@@ -10,13 +10,13 @@ $ npm install
 
 ### FrontEnd
 ```bash
-$ cd client/
+$ cd frontend/
 $ npm install
 ```
 
-### Back-End
+### BackEnd
 ```bash
-$ cd server/
+$ cd backend/
 $ npm install
 ```
 
