@@ -1,0 +1,26 @@
+{
+  "name": "BBNG",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "frontend" : "cd frontend && npm run serve",
+    "backend" : "cd backend && npm start",
+    "start" : "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/westofsky/BBNG.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/westofsky/BBNG/issues"
+  },
+  "homepage": "https://github.com/westofsky/BBNG#readme"
+}
