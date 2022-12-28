@@ -19,6 +19,7 @@ $ npm install
 $ cd backend/
 $ npm install
 ```
+- backend/ 에 .env 파일 생성하여 DB_URL = '자신의 mongodb cluster url'을 추가하여야 합니다.
 
 ### Environment
 ```bash
