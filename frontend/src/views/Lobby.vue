@@ -56,6 +56,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #E1D5D5;
 }
 
 .RoundBorder {
