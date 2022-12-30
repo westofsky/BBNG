@@ -16,20 +16,35 @@
                 <div class="login"><a class="login_btn">로그인</a></div>
                 <div class = "extra">
                     <p>아이디/비밀번호 찾기</p>
-                    <p>회원가입</p>
+                    <p @click = "google_login">회원가입</p>
                 </div>
             </div>
+        </div>
+        <div class="popup_register">
+            
         </div>
     </div>
 </template>
   
 <script>
+import { googleTokenLogin  } from "vue3-google-login"
     export default {
         name: 'Home',
+        data(){
+            return {
+                click_register : false,
+            }
+        },
+        methods : {
+            google_login(){
+                
+                // googleTokenLogin().then((response) => {
+                //     console.log("Handle the response", response)
+                // })
+            }
+        }
     }
 </script>
-  
-  <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .Home{
     height:100%;
@@ -127,6 +142,12 @@
     margin-top : 10px;
     display : flex;
     float : right;
+}
+
+.popup_register{
+    width : 100%;
+    height : 100%;
+    background-color : gray;
 }
 </style>
   
