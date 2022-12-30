@@ -1,15 +1,11 @@
 <template>
-    <Home/>
+    <router-view></router-view>
 </template>
 
 <script>
-import Home from './views/Home'
 
 export default {
   name: 'App',
-  components: {
-    Home
-  }
 }
 </script>
 
@@ -17,6 +13,6 @@ export default {
 html,body,#app{
     margin : 0;
     height: 100%;
-    weight: 100%;
+    width: 100%;
 }
 </style>
