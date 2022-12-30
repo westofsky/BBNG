@@ -8,9 +8,15 @@
                 <Rooms />
             </div>
             <div class="BtnArea">
-                <div class="BtnQuickMatch RoundBorder" @click="run"> </div>
-                <div class="BtnRankMatch RoundBorder"> </div>
-                <div class="BtnCreateRoom RoundBorder"> </div>
+                <div class="Btn BtnQuickMatch RoundBorder" @click="run">
+                    <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
+                </div>
+                <div class="Btn BtnRankMatch RoundBorder">
+                    <label class="BtnText" style="user-select: none; flex: 1;">랭크매칭</label>
+                </div>
+                <div class="Btn BtnCreateRoom RoundBorder">
+                    <label class="BtnText" style="user-select: none; flex: 1;">방 만들기</label>
+                </div>
             </div>
         </div>
         <div>
@@ -109,30 +115,62 @@ export default {
     display: flex;
 }
 
+.Btn {
+    display: flex;
+}
+
+.BtnText {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 16pt;
+    text-align: center;
+    line-height: 48px;
+}
+
 .BtnQuickMatch {
-    background-color: #524311;
+    background-color: #4677c1;
     width: 180px;
     height: 48px;
     flex: 1;
     box-sizing: border-box;
 }
 
+.BtnQuickMatch:hover {
+    background-color: #3e69aa;
+}
+.BtnQuickMatch:active {
+    background-color: #32568b;
+}
+
 .BtnRankMatch {
-    background-color: #515111;
+    background-color: #334662;
     width: 180px;
     height: 48px;
     margin: 0px 50px;
     flex: 1;
     box-sizing: border-box;
 }
+.BtnRankMatch:hover {
+    background-color: #2b3b52;
+}
+.BtnRankMatch:active {
+    background-color: #243146;
+}
 
 .BtnCreateRoom {
-    background-color: #553331;
+    background-color: #9b7d50;
     width: 180px;
     height: 48px;
     float: left;
     box-sizing: border-box;
 }
+.BtnCreateRoom:hover {
+    background-color: #8d7248;
+}
+.BtnCreateRoom:active {
+    background-color: #79623e;
+}
+
 
 .Friends {
     width: 320px;
