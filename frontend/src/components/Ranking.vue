@@ -1,11 +1,13 @@
 <template>
     <div class="Ranking RoundBorder">
         <label class="Title">랭킹</label>
-        <hr style="margin-top: 8px" />
-        <div v-for="rankInfo in rankInfoList">
-            <div class="RankArea">
-                <label>{{ rankInfo.nick }}</label>
-                <label style="float:right;"></label>
+        <hr style="margin: 8px;" />
+        <div style="overflow: auto; flex: 1;">
+            <div class="RankInfoArea" v-for="rankInfo in rankList">
+                <img class="TierImage" src="../assets/images/tier_challenger.png" />
+                <label class="Nickname" >{{ rankInfo.nick }}</label>
+                <img class="IconRankPoint" src="../assets/images/icon_rankpoint.png"/>
+                <label class="RankPoint" >{{ rankInfo.rank_point }}</label>
             </div>
         </div>
     </div>
@@ -16,25 +18,13 @@ export default {
     name: 'Ranking',
     data() {
         return {
-            rankInfoList: [
-                { tier: "Challenger", nick: "Nickname1", point: 99999 },
-                { tier: "Challenger", nick: "Nickname2", point: 99999 },
-                { tier: "Challenger", nick: "Nickname3", point: 99999 },
-                { tier: "Challenger", nick: "Nickname3", point: 99999 },
-                { tier: "Challenger", nick: "Nickname4", point: 99999 },
-                { tier: "Challenger", nick: "Nickname5", point: 99999 },
-                { tier: "Challenger", nick: "Nickname6", point: 99999 },
-                { tier: "Challenger", nick: "Nickname7", point: 99999 },
-                { tier: "Challenger", nick: "Nickname8", point: 99999 },
-                { tier: "Challenger", nick: "Nickname9", point: 99999 },
-                { tier: "Challenger", nick: "Nickname10", point: 99999 },
-                { tier: "Challenger", nick: "Nickname11", point: 99999 }
-            ]
+            rankList: [],
+            roomList: []
         }
     },
     methods: {
-        loadRanking: function () {
-
+        setRanking(rankList) {
+            this.rankList = rankList;
         }
     },
 }
@@ -42,11 +32,12 @@ export default {
 
 <style scoped>
 .Ranking {
-    background-color: #123123;
-    width: 304px;
+    background-color: #ffffff;
+    width: 320px;
     height: 800px;
     text-align: center;
-    padding: 8px;
+    flex-direction: column;
+    display: flex;
 }
 
 .RoundBorder {
@@ -55,10 +46,48 @@ export default {
 
 .Title {
     font-size: 32pt;
-    color: #ffffff;
+    color: #000000;
+    margin-top: 8px;
 }
 
-.RankArea{
+.RankInfoArea {
+    display: flex;
+    align-items: center;
+    margin: 8px;
+}
 
+.RankInfoArea:hover{
+    background-color: #acacac;
+}
+
+.TierImage {
+    user-select: none;
+    width: 48px;
+    height: 48px;
+}
+
+.Nickname {
+    user-select: none;
+    margin-left: 16px;
+    text-align: left;
+    height: 48px;
+    line-height: 48px;
+    flex: 1;
+    font-size: 16pt;
+    text-overflow: ellipsis;
+}
+
+.IconRankPoint {
+    user-select: none;
+    width: 32px;
+    height: 32px;
+}
+
+.RankPoint {
+    user-select: none;
+    height: 48px;
+    line-height: 48px;
+    margin-right: 8px;
+    font-size: 16pt;
 }
 </style>
