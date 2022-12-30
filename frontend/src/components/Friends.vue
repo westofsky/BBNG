@@ -1,6 +1,6 @@
 <template>
-
-
+    <div class="Friends RoundBorder">
+    </div>
 </template>
 
 <script>
@@ -11,6 +11,12 @@
 
 <style scoped>
 .Friends{
-    
+    background-color: #555111;
+    width: 320px;
+    height: 384px;
+}
+
+.RoundBorder {
+    border-radius: 8px;
 }
 </style>
