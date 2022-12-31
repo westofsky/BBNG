@@ -8,13 +8,13 @@
                 <Rooms />
             </div>
             <div class="BtnArea">
-                <div class="Btn BtnQuickMatch RoundBorder" @click="run">
+                <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
                 </div>
-                <div class="Btn BtnRankMatch RoundBorder">
+                <div class="Btn BtnRankMatch RoundBorder" @click="btnRankMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">랭크매칭</label>
                 </div>
-                <div class="Btn BtnCreateRoom RoundBorder">
+                <div class="Btn BtnCreateRoom RoundBorder" @click="btnCreateRoomClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">방 만들기</label>
                 </div>
             </div>
@@ -42,30 +42,14 @@ export default {
 
     },
     methods: {
-        run() {
-            this.$refs.RankingComponent.setRanking([{ tier: "Challenger", nick: "Nickname1", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname2", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname3", rank_point: 33333 },
-            { tier: "Challenger", nick: "Nickname3", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname4", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname5", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname6", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname7", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname8", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname9", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname10", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname11", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname12", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname13", rank_point: 33333 },
-            { tier: "Challenger", nick: "Nickname13", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname14", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname15", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname16", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname17", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname18", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname19", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname20", rank_point: 99999 },
-            { tier: "Challenger", nick: "Nickname21", rank_point: 99999 },]);
+        btnQuickMatchClicked() {
+            
+        },
+        btnRankMatchClicked() {
+
+        },
+        btnCreateRoomClicked() {
+
         }
     },
     components: {
@@ -138,6 +122,7 @@ export default {
 .BtnQuickMatch:hover {
     background-color: #3e69aa;
 }
+
 .BtnQuickMatch:active {
     background-color: #32568b;
 }
@@ -150,9 +135,11 @@ export default {
     flex: 1;
     box-sizing: border-box;
 }
+
 .BtnRankMatch:hover {
     background-color: #2b3b52;
 }
+
 .BtnRankMatch:active {
     background-color: #243146;
 }
@@ -164,9 +151,11 @@ export default {
     float: left;
     box-sizing: border-box;
 }
+
 .BtnCreateRoom:hover {
     background-color: #8d7248;
 }
+
 .BtnCreateRoom:active {
     background-color: #79623e;
 }
