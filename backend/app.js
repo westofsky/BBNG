@@ -22,7 +22,10 @@ mongoose.connect(
   // useCreateIndex: true,
   // useFindAndModify: false,
   }
-).then(() => console.log('MongoDB 연결됨')).catch((err) => {
+).then(() => {
+    console.log('MongoDB 연결됨');
+    
+}).catch((err) => {
     console.log(err);
 });
 
