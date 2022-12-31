@@ -16,34 +16,55 @@
                 <div class="login"><a class="login_btn">로그인</a></div>
                 <div class = "extra">
                     <p>아이디/비밀번호 찾기</p>
-                    <p @click = "google_login">회원가입</p>
+                    <p @click = "register">회원가입</p>
                 </div>
             </div>
         </div>
-        <div class="popup_register">
-            
+        <div class="popup_register" v-if="isActive_register">
+            <div class="contents">
+                <div class = "title">
+                    <h1>회원가입</h1>
+                </div>
+                <div class="input_box id">
+                    <label for="id">아이디</label>
+                    <input type="text" id="id" placeholder="아이디">
+                    <div class="check"><a class="check_btn">중복확인</a></div>
+                </div>
+                <div class="input_box password">
+                    <label for="password">비밀번호</label>
+                    <input type="password" placeholder="비밀번호" >
+                </div>
+                <div class="input_box nickname">
+                    <label for="nickname">닉네임</label>
+                    <input type="text" placeholder="닉네임" >
+                    <div class="check"><a class="check_btn">중복확인</a></div>
+                </div>
+                <div class="login">
+                <GoogleButton></GoogleButton>
+                <a class="login_btn">회원가입</a></div>
+            </div>
         </div>
     </div>
 </template>
   
 <script>
-import { googleTokenLogin  } from "vue3-google-login"
-    export default {
-        name: 'Home',
-        data(){
-            return {
-                click_register : false,
-            }
-        },
-        methods : {
-            google_login(){
-                
-                // googleTokenLogin().then((response) => {
-                //     console.log("Handle the response", response)
-                // })
-            }
+import GoogleButton from '../components/GoogleButton.vue';
+export default {
+    name: 'Home',
+    components : {
+        GoogleButton
+    },
+    data(){
+        return {
+            isActive_register : false,
+        }
+    },
+    methods : {
+        register(){
+            this.isActive_register = true;
         }
     }
+}
 </script>
 <style scoped>
 .Home{
@@ -145,9 +166,68 @@ import { googleTokenLogin  } from "vue3-google-login"
 }
 
 .popup_register{
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    position:fixed;
     width : 100%;
     height : 100%;
-    background-color : gray;
+    background: rgba(0, 0, 0, .8);
+}
+.popup_register .contents{
+    width:350px;
+    min-height : 460px;
+    display : block;
+    padding: 10px 30px;
+    border-radius: 30px;
+    background-color : white;
+    background-color: rgba( 255, 255, 255 );
+}
+
+.popup_register .contents .title{
+    text-align: center;
+    margin-bottom : 50px;
+}
+
+.popup_register .contents .id{
+    text-align: center;
+    margin-bottom : 50px;
+    display : flex;
+    flex-direction: row;
+}
+.popup_register .contents .password{
+    margin-bottom : 35px;
+}
+
+.popup_register .contents .nickname{
+    text-align: center;
+    display : flex;
+    flex-direction: row;
+}
+.popup_register input{
+    width:70%;
+}
+
+.popup_register .password input{
+    width:100%;
+}
+.popup_register .check{
+    width:30%;
+}
+
+.popup_register .check_btn{
+    border-radius: 4px;
+    background: #84ca5c;
+    width: 100%;
+    height: 40px;   
+    line-height: 40px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center;
+    display: inline-block;
+    margin-top : 5px;
 }
 </style>
   
