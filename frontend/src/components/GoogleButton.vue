@@ -26,15 +26,16 @@ import {googleTokenLogin} from 'vue3-google-login';
 
 .GoogleButton button{
     border-radius: 4px;
-    background: #2d5188;
+    background: #00AE68;
     width: 100%;
     height: 40px;
-    line-height: 50px;
     color: #fff;
     font-size: 18px;
     font-weight: 700;
     text-align: center;
-    display: inline-block;
-    margin-bottom : 40px;
+}
+
+.GoogleButton button:hover {
+  background: #21825B;
 }
 </style>

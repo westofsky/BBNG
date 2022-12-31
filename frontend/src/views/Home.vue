@@ -40,8 +40,9 @@
                     <div class="check"><a class="check_btn">중복확인</a></div>
                 </div>
                 <div class="login">
-                <GoogleButton></GoogleButton>
-                <a class="login_btn">회원가입</a></div>
+                    <GoogleButton></GoogleButton>
+                    <a class="register_btn">회원가입</a>
+                </div>
             </div>
         </div>
     </div>
@@ -204,6 +205,17 @@ export default {
     text-align: center;
     display : flex;
     flex-direction: row;
+}
+
+.popup_register .contents .login .register_btn{
+    border-radius: 4px;
+    background: #00AE68;
+    width: 100%;
+    height: 40px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
 }
 .popup_register input{
     width:70%;
