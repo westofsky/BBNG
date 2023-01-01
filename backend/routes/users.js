@@ -62,7 +62,6 @@ router.post('/register', (request, response) => {
     for(var i =0;i<20;i++){
         tokens += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-    
     User.create({
       user_id: request.body.user_id,
       user_pw: request.body.user_pw,
