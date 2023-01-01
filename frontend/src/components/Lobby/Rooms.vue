@@ -8,13 +8,13 @@
 
             </div>
             <div class="BtnRefresh" v-on:click="btnRefreshClicked">
-                <img src="../assets/images/icon_refresh.png" style="width: 40px; height: 40px;" />
+                <img src="../../assets/images/icon_refresh.png" style="width: 40px; height: 40px;" />
             </div>
         </div>
         <div class="RoomList">
             <div :class="roomInfo.room_state === '대기중'? 'RoomInfo Enable':'RoomInfo Disable'" v-for="roomInfo in roomList" v-on:click="onRoomClicked(roomInfo)">
                 <div class="RoomInfo1">
-                    <img v-if="roomInfo.roomopt_lock" class="Lock" src="../assets/images/icon_lock.png"/>
+                    <img v-if="roomInfo.roomopt_lock" class="Lock" src="../../assets/images/icon_lock.png"/>
                     <label class="Name">{{roomInfo.room_name}}</label>
                     <label class="Player">{{roomInfo.room_current_player}} / {{roomInfo.roomopt_max_player}}</label>
                 </div>
