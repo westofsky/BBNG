@@ -3,14 +3,14 @@
         <div class="FilterArea">
             <div class="FilterOptionArea">
                 <div class="PasswordRequired">
-                    <select name="FilterPasswordRequired" style="font-size: 14pt">
+                    <select v-model="filterPasswordRequired" style="font-size: 14pt" @change="applyFilter">
                         <option value="all">전체</option>
                         <option value="required">필요</option>
                         <option value="not_required">불필요</option>
                     </select>
                 </div>
                 <div class="Round">
-                    <select name="FilterRound" style="font-size: 14pt">
+                    <select v-model="filterRound" name="FilterRound" style="font-size: 14pt" @change="applyFilter">
                         <option value="all">전체</option>
                         <option value="round_10">10 라운드</option>
                         <option value="round_15">15 라운드</option>
@@ -18,14 +18,14 @@
                     </select>
                 </div>
                 <div class="ShowScore">
-                    <select name="FilterShowScore" style="font-size: 14pt">
+                    <select v-model="filterShowScore" name="FilterShowScore" style="font-size: 14pt" @change="applyFilter">
                         <option value="all">전체</option>
                         <option value="show">표시</option>
                         <option value="not_show">미표시</option>
                     </select>
                 </div>
-                <input class="SearchInput" type="search" placeholder="검색할 방 이름 입력"/>
-                <div class="BtnSearch">
+                <input class="SearchInput" type="search" placeholder="검색할 방 이름 입력" v-model="filterName" v-on:keyup.enter="applyFilter"/>
+                <div class="BtnSearch" v-on:click="applyFilter">
                     <img src="../../assets/images/icon_search.png" style="width: 32px; height: 32px;"/>
                 </div>
             </div>
@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="RoomList">
-            <div :class="roomInfo.room_state === '대기중'? 'RoomInfo Enable':'RoomInfo Disable'" v-for="roomInfo in roomList" v-on:click="onRoomClicked(roomInfo)">
+            <div :class="roomInfo.room_state === '대기중'? 'RoomInfo Enable':'RoomInfo Disable'" v-for="roomInfo in filteredRoomList" v-on:click="onRoomClicked(roomInfo)">
                 <div class="RoomInfo1">
                     <img v-if="roomInfo.roomopt_lock" class="Lock" src="../../assets/images/icon_lock.png"/>
                     <label class="Name">{{roomInfo.room_name}}</label>
@@ -56,6 +56,11 @@ export default {
     name: 'Rooms',
     data() {
         return {
+            filterPasswordRequired: 'all',
+            filterRound: 'all',
+            filterShowScore: 'all',
+            filterName: '', 
+            filteredRoomList: [],
             roomList: [
                 {
                     room_name: "Player1의 방",
@@ -144,9 +149,41 @@ export default {
     methods: {
         setRooms(roomList) {
             this.roomList = roomList;
+            this.filteredRoomList = this.roomList;
         },
-        btnFilterClicked(){
+        applyFilter(){
+            this.filteredRoomList = [];
+            if(this.filterPasswordRequired == "all") {
+                this.filteredRoomList = this.roomList;
+            } else if(this.filterPasswordRequired == "required") {
+                this.filteredRoomList = this.roomList.filter(roomInfo => roomInfo.roomopt_lock)
+            } else if(this.filterPasswordRequired == "not_required") {
+                this.filteredRoomList = this.roomList.filter(roomInfo => !roomInfo.roomopt_lock)
+            }
 
+            if(this.filterRound == "all") {
+                this.filteredRoomList = this.filteredRoomList;
+            } else if(this.filterRound == "round_10") {
+                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 10)
+            } else if(this.filterRound == "round_15") {
+                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 15)
+            } else if(this.filterRound == "round_20") {
+                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 20)
+            }
+
+            if(this.filterShowScore == "all") {
+                this.filteredRoomList = this.filteredRoomList;
+            } else if(this.filterShowScore == "show") {
+                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_show_score)
+            } else if(this.filterShowScore == "not_show") {
+                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => !roomInfo.roomopt_show_score)
+            }
+
+            if(this.filterName == "") {
+                this.filteredRoomList = this.filteredRoomList;
+            } else {
+                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.room_name.indexOf(this.filterName) == 0);
+            }
         },
         btnRefreshClicked() {
 
@@ -156,6 +193,9 @@ export default {
                 alert("이미 게임이 진행중인 방입니다!");
             }
         },
+    },
+    mounted() {
+        this.applyFilter();
     },
 }
 </script>
