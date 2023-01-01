@@ -24,10 +24,7 @@
                         <option value="not_show">미표시</option>
                     </select>
                 </div>
-                <input class="SearchInput" type="search" placeholder="검색할 방 이름 입력" v-model="filterName" v-on:keyup.enter="applyFilter"/>
-                <div class="BtnSearch" v-on:click="applyFilter">
-                    <img src="../../assets/images/icon_search.png" style="width: 32px; height: 32px;"/>
-                </div>
+                <input class="SearchInput" type="search" placeholder="검색할 방 이름 입력" v-model="filterName" v-on:input="applyFilter"/>
             </div>
             <div class="BtnRefresh" v-on:click="btnRefreshClicked">
                 <img src="../../assets/images/icon_refresh.png" style="width: 32px; height: 32px;" />
@@ -252,23 +249,6 @@ export default {
 .FilterOptionArea .SearchInput {
     flex: 1;
     font-size: 14pt;
-}
-
-.FilterOptionArea .BtnSearch {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background-color: #A8A8A8;
-    box-shadow: 2px 1px rgb(209, 209, 209);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.FilterOptionArea .BtnSearch:hover {
-    background-color: #8f8f8f;
-}
-.FilterOptionArea .BtnSearch:active {
-    background-color: #727272;
 }
 
 .BtnRefresh {
