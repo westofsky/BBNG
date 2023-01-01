@@ -1,14 +1,10 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const userSchema = new Schema({
-	user_id: {
+const userSchema_t = new Schema({
+	user_token: {
 		type: String,
 		unique: true,
-		default: "",
-	},
-	user_pw: {
-		type: String,
 		default: "",
 	},
 	user_nickname: {
@@ -19,4 +15,4 @@ const userSchema = new Schema({
 	},
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User_t', userSchema_t);

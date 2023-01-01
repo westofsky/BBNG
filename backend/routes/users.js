@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../Schemas/User');
-var User_t = require('../Schemas/User');
+var User_t = require('../Schemas/User_t');
 
 router.post('/register', (request, response) => {
   User.find((err,users)=>{
