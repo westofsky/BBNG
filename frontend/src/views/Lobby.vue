@@ -31,10 +31,10 @@
 </template>
 
 <script>
-import Ranking from '../components/Ranking.vue';
-import Rooms from '../components/Rooms.vue';
-import Friends from '../components/Friends.vue';
-import Chatting from '../components/Chatting.vue';
+import Ranking from '../components/Lobby/Ranking.vue';
+import Rooms from '../components/Lobby/Rooms.vue';
+import Friends from '../components/Lobby/Friends.vue';
+import Chatting from '../components/Lobby/Chatting.vue';
 
 export default {
     name: 'Lobby',

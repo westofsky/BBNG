@@ -4,9 +4,9 @@
         <hr style="margin: 8px;" />
         <div style="overflow: auto; flex: 1;">
             <div class="RankInfoArea" v-for="rankInfo in rankList">
-                <img class="TierImage" src="../assets/images/tier_challenger.png" />
+                <img class="TierImage" src="../../assets/images/tier_challenger.png" />
                 <label class="Nickname" >{{ rankInfo.nick }}</label>
-                <img class="IconRankPoint" src="../assets/images/icon_rankpoint.png"/>
+                <img class="IconRankPoint" src="../../assets/images/icon_rankpoint.png"/>
                 <label class="RankPoint" >{{ rankInfo.rank_point }}</label>
             </div>
         </div>
