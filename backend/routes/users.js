@@ -1,11 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../Schemas/User');
-
-/* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
+var User_t = require('../Schemas/User_t');
 
 router.post('/register', (request, response) => {
   User.find((err,users)=>{
@@ -30,7 +26,7 @@ router.post('/register', (request, response) => {
     });
   }
   else if (request.body.type == 2) {
-    User.find((err, users) => {
+    User_t.find((err, users) => {
       users.forEach((item) => {
         if (item.user_token == request.body.user_token) {
           response.json({ status: "500", msg :"아이디(토큰) 중복"});
@@ -54,20 +50,23 @@ router.post('/register', (request, response) => {
         response.json({ status: "200", msg :"사용 가능한 닉네임"});
       }
     });
+    User_t.find((err, users) => {
+      users.forEach((item) => {
+        if (item.user_nickname == request.body.user_nickname) {
+          response.json({ status: "500", msg :"닉네임 중복"});
+          flag = false;
+        }
+      })
+      if (flag == true) {
+        response.json({ status: "200", msg :"사용 가능한 닉네임"});
+      }
+    });
   }
   else if (request.body.type == 4) {
-    const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    let tokens = request.body.user_id;
-    const charactersLength = characters.length;
-    for(var i =0;i<20;i++){
-        tokens += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    
     User.create({
       user_id: request.body.user_id,
       user_pw: request.body.user_pw,
       user_nickname: request.body.user_nickname,
-      user_token : tokens,
     }).then((result) => {
         response.json({ status:"200", msg : "회원가입에 성공했습니다."});
     }).catch((err) => {
@@ -81,10 +80,20 @@ router.post('/register', (request, response) => {
     });
   }
   else if (request.body.type == 5) {
-    User.create({
+    User_t.create({
       user_token: request.body.user_token,
       user_nickname: request.body.user_nickname,
-    });
+    }).then((result) => {
+      response.json({ status:"200", msg : "(구글)회원가입에 성공했습니다."});
+  }).catch((err) => {
+      console.log(err);
+      if(err){
+          if (err.name === 'MongoError' && err.code === 11000)
+              res.json({ status : "500", msg : "오류가 발생했습니다."})
+      }
+      else
+          next(err);
+  });
   }
 });
 
@@ -111,7 +120,7 @@ router.post('/login', (request, response) => {
     })
   }
   else if(request.body.type == 2){
-    User.find((err,users) => {
+    User_t.find((err,users) => {
       users.forEach((item) => {
         if(item.user_token == request.body.user_token){
           flag = false;
