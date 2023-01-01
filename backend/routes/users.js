@@ -42,25 +42,23 @@ router.post('/register', (request, response) => {
     User.find((err, users) => {
       users.forEach((item) => {
         if (item.user_nickname == request.body.user_nickname) {
-          response.json({ status: "500", msg :"닉네임 중복"});
           flag = false;
         }
       })
-      if (flag == true) {
-        response.json({ status: "200", msg :"사용 가능한 닉네임"});
-      }
     });
     User_t.find((err, users) => {
       users.forEach((item) => {
         if (item.user_nickname == request.body.user_nickname) {
-          response.json({ status: "500", msg :"닉네임 중복"});
           flag = false;
         }
       })
-      if (flag == true) {
-        response.json({ status: "200", msg :"사용 가능한 닉네임"});
-      }
     });
+    if(flag == true){
+        response.json({ status : "200" , msg : "닉네임 사용 가능"});
+    }
+    else{
+        response.json({ status: "500", msg :"닉네임 중복"});
+    }
   }
   else if (request.body.type == 4) {
     User.create({
