@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="RoomList">
-            <div class="RoomInfo" v-for="roomInfo in roomList" v-on:click="onRoomClicked(roomInfo)">
+            <div :class="roomInfo.room_state === '대기중'? 'RoomInfo Enable':'RoomInfo Disable'" v-for="roomInfo in roomList" v-on:click="onRoomClicked(roomInfo)">
                 <div class="RoomInfo1">
                     <img v-if="roomInfo.roomopt_lock" class="Lock" src="../assets/images/icon_lock.png"/>
                     <label class="Name">{{roomInfo.room_name}}</label>
@@ -209,12 +209,23 @@ export default {
 }
 
 .RoomInfo {
-    background-color: #ffffff;
     padding: 8px;
-    display: flex;
+    display: flexbox;
     border-radius: 8px;
-    margin: 8px 0px;
+    margin: 8px 8px 0px 4px;
     flex-direction: column;
+    box-shadow: 2px 2px rgb(209, 209, 209);
+}
+
+.Enable{
+    background-color: #ffffff;
+}
+
+.Disable{
+    user-select: none;
+    pointer-events: none;
+    background-color: #888888;
+    opacity: 0.7;
 }
 
 .RoomInfo:hover {
@@ -286,7 +297,7 @@ export default {
     float:right;
 }
 .RoomInfo2 .Playing {
-    color: #f13131;
+    color: #a11414;
     font-weight: bold;
     font-size: 14pt;
     user-select: none;
