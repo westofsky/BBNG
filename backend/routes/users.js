@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../Schemas/User');
-var User_t = require('../Schemas/User_t');
+var User_t = require('../Schemas/User');
 
 router.post('/register', (request, response) => {
   User.find((err,users)=>{
@@ -120,7 +120,7 @@ router.post('/login', (request, response) => {
     })
   }
   else if(request.body.type == 2){
-    User.find((err,users) => {
+    User_t.find((err,users) => {
       users.forEach((item) => {
         if(item.user_token == request.body.user_token){
           flag = false;
