@@ -1,14 +1,36 @@
 <template>
     <div class="Rooms RoundBorder">
         <div class="FilterArea">
-            <div class="BtnFilter" v-on:click="btnFilterClicked">
-                <label style="font-size: 14pt; font-weight: bold; user-select: none;">필터</label>
-            </div>
             <div class="FilterOptionArea">
-
+                <div class="PasswordRequired">
+                    <select name="FilterPasswordRequired" style="font-size: 14pt">
+                        <option value="all">전체</option>
+                        <option value="required">필요</option>
+                        <option value="not_required">불필요</option>
+                    </select>
+                </div>
+                <div class="Round">
+                    <select name="FilterRound" style="font-size: 14pt">
+                        <option value="all">전체</option>
+                        <option value="round_10">10 라운드</option>
+                        <option value="round_15">15 라운드</option>
+                        <option value="round_20">20 라운드</option>
+                    </select>
+                </div>
+                <div class="ShowScore">
+                    <select name="FilterShowScore" style="font-size: 14pt">
+                        <option value="all">전체</option>
+                        <option value="show">표시</option>
+                        <option value="not_show">미표시</option>
+                    </select>
+                </div>
+                <input class="SearchInput" type="search" placeholder="검색할 방 이름 입력"/>
+                <div class="BtnSearch">
+                    <img src="../../assets/images/icon_search.png" style="width: 32px; height: 32px;"/>
+                </div>
             </div>
             <div class="BtnRefresh" v-on:click="btnRefreshClicked">
-                <img src="../../assets/images/icon_refresh.png" style="width: 40px; height: 40px;" />
+                <img src="../../assets/images/icon_refresh.png" style="width: 32px; height: 32px;" />
             </div>
         </div>
         <div class="RoomList">
@@ -168,29 +190,45 @@ export default {
     margin: 0px 8px 8px 8px;
     overflow: auto;
 }
-
-.BtnFilter {
-    width: 100px;
-    height: 40px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.BtnFilter:hover {
-    background-color: #d8d8d8;
-}
-
-.BtnFilter:active {
-    background-color: #acacac;
-}
-
 .FilterOptionArea {
     flex: 1;
-    background-color: #888888;
-    margin: 0px 8px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.FilterOptionArea .PasswordRequired {
+    margin-right: 8px;
+}
+
+.FilterOptionArea .Round {
+    margin-right: 8px;
+}
+
+.FilterOptionArea .ShowScore {
+    margin-right: 8px;
+}
+
+.FilterOptionArea .SearchInput {
+    flex: 1;
+    font-size: 14pt;
+}
+
+.FilterOptionArea .BtnSearch {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #A8A8A8;
+    box-shadow: 2px 1px rgb(209, 209, 209);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.FilterOptionArea .BtnSearch:hover {
+    background-color: #8f8f8f;
+}
+.FilterOptionArea .BtnSearch:active {
+    background-color: #727272;
 }
 
 .BtnRefresh {
@@ -198,6 +236,10 @@ export default {
     height: 40px;
     border-radius: 8px;
     background-color: #A8A8A8;
+    box-shadow: 2px 2px rgb(209, 209, 209);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .BtnRefresh:hover {
@@ -214,17 +256,18 @@ export default {
     border-radius: 8px;
     margin: 8px 8px 0px 4px;
     flex-direction: column;
-    box-shadow: 2px 2px rgb(209, 209, 209);
 }
 
 .Enable{
     background-color: #ffffff;
+    box-shadow: 2px 2px rgb(209, 209, 209);
 }
 
 .Disable{
     user-select: none;
     pointer-events: none;
     background-color: #888888;
+    box-shadow: 2px 2px rgb(70, 70, 70);
     opacity: 0.7;
 }
 
