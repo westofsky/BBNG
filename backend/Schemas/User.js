@@ -11,6 +11,15 @@ const userSchema = new Schema({
 		type: String,
 		default: "",
 	},
+	user_nickname: {
+		type: String,
+		required: true,
+        unique: true,
+		default: "",
+	},
+});
+
+const userSchema2 = new Schema({
 	user_token: {
 		type: String,
 		unique: true,
@@ -25,3 +34,4 @@ const userSchema = new Schema({
 });
 
 module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User_t', userSchema2);
