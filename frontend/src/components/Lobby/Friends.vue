@@ -49,7 +49,7 @@ export default {
 
 <style scoped>
 .Friends {
-    background-color: #ffffff;
+    background-color: #F9F6F6;
     width: 320px;
     height: 384px;
     text-align: center;

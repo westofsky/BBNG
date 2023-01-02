@@ -53,7 +53,7 @@ export default {
 
 <style scoped>
 .Ranking {
-    background-color: #ffffff;
+    background-color: #F9F6F6;
     width: 320px;
     height: 800px;
     text-align: center;
