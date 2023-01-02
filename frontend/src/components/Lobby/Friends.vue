@@ -1,6 +1,9 @@
 <template>
     <div class="Friends RoundBorder">
-        <label class="Title">친구</label>
+        <div style="position: relative; margin-top: 8px;">
+            <label class="Title">친구</label>
+            <label class="OnlineCount">온라인: {{ friendList.length }}명</label>
+        </div>
         <hr style="margin: 8px;" />
         <div class="FriendList">
             <div :class="friendInfo.state === 'online' ? 'FriendInfo Online' : 'FriendInfo Offline'"
@@ -18,25 +21,29 @@ export default {
     name: 'Friends',
     data() {
         return {
-            friendList: [
-                { nickname: "Player1", state: "online" },
-                { nickname: "손영진", state: "online" },
-                { nickname: "배성준", state: "offline" },
-                { nickname: "손영진", state: "online" },
-                { nickname: "Player2", state: "online" },
-                { nickname: "Player3", state: "online" },
-                { nickname: "Player4", state: "online" },
-                { nickname: "Player5", state: "online" },
-                { nickname: "Player6", state: "online" },
-                { nickname: "Player7", state: "online" },
-            ],
+            friendList: [],
         }
     },
     methods: {
         setFriends(friendList) {
             this.friendList = friendList;
+            this.friendList.sort((v1, v2) => v2.state.localeCompare(v1.state));
         },
-    }
+    },
+    mounted() {
+        this.setFriends([
+            { nickname: "Player1", state: "online" },
+            { nickname: "손영진", state: "online" },
+            { nickname: "배성준", state: "offline" },
+            { nickname: "손영진", state: "online" },
+            { nickname: "Player2", state: "online" },
+            { nickname: "Player3", state: "online" },
+            { nickname: "Player4", state: "online" },
+            { nickname: "Player5", state: "online" },
+            { nickname: "Player6", state: "online" },
+            { nickname: "Player7", state: "online" },
+        ]);
+    },
 }
 </script>
 
@@ -57,8 +64,17 @@ export default {
 .Title {
     font-size: 24pt;
     color: #000000;
-    margin-top: 8px;
     font-weight: bold;
+    user-select: none;
+}
+
+.OnlineCount {
+    font-size: 12pt;
+    color: rgb(65, 248, 40);
+    font-weight: bold;
+    position: absolute;
+    right: 8px;
+    bottom: 0px;
     user-select: none;
 }
 
@@ -79,7 +95,7 @@ export default {
 .FriendInfo .Online {
     user-select: none;
     width: 64px;
-    background-color: #6866fc;
+    background-color: #6eda6b;
     padding: 8px;
     color: #ffffff;
     font-weight: bold;
