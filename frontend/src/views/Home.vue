@@ -11,7 +11,7 @@
                 </div>
                 <div class="input_box password">
                     <label for="password">비밀번호</label>
-                    <input type="password" v-model = "login_pw" placeholder="비밀번호" >
+                    <input type="password" v-model = "login_pw" placeholder="비밀번호" @keyup.enter="login">
                 </div>
                 <div class="login"><a class="login_btn" @click = "login">로그인</a></div>
                 <div class="login_google"><a class="login_btn" @click = "login_google">구글로 로그인</a></div>

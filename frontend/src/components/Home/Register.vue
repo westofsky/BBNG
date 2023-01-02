@@ -21,7 +21,7 @@
             </div>
             <div class="input_box nickname">
                 <label for="nickname">닉네임</label>
-                <input type="text" @input="onChange_nick($event)" v-model = "user_nickname" placeholder="닉네임">
+                <input type="text" @input="onChange_nick($event)" v-model = "user_nickname" placeholder="닉네임" @keyup.enter="register">
                 <div class="check"><button @click = "chk_nick_dup" class="check_btn">중복확인</button></div>
             </div>
             <div class="login">
