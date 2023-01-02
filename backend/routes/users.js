@@ -2,8 +2,9 @@ var express = require('express');
 var router = express.Router();
 var User = require('../Schemas/User');
 var User_t = require('../Schemas/User_t');
-
-router.post('/register', (request, response) => {
+const { OAuth2Client } = require("google-auth-library")
+const client = new OAuth2Client();
+router.post('/register', async (request, response) => {
   User.find((err,users)=>{
     users.forEach((item)=>{
         console.log(item);
@@ -11,8 +12,8 @@ router.post('/register', (request, response) => {
   });
   console.log('회원가입 중');
   console.log(request.body);
-  var flag = true;
   if (request.body.type == 1) {
+    var flag = true;
     User.find((err, users) => {
       users.forEach((item) => {
         if (item.user_id == request.body.user_id) {
@@ -26,6 +27,7 @@ router.post('/register', (request, response) => {
     });
   }
   else if (request.body.type == 2) {
+    var flag = true;
     User_t.find((err, users) => {
       users.forEach((item) => {
         if (item.user_token == request.body.user_token) {
@@ -39,26 +41,25 @@ router.post('/register', (request, response) => {
     });
   }
   else if (request.body.type == 3) {
-    User.find((err, users) => {
-      users.forEach((item) => {
-        if (item.user_nickname == request.body.user_nickname) {
-          flag = false;
-        }
-      })
-    });
-    User_t.find((err, users) => {
-      users.forEach((item) => {
-        if (item.user_nickname == request.body.user_nickname) {
-          flag = false;
-        }
-      })
-    });
-    if(flag == true){
+    var flag = true;
+    User.findOne( {user_nickname : request.body.user_nickname})
+    .then((result) => {
+      if(result) 
+        flag = false;
+      else{
+          User_t.findOne( {user_nickname : request.body.user_nickname})
+          .then((result) => {
+            if(result) 
+              flag = false;
+          })
+      }
+      if(flag == true){
         response.json({ status : "200" , msg : "닉네임 사용 가능"});
-    }
-    else{
+      }
+      else{
         response.json({ status: "500", msg :"닉네임 중복"});
-    }
+      }
+    })
   }
   else if (request.body.type == 4) {
     User.create({
@@ -98,8 +99,8 @@ router.post('/register', (request, response) => {
 router.post('/login', (request, response) => {
   console.log('로그인 중');
   console.log(request.body);
-  var flag = true;
   if (request.body.type == 1) {
+    var flag = true;
     User.find((err, users) => {
       users.forEach((item) => {
         if(item.user_id == request.body.user_id){
@@ -118,18 +119,49 @@ router.post('/login', (request, response) => {
     })
   }
   else if(request.body.type == 2){
-    User_t.find((err,users) => {
-      users.forEach((item) => {
-        if(item.user_token == request.body.user_token){
-          flag = false;
-          response.json({ status: "200", msg :"로그인 성공(토큰)"});
-        }
-      })
-      if(flag == true){
-        response.json({ status: "500", msg :"존재하지 않는 아이디(토큰)"});
-      }
+    var flag = true;
+    var user_tokens;
+    async function verifyToken(token) {
+      client.setCredentials({ access_token: token })
+      const userinfo = await client.request({
+        url: "https://www.googleapis.com/oauth2/v3/userinfo",
+      });
+      return userinfo.data
+    }
+  
+    verifyToken(request.body.user_token)
+    .then((userInfo) => {
+      user_tokens = userInfo.sub;
+      User_t.findOne( {user_token : user_tokens})
+          .then((result) => {
+            if(result){
+              response.json({ status: "200", msg :"로그인 성공(토큰)"});
+            }
+            else{
+              response.json({ status: "500", msg :"존재하지 않는 아이디(토큰)"});
+            }
+          })
+    })
+    .catch((error) => {
+      console.log(error);
     })
   }
 });
+router.post('/getUserGoogleInfo', (request, response) => {
+  async function verifyToken(token) {
+    client.setCredentials({ access_token: token })
+    const userinfo = await client.request({
+      url: "https://www.googleapis.com/oauth2/v3/userinfo",
+    });
+    return userinfo.data
+  }
 
+  verifyToken(request.body.access_token)
+  .then((userInfo) => {
+    response.json({info : userInfo});
+  })
+  .catch((error) => {
+    console.log(error)
+  })
+});
 module.exports = router;
