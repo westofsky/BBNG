@@ -55,10 +55,11 @@ export default {
 }
 
 .Title {
-    font-size: 16pt;
+    font-size: 24pt;
     color: #000000;
     margin-top: 8px;
     font-weight: bold;
+    user-select: none;
 }
 
 .FriendList {
@@ -80,7 +81,6 @@ export default {
     width: 64px;
     background-color: #6866fc;
     padding: 8px;
-    ;
     color: #ffffff;
     font-weight: bold;
     border-radius: 8px;
@@ -91,7 +91,6 @@ export default {
     width: 64px;
     background-color: #ec5050;
     padding: 8px;
-    ;
     color: #ffffff;
     font-weight: bold;
     border-radius: 8px;

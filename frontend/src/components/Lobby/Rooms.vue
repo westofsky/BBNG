@@ -260,6 +260,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
 }
 
 .BtnRefresh:hover {
@@ -306,8 +307,9 @@ export default {
 }
 
 .RoomInfo1 .Lock {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
+    user-select: none;
 }
 
 .RoomInfo1 .Name {

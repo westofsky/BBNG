@@ -66,9 +66,11 @@ export default {
 }
 
 .Title {
-    font-size: 32pt;
+    font-size: 24pt;
     color: #000000;
     margin-top: 8px;
+    font-weight: bold;
+    user-select: none;
 }
 
 .RankInfoArea {
