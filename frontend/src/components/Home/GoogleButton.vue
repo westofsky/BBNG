@@ -8,10 +8,15 @@
 import {googleTokenLogin} from 'vue3-google-login';
     export default {
         name: 'GoogleButton',
-        medthos : {
+        methods : {
             google_login(){
                 googleTokenLogin().then((response) => {
-                    console.log("Handle the response", response)
+                    console.log(response.access_token);
+                    this.$axios.post('/api/users/getUserGoogleInfo',{
+                        access_token : response.access_token,
+                    }).then((res) =>{
+                        this.$emit('event-GoogleisActive',res);
+                    });
                 })
             }
         }

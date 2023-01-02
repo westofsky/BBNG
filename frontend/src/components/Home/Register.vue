@@ -17,16 +17,16 @@
             </div>
             <div class="input_box password">
                 <label for="password">비밀번호</label>
-                <input type="password" v-model = "user_pw" placeholder="비밀번호" >
+                <input type="password" v-model = "user_pw" :disabled = "pw_chk" placeholder="비밀번호" >
             </div>
             <div class="input_box nickname">
                 <label for="nickname">닉네임</label>
-                <input type="text" v-model = "user_nickname" placeholder="닉네임" :disabled = "nick_chk">
-                <div class="check"><button @click = "chk_nick_dup" :class="[nick_chk ? 'disabled' : 'check_btn']" :disabled = "nick_chk">중복확인</button></div>
+                <input type="text" @input="onChange_nick($event)" v-model = "user_nickname" placeholder="닉네임">
+                <div class="check"><button @click = "chk_nick_dup" class="check_btn">중복확인</button></div>
             </div>
             <div class="login">
-                <GoogleButton></GoogleButton>
                 <button class="register_btn" @click = "register">회원가입</button>
+                <GoogleButton @event-GoogleisActive="setGoogleUser"></GoogleButton>
             </div>
         </div>
     </div>
@@ -44,8 +44,11 @@ import GoogleButton from './GoogleButton.vue';
                 user_id : '',
                 id_chk : false,
                 user_pw : '',
+                pw_chk : false,
                 user_nickname : '',
                 nick_chk : false,
+                is_Google_register : false,
+                user_token : '',
             }
         },
         methods : {
@@ -80,15 +83,28 @@ import GoogleButton from './GoogleButton.vue';
                     type : 3,
                     user_nickname : this.user_nickname,
                 }).then((res) =>{
+                    console.log(res);
                     if(res.data.status == 200){
                         alert(res.data.msg);
                         this.nick_chk = true;
-                        
                     }
                     else if(res.data.status == 500){
                         alert(res.data.msg);
                     }
                 });
+            },
+            onChange_nick(event){
+                console.log(event.target.value);
+                this.nick_chk = false;
+            },
+            setGoogleUser(data){
+                alert("구글 인증 되었습니다.");
+                this.id_chk = true;
+                this.user_id = data.data.info.email;
+                this.pw_chk = true;
+                this.user_pw = "*****"
+                this.is_Google_register = true;
+                this.user_token = data.data.info.sub;
             },
             register(){
                 if(!this.id_chk){
@@ -103,21 +119,39 @@ import GoogleButton from './GoogleButton.vue';
                     alert("닉네임 중복확인을 해주세요.");
                     return false;
                 }
-                this.$axios.post('/api/users/register',{
-                    type : 4,
-                    user_id : this.user_id,
-                    user_pw : this.user_pw,
-                    user_nickname : this.user_nickname,
-                }).then((res) =>{
-                    if(res.data.status == 200){
-                        alert(res.data.msg);
-                        this.$router.push({name : 'Home'});
-                        this.$router.go()
-                    }
-                    else if(res.data.status == 500){
-                        alert(res.data.msg);
-                    }
-                });
+                if(!this.is_Google_register){
+                    this.$axios.post('/api/users/register',{
+                        type : 4,
+                        user_id : this.user_id,
+                        user_pw : this.user_pw,
+                        user_nickname : this.user_nickname,
+                    }).then((res) =>{
+                        if(res.data.status == 200){
+                            alert(res.data.msg);
+                            this.$router.push({name : 'Home'});
+                            this.$router.go()
+                        }
+                        else if(res.data.status == 500){
+                            alert(res.data.msg);
+                        }
+                    });
+                }
+                else{
+                    this.$axios.post('/api/users/register',{
+                        type : 5,
+                        user_token : this.user_token,
+                        user_nickname : this.user_nickname,
+                    }).then((res) =>{
+                        if(res.data.status == 200){
+                            alert(res.data.msg);
+                            this.$router.push({name : 'Home'});
+                            this.$router.go();
+                        }
+                        else if(res.data.status == 500){
+                            alert(res.data.msg);
+                        }
+                    });
+                }
             },
         }
     }
@@ -239,7 +273,7 @@ import GoogleButton from './GoogleButton.vue';
     background: #00AE68;
     width: 100%;
     height: 40px;
-    margin-top:30px;
+    margin-bottom:15px;
     color: #fff;
     font-size: 18px;
     font-weight: 700;

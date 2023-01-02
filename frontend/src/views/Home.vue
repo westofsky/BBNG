@@ -14,9 +14,10 @@
                     <input type="password" v-model = "login_pw" placeholder="비밀번호" >
                 </div>
                 <div class="login"><a class="login_btn" @click = "login">로그인</a></div>
+                <div class="login_google"><a class="login_btn" @click = "login_google">구글로 로그인</a></div>
                 <div class = "extra">
                     <p>아이디/비밀번호 찾기</p>
-                    <p @click = "to_register">회원가입</p>
+                    <p style ="cursor:pointer" @click = "to_register">회원가입</p> 
                 </div>
             </div>
         </div>
@@ -28,6 +29,8 @@
   
 <script>
 import Register from '../components/Home/Register.vue';
+import {googleTokenLogin} from 'vue3-google-login';
+
 export default {
     name: 'Home',
     components : {
@@ -38,6 +41,7 @@ export default {
             login_id : '',
             login_pw : '',
             isActive_register : false,
+            login_token : '',
         }
     },
     methods : {
@@ -71,6 +75,24 @@ export default {
                     alert(res.data.msg);
                 }
             });
+        },
+        login_google(){
+            googleTokenLogin().then((response) => {
+                this.login_token = response.access_token;
+                this.$axios.post('/api/users/login',{
+                    type : 2,
+                    user_token : this.login_token,
+                }).then((res) =>{
+                    if(res.data.status == 200){
+                        alert(res.data.msg);
+                        this.$router.push({name : 'Lobby'});
+                    }
+                    else if(res.data.status == 500){
+                        alert(res.data.msg);
+                    }
+                });
+            })
+            
         }
     }
 }
@@ -148,6 +170,10 @@ export default {
 
 .contents .login{
     padding-top : 20px;
+}
+
+.contents .login_google{
+    margin-top : 20px;
 }
 
 .contents .login_btn{
