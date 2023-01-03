@@ -19,7 +19,7 @@
             <Friends />
             <Chatting />
         </div>
-        <div class ="popup_rules">
+        <div class ="popup_rules" v-if = "isRuleActive">
             <Rules/>
         </div>
     </div>
@@ -30,15 +30,18 @@ import Ranking from '../components/Lobby/Ranking.vue';
 import Rooms from '../components/Lobby/Rooms.vue';
 import Friends from '../components/Lobby/Friends.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
+import Rules from '../components/Lobby/Rules.vue';
 
 export default {
     name: 'Lobby',
     data() {
-
+        return {
+            isRuleActive : false,
+        }
     },
     methods: {
         btnQuickMatchClicked() {
-            
+            this.isRuleActive = true;
         },
         btnRankMatchClicked() {
 
@@ -47,7 +50,6 @@ export default {
 
         },
         btnRuleClicked() {
-
         }
     },
     components: {
@@ -55,6 +57,7 @@ export default {
         Rooms: Rooms,
         Friends: Friends,
         Chatting: Chatting,
+        Rules : Rules,
     },
     created() {
 
