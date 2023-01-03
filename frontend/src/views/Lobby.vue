@@ -19,6 +19,9 @@
             <Friends />
             <Chatting />
         </div>
+        <div class ="popup_rules">
+            <Rules/>
+        </div>
     </div>
 </template>
 
@@ -166,5 +169,23 @@ export default {
 
 .BtnCreateRoom:active {
     background-color: #79623e;
+}
+
+
+.Friends {
+    width: 320px;
+    height: 384px;
+    margin-bottom: 32px;
+}
+
+.popup_rules{
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    position:fixed;
+    width : 100%;
+    height : 100%;
+    background: rgba(0, 0, 0, .8);
 }
 </style>
