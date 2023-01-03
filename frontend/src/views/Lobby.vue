@@ -4,11 +4,7 @@
             <Ranking ref="RankingComponent" />
         </div>
         <div>
-            <div class = "RuleArea">
-                <div class="Btn BtnRule RoundBorder" @click="btnCreateRoomClicked">
-                    <label class="BtnText" style="flex: 1;">규칙</label>
-                </div>
-            </div>
+            
             <div class="Rooms">
                 <Rooms />
             </div>
@@ -55,6 +51,9 @@ export default {
         },
         btnCreateRoomClicked() {
 
+        },
+        btnRuleClicked() {
+
         }
     },
     components: {
@@ -79,10 +78,6 @@ export default {
     justify-content: center;
     align-items: center;
     background-color: #E1D5D5;
-}
-
-.RoundBorder {
-    border-radius: 8px;
 }
 
 .Ranking {
@@ -110,10 +105,6 @@ export default {
 }
 .BtnRule:active{
     background-color : #362b1c;
-}
-.Rooms {
-    width: 640px;
-    height: 640px;
 }
 
 .BtnArea {
@@ -192,10 +183,5 @@ export default {
     width: 320px;
     height: 384px;
     margin-bottom: 32px;
-}
-
-.Chatting {
-    width: 320px;
-    height: 340px;
 }
 </style>
