@@ -80,9 +80,8 @@ export default {
     background-color: #E1D5D5;
 }
 
-.Ranking {
-    width: 320px;
-    height: 800px;
+.RoundBorder {
+    border-radius: 8px;
 }
 .RuleArea{
     margin-left: 32px;
