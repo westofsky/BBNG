@@ -4,7 +4,7 @@
             <div class = "title">
                 <div class="close close1" style="visibility : hidden"></div>
                 <h1>게임 도움말</h1>
-                <div class="close close1"></div>
+                <div class="close close1" @click = "close_rules"></div>
             </div>
             <div class = "contents">
                 <div class ="wrap_p">
@@ -30,6 +30,9 @@ export default {
         }
     },
     methods: {
+        close_rules(){
+            this.$emit('event-isRules',true);
+        }
     },
 }
 </script>

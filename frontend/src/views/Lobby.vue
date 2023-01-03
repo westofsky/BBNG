@@ -20,7 +20,7 @@
             <Chatting />
         </div>
         <div class ="popup_rules" v-if = "isRuleActive">
-            <Rules/>
+            <Rules @event-isRules = "setIsRuleActive"/>
         </div>
     </div>
 </template>
@@ -50,6 +50,9 @@ export default {
 
         },
         btnRuleClicked() {
+        },
+        setIsRuleActive(){
+            this.isRuleActive = false;
         }
     },
     components: {
