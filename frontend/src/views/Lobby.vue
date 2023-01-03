@@ -1,13 +1,8 @@
 <template>
     <div class="Lobby">
-        <div class="Ranking">
-            <Ranking ref="RankingComponent" />
-        </div>
+        <Ranking ref="RankingComponent" />
         <div>
-            
-            <div class="Rooms">
-                <Rooms />
-            </div>
+            <Rooms />
             <div class="BtnArea">
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
@@ -21,12 +16,8 @@
             </div>
         </div>
         <div>
-            <div class="Friends">
-                <Friends />
-            </div>
-            <div class="Chatting">
-                <Chatting />
-            </div>
+            <Friends />
+            <Chatting />
         </div>
     </div>
 </template>
@@ -175,12 +166,5 @@ export default {
 
 .BtnCreateRoom:active {
     background-color: #79623e;
-}
-
-
-.Friends {
-    width: 320px;
-    height: 384px;
-    margin-bottom: 32px;
 }
 </style>

@@ -55,6 +55,7 @@ export default {
     text-align: center;
     flex-direction: column;
     display: flex;
+    margin-bottom: 32px;
 }
 
 .RoundBorder {
