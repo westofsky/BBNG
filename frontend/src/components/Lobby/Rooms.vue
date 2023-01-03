@@ -201,7 +201,7 @@ export default {
 .Rooms {
     background-color: #F9F6F6;
     width: 640px;
-    height: 720px;
+    height: 640px;
     margin-left: 32px;
     margin-right: 32px;
     display: flex;

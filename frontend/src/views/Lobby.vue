@@ -4,6 +4,11 @@
             <Ranking ref="RankingComponent" />
         </div>
         <div>
+            <div class = "RuleArea">
+                <div class="Btn BtnRule RoundBorder" @click="btnCreateRoomClicked">
+                    <label class="BtnText" style="flex: 1;">규칙</label>
+                </div>
+            </div>
             <div class="Rooms">
                 <Rooms />
             </div>
@@ -84,10 +89,31 @@ export default {
     width: 320px;
     height: 800px;
 }
-
+.RuleArea{
+    margin-left: 32px;
+    margin-right: 32px;
+    margin-bottom: 32px;
+    width: 640px;
+    height: 48px;
+    display: flex;
+}
+.BtnRule{
+    background-color: #6b5637;
+    width: 180px;
+    height: 48px;
+    margin-left : auto;
+    margin-top : 20px;
+    box-sizing: border-box;
+}
+.BtnRule:hover{
+    background-color : #4e3f29;
+}
+.BtnRule:active{
+    background-color : #362b1c;
+}
 .Rooms {
     width: 640px;
-    height: 720px;
+    height: 640px;
 }
 
 .BtnArea {
@@ -109,6 +135,7 @@ export default {
     font-size: 16pt;
     text-align: center;
     line-height: 48px;
+    cursor:pointer;
 }
 
 .BtnQuickMatch {
@@ -169,6 +196,6 @@ export default {
 
 .Chatting {
     width: 320px;
-    height: 384px;
+    height: 340px;
 }
 </style>
