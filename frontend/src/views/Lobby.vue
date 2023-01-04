@@ -19,6 +19,12 @@
             <Friends ref="FriendsComponent"/>
             <Chatting ref="ChattingComponent"/>
         </div>
+        <div class ="popup_rules" v-if = "isRuleActive">
+            <Rules @event-isRules = "setIsRuleActive"/>
+        </div>
+        <div class ="popup_rules" v-if = "isRuleActive">
+            <Rules @event-isRules = "setIsRuleActive"/>
+        </div>
     </div>
 </template>
 
@@ -27,16 +33,18 @@ import Ranking from '../components/Lobby/Ranking.vue';
 import Rooms from '../components/Lobby/Rooms.vue';
 import Friends from '../components/Lobby/Friends.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
+import Rules from '../components/Lobby/Rules.vue';
 
 export default {
     name: 'Lobby',
     data() {
         return {
+            isRuleActive : false,
         }
     },
     methods: {
         btnQuickMatchClicked() {
-
+            this.isRuleActive = true;
         },
         btnRankMatchClicked() {
 
@@ -45,7 +53,9 @@ export default {
 
         },
         btnRuleClicked() {
-
+        },
+        setIsRuleActive(){
+            this.isRuleActive = false;
         }
     },
     components: {
@@ -53,6 +63,7 @@ export default {
         Rooms: Rooms,
         Friends: Friends,
         Chatting: Chatting,
+        Rules : Rules,
     },
     mounted() {
         // Implement load initial datas from server.
@@ -318,5 +329,23 @@ export default {
 
 .BtnCreateRoom:active {
     background-color: #79623e;
+}
+
+
+.Friends {
+    width: 320px;
+    height: 384px;
+    margin-bottom: 32px;
+}
+
+.popup_rules{
+    display : flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    position:fixed;
+    width : 100%;
+    height : 100%;
+    background: rgba(0, 0, 0, .8);
 }
 </style>
