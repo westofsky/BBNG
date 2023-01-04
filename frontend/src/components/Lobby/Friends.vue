@@ -31,18 +31,7 @@ export default {
         },
     },
     mounted() {
-        this.setFriends([
-            { nickname: "Player1", state: "online" },
-            { nickname: "손영진", state: "online" },
-            { nickname: "배성준", state: "offline" },
-            { nickname: "손영진", state: "online" },
-            { nickname: "Player2", state: "online" },
-            { nickname: "Player3", state: "online" },
-            { nickname: "Player4", state: "online" },
-            { nickname: "Player5", state: "online" },
-            { nickname: "Player6", state: "online" },
-            { nickname: "Player7", state: "online" },
-        ]);
+        
     },
 }
 </script>

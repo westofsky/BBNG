@@ -58,95 +58,14 @@ export default {
             filterShowScore: 'all',
             filterName: '', 
             filteredRoomList: [],
-            roomList: [
-                {
-                    room_name: "Player1의 방",
-                    room_state: "대기중",
-                    room_current_player: 2,
-                    roomopt_round: 15,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 5,
-                    roomopt_lock: true
-                },
-                {
-                    room_name: "초보만",
-                    room_state: "대기중",
-                    room_current_player: 1,
-                    roomopt_round: 10,
-                    roomopt_show_score: false,
-                    roomopt_max_player: 4,
-                    roomopt_lock: false
-                },
-                {
-                    room_name: "고수만 초보 사절",
-                    room_state: "대기중",
-                    room_current_player: 2,
-                    roomopt_round: 20,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 4,
-                    roomopt_lock: false
-                },
-                {
-                    room_name: "qwer1234",
-                    room_state: "대기중",
-                    room_current_player: 3,
-                    roomopt_round: 15,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 3,
-                    roomopt_lock: true
-                },
-                {
-                    room_name: "초보만",
-                    room_state: "진행중",
-                    room_current_player: 3,
-                    roomopt_round: 15,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 3,
-                    roomopt_lock: true
-                },
-                {
-                    room_name: "초보만",
-                    room_state: "진행중",
-                    room_current_player: 3,
-                    roomopt_round: 15,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 3,
-                    roomopt_lock: true
-                },
-                {
-                    room_name: "초보만",
-                    room_state: "진행중",
-                    room_current_player: 3,
-                    roomopt_round: 15,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 3,
-                    roomopt_lock: true
-                },
-                {
-                    room_name: "초보만",
-                    room_state: "진행중",
-                    room_current_player: 3,
-                    roomopt_round: 15,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 3,
-                    roomopt_lock: true
-                },
-                {
-                    room_name: "초보만",
-                    room_state: "진행중",
-                    room_current_player: 3,
-                    roomopt_round: 15,
-                    roomopt_show_score: true,
-                    roomopt_max_player: 3,
-                    roomopt_lock: true
-                },
-            ]
+            roomList: [],
         }
     },
     methods: {
         setRooms(roomList) {
             this.roomList = roomList;
             this.filteredRoomList = this.roomList;
+            this.applyFilter();
         },
         applyFilter(){
             this.filteredRoomList = [];
@@ -192,7 +111,7 @@ export default {
         },
     },
     mounted() {
-        this.applyFilter();
+
     },
 }
 </script>

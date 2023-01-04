@@ -2,7 +2,7 @@
     <div class="Lobby">
         <Ranking ref="RankingComponent" />
         <div>
-            <Rooms />
+            <Rooms ref="RoomComponent"/>
             <div class="BtnArea">
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
@@ -16,8 +16,8 @@
             </div>
         </div>
         <div>
-            <Friends />
-            <Chatting />
+            <Friends ref="FriendsComponent"/>
+            <Chatting ref="ChattingComponent"/>
         </div>
     </div>
 </template>
@@ -31,11 +31,12 @@ import Chatting from '../components/Lobby/Chatting.vue';
 export default {
     name: 'Lobby',
     data() {
-
+        return {
+        }
     },
     methods: {
         btnQuickMatchClicked() {
-            
+
         },
         btnRankMatchClicked() {
 
@@ -53,8 +54,155 @@ export default {
         Friends: Friends,
         Chatting: Chatting,
     },
-    created() {
-
+    mounted() {
+        // Implement load initial datas from server.
+        
+        let rankList = [{ tier: "Challenger", nick: "Nickname1", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname2", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname3", rank_point: 33333 },
+        { tier: "Challenger", nick: "Nickname3", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname4", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname5", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname6", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname7", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname8", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname9", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname10", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname11", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname12", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname13", rank_point: 33333 },
+        { tier: "Challenger", nick: "Nickname13", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname14", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname15", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname16", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname17", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname18", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname19", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname20", rank_point: 99999 },
+        { tier: "Challenger", nick: "Nickname21", rank_point: 99999 }];
+        let roomList = [
+            {
+                room_name: "Player1의 방",
+                room_state: "대기중",
+                room_current_player: 2,
+                roomopt_round: 15,
+                roomopt_show_score: true,
+                roomopt_max_player: 5,
+                roomopt_lock: true
+            },
+            {
+                room_name: "초보만",
+                room_state: "대기중",
+                room_current_player: 1,
+                roomopt_round: 10,
+                roomopt_show_score: false,
+                roomopt_max_player: 4,
+                roomopt_lock: false
+            },
+            {
+                room_name: "고수만 초보 사절",
+                room_state: "대기중",
+                room_current_player: 2,
+                roomopt_round: 20,
+                roomopt_show_score: true,
+                roomopt_max_player: 4,
+                roomopt_lock: false
+            },
+            {
+                room_name: "qwer1234",
+                room_state: "대기중",
+                room_current_player: 3,
+                roomopt_round: 15,
+                roomopt_show_score: true,
+                roomopt_max_player: 3,
+                roomopt_lock: true
+            },
+            {
+                room_name: "초보만",
+                room_state: "진행중",
+                room_current_player: 3,
+                roomopt_round: 15,
+                roomopt_show_score: true,
+                roomopt_max_player: 3,
+                roomopt_lock: true
+            },
+            {
+                room_name: "초보만",
+                room_state: "진행중",
+                room_current_player: 3,
+                roomopt_round: 15,
+                roomopt_show_score: true,
+                roomopt_max_player: 3,
+                roomopt_lock: true
+            },
+            {
+                room_name: "초보만",
+                room_state: "진행중",
+                room_current_player: 3,
+                roomopt_round: 15,
+                roomopt_show_score: true,
+                roomopt_max_player: 3,
+                roomopt_lock: true
+            },
+            {
+                room_name: "초보만",
+                room_state: "진행중",
+                room_current_player: 3,
+                roomopt_round: 15,
+                roomopt_show_score: true,
+                roomopt_max_player: 3,
+                roomopt_lock: true
+            },
+            {
+                room_name: "초보만",
+                room_state: "진행중",
+                room_current_player: 3,
+                roomopt_round: 15,
+                roomopt_show_score: true,
+                roomopt_max_player: 3,
+                roomopt_lock: true
+            },
+        ];
+        let friendList = [
+            { nickname: "Player1", state: "online" },
+            { nickname: "손영진", state: "online" },
+            { nickname: "배성준", state: "offline" },
+            { nickname: "손영진", state: "online" },
+            { nickname: "Player2", state: "online" },
+            { nickname: "Player3", state: "online" },
+            { nickname: "Player4", state: "online" },
+            { nickname: "Player5", state: "online" },
+            { nickname: "Player6", state: "online" },
+            { nickname: "Player7", state: "online" },
+        ];
+        let chattingList = [
+            { nickname: 'Player1', message: 'Hi' },
+            { nickname: 'Player2', message: 'Hello' },
+            { nickname: 'Player3', message: 'qwer' },
+            { nickname: 'Player4', message: '반갑습니다' },
+            { nickname: 'Player2', message: 'Hello' },
+            { nickname: 'Player3', message: 'qwer' },
+            { nickname: 'Player4', message: '반갑습니다' },
+            { nickname: 'Player2', message: 'Hello' },
+            { nickname: 'Player3', message: 'qwer' },
+            { nickname: 'Player4', message: '반갑습니다' },
+            { nickname: 'Player2', message: 'Hello' },
+            { nickname: 'Player3', message: 'qwer' },
+            { nickname: 'Player4', message: '반갑습니다' },
+            { nickname: 'Player2', message: 'Hello' },
+            { nickname: 'Player3', message: 'qwer' },
+            { nickname: 'Player4', message: '반갑습니다' },
+            { nickname: 'Player2', message: 'Hello' },
+            { nickname: 'Player3', message: 'qwer' },
+            { nickname: 'Player4', message: '반갑습니다' },
+            { nickname: 'Player2', message: 'Hello' },
+            { nickname: 'Player3', message: 'qwer' },
+            { nickname: 'Player4', message: '반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다' },
+        ];
+        this.$refs.RankingComponent.setRanking(rankList);
+        this.$refs.RoomComponent.setRooms(roomList);
+        this.$refs.FriendsComponent.setFriends(friendList);
+        this.$refs.ChattingComponent.setMessages(chattingList);
     },
 }
 </script>
@@ -74,7 +222,8 @@ export default {
 .RoundBorder {
     border-radius: 8px;
 }
-.RuleArea{
+
+.RuleArea {
     margin-left: 32px;
     margin-right: 32px;
     margin-bottom: 32px;
@@ -82,19 +231,22 @@ export default {
     height: 48px;
     display: flex;
 }
-.BtnRule{
+
+.BtnRule {
     background-color: #6b5637;
     width: 180px;
     height: 48px;
-    margin-left : auto;
-    margin-top : 20px;
+    margin-left: auto;
+    margin-top: 20px;
     box-sizing: border-box;
 }
-.BtnRule:hover{
-    background-color : #4e3f29;
+
+.BtnRule:hover {
+    background-color: #4e3f29;
 }
-.BtnRule:active{
-    background-color : #362b1c;
+
+.BtnRule:active {
+    background-color: #362b1c;
 }
 
 .BtnArea {
@@ -116,7 +268,7 @@ export default {
     font-size: 16pt;
     text-align: center;
     line-height: 48px;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 .BtnQuickMatch {
