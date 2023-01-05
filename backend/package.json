@@ -16,6 +16,7 @@
     "morgan": "~1.9.1",
     "nodemon": "^2.0.20",
     "pug": "2.0.0-beta11",
+    "socket.io": "^4.5.4",
     "vue-socket.io": "^3.0.10"
   }
 }
