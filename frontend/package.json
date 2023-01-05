@@ -13,7 +13,9 @@
     "vue": "^3.2.13",
     "vue-router": "^4.0.13",
     "vue-socket.io": "^3.0.10",
-    "vue3-google-login": "^2.0.12"
+    "vue3-google-login": "^2.0.12",
+    "vuex": "^4.1.0",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
