@@ -106,7 +106,7 @@ router.post('/login', (request, response) => {
         if(item.user_id == request.body.user_id){
           flag = false;
           if(item.user_pw == request.body.user_pw){
-            response.json({ status: "200", _id : "item._id.toString()" , msg :"로그인 성공"});
+            response.json({ status: "200", _id : item._id.toString(),nickname : item.user_nickname , msg :"로그인 성공"});
           }
           else{
             response.json({ status: "500", msg :"비밀번호 잘못 입력"});
@@ -135,7 +135,7 @@ router.post('/login', (request, response) => {
       User_t.findOne( {user_token : user_tokens})
           .then((result) => {
             if(result){
-              response.json({ status: "200", msg :"로그인 성공(토큰)"});
+              response.json({ status: "200", _id : result._id.toString(), nickname : result.user_nickname ,msg :"로그인 성공(토큰)"});
             }
             else{
               response.json({ status: "500", msg :"존재하지 않는 아이디(토큰)"});
