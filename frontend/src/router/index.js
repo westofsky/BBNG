@@ -2,6 +2,7 @@ import { createWebHistory, createRouter, routerKey } from "vue-router";
 import Home from "../views/Home.vue";
 import Lobby from "../views/Lobby.vue";
 import store from "../vuex/store";
+import * as sock_const from "../constants/socket-constants.js";
 
 const requireAuth = () => (to, from, next) =>{
   if(store.getters["Users/getUser_oid"]){
@@ -30,5 +31,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+sock_const.initSocketConstants();
 
 export default router;

@@ -13,6 +13,7 @@
 
 <script>
 import io from 'socket.io-client';
+import * as sock_const from "../../constants/socket-constants.js";
 
     export default {
         name: 'Chatting',
@@ -40,7 +41,7 @@ import io from 'socket.io-client';
                 if(this.inputMessage.length == 0 || this.chattingDelayTime != 0) return;
 
                 // Implement send message to server logic.
-                this.socket.emit('SEND_FROM_CLIENT', {user: 'user', message: this.inputMessage});
+                this.socket.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, {user: 'user', message: this.inputMessage});
                 this.addMessageToList('user', this.inputMessage);
                 this.inputMessage = "";
 
@@ -69,7 +70,9 @@ import io from 'socket.io-client';
         },
         mounted() {
             // Implement receive chatting message from server logic.
-            this.socket.on('SEND_FROM_SERVER', (data) => {
+            this.socket.emit(sock_const.RequestType.JOIN_LOBBY, '');
+            console.log(sock_const.ResponseType.BROADCAST_LOBBY_MSG);
+            this.socket.on(sock_const.ResponseType.BROADCAST_LOBBY_MSG, (data) => {
                this.addMessageToList(data.user, data.message); 
             });
         },
