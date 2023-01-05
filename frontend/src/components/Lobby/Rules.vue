@@ -1,6 +1,6 @@
 <template>
     <div class="Rules">
-        <div class = "wrapper">
+        <div class = "wrapper" v-show="page==1">
             <div class = "title">
                 <div class="close close1" style="visibility : hidden"></div>
                 <h1>게임 도움말</h1>
@@ -15,8 +15,24 @@
                 </div>
             </div>
             <div class = "btnWrapper">
-                <span class="pop-btn confirm" id="confirm">이전</span>
-                <span class="pop-btn close" id="close">다음</span>
+                <span class="pop-btn confirm" id="confirm" @click = "before_page">이전</span>
+                <span class="pop-btn close" id="close" @click = "next_page">다음</span>
+            </div>
+        </div>
+        <div class = "wrapper" v-show = "page==2">
+            <div class = "title">
+                <div class="close close1" style="visibility : hidden"></div>
+                <h1>게임 도움말</h1>
+                <div class="close close1" @click = "close_rules"></div>
+            </div>
+            <div class = "contents">
+                <div class ="wrap_p">
+                    
+                </div>
+            </div>
+            <div class = "btnWrapper">
+                <span class="pop-btn confirm" id="confirm" @click = "before_page">이전</span>
+                <span class="pop-btn close" id="close" @click = "next_page">다음</span>
             </div>
         </div>
     </div>
@@ -27,11 +43,26 @@ export default {
     name: 'Rules',
     data() {
         return {
+            page:1,
         }
     },
     methods: {
         close_rules(){
             this.$emit('event-isRules',true);
+        },
+        before_page(){
+            if(this.page == 1)
+                return;
+            else{
+                this.page--;
+            }
+        },
+        next_page(){
+            if(this.page == 5)
+                return;
+            else{
+                this.page++;
+            }
         }
     },
 }
@@ -44,8 +75,8 @@ export default {
     align-content: center;
 }
 .wrapper {
-    width : 800px;
-    height: 600px;
+    width : 88vw;
+    height: 55vw;
     border-radius:10px;
     overflow:hidden;         
     background : rgba(255,255,255,0.8);
@@ -54,7 +85,7 @@ export default {
 
 .wrapper .title{
     width:100%;
-    height:11%;
+    height:6vw;
     display:flex;
     align-items:center;
     justify-content: space-between;
@@ -78,7 +109,7 @@ export default {
 }
 .wrapper .contents{
     width:100%;
-    height:77%;
+    height:42vw;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -91,7 +122,7 @@ export default {
 }
 .wrapper .btnWrapper{
     width:100%;
-    height:8%;
+    height:5vw;
     display:flex;
     align-items:center;
     justify-content:center;
