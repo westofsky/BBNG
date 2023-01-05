@@ -84,10 +84,8 @@ export default {
     align-items: center;
     text-align: center;
 }
-.wrapper .contents .wrap_p{
-}
 .wrapper .contents p{
-    font-size :30px;
+    font-size :2.7vw;
     margin : 0;
     padding : 0;
 }
