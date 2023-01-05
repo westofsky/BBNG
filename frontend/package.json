@@ -12,6 +12,7 @@
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
     "vue-router": "^4.0.13",
+    "vue-socket.io": "^3.0.10",
     "vue3-google-login": "^2.0.12"
   },
   "devDependencies": {
@@ -36,9 +37,9 @@
       "parser": "@babel/eslint-parser"
     },
     "rules": {
-      "no-unused-vars" : "off",
-      "vue/multi-word-component-names" : "off",
-      "vue/require-v-for-key" : "off"
+      "no-unused-vars": "off",
+      "vue/multi-word-component-names": "off",
+      "vue/require-v-for-key": "off"
     }
   },
   "browserslist": [
