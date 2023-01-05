@@ -87,6 +87,12 @@
                     </div>
                 </div>
             </div>
+            <div class = "contents page1" v-if = "page==3">
+                <div class ="wrap_p">
+                    <p>대한민국 대표 게임인 뽕은 플레이어가 5장의 카드로 시작하며,<br>다양한 전략을 세워 이기는 게임입니다.</p><br>
+                    <p>플레이어는 순서가 되면 카드 한 장을 뽑고,<br>카드 한장을 버려 카드 5장을 유지합니다.</p><br>
+                </div>
+            </div>
             <div class = "btnWrapper">
                 <span class="pop-btn confirm" id="confirm" @click = "before_page">이전</span>
                 <span class="pop-btn close" id="close" @click = "next_page">다음</span>
@@ -142,11 +148,11 @@ export default {
 
 .wrapper .title{
     width:100%;
-    height:6vw;
+    height:9%;
     display:flex;
     align-items:center;
     justify-content: space-between;
-    margin-top : 25px;
+    margin-top : 3%;
 }
 
 .close {
@@ -166,7 +172,7 @@ export default {
 }
 .wrapper .contents{
     width:100%;
-    height:42vw;
+    height:77%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -211,7 +217,8 @@ export default {
 }
 .wrapper .btnWrapper{
     width:100%;
-    height:5vw;
+    height:10%;
+    font-size : 1.5rem;
     display:flex;
     align-items:center;
     justify-content:center;
