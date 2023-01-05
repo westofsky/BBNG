@@ -36,6 +36,9 @@ export default {
     components : {
         Register
     },
+    beforeCreate(){
+        this.$store.commit("Users/setUser_oid","");
+    },
     data(){
         return {
             login_id : '',
@@ -69,6 +72,8 @@ export default {
             }).then((res) =>{
                 if(res.data.status == 200){
                     alert(res.data.msg);
+                    this.$store.commit("Users/setUser_oid",res.data._id);
+                    this.$store.commit("Users/setUser_nickname",res.data.nickname);
                     this.$router.push({name : 'Lobby'});
                 }
                 else if(res.data.status == 500){
@@ -85,6 +90,8 @@ export default {
                 }).then((res) =>{
                     if(res.data.status == 200){
                         alert(res.data.msg);
+                        this.$store.commit("Users/setUser_oid",res.data._id);
+                        this.$store.commit("Users/setUser_nickname",res.data.nickname);
                         this.$router.push({name : 'Lobby'});
                     }
                     else if(res.data.status == 500){
