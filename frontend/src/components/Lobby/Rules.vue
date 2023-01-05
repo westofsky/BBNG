@@ -1,12 +1,12 @@
 <template>
     <div class="Rules">
-        <div class = "wrapper" v-show="page==1">
+        <div class = "wrapper">
             <div class = "title">
                 <div class="close close1" style="visibility : hidden"></div>
                 <h1>게임 도움말</h1>
                 <div class="close close1" @click = "close_rules"></div>
             </div>
-            <div class = "contents">
+            <div class = "contents" v-if = "page==1">
                 <div class ="wrap_p">
                     <p>대한민국 대표 게임인 뽕은 플레이어가 5장의 카드로 시작하며,<br>다양한 전략을 세워 이기는 게임입니다.</p><br>
                     <p>플레이어는 순서가 되면 카드 한 장을 뽑고,<br>카드 한장을 버려 카드 5장을 유지합니다.</p><br>
@@ -14,20 +14,10 @@
                     <p>첫 턴에 라운드가 종료 될 수는 없으며,<br>시계 반대 방향으로 차례가 바뀝니다.</p>
                 </div>
             </div>
-            <div class = "btnWrapper">
-                <span class="pop-btn confirm" id="confirm" @click = "before_page">이전</span>
-                <span class="pop-btn close" id="close" @click = "next_page">다음</span>
-            </div>
-        </div>
-        <div class = "wrapper" v-show = "page==2">
-            <div class = "title">
-                <div class="close close1" style="visibility : hidden"></div>
-                <h1>게임 도움말</h1>
-                <div class="close close1" @click = "close_rules"></div>
-            </div>
-            <div class = "contents">
+            <div class = "contents" v-if = "page==2">
                 <div class ="wrap_p">
-                    
+                    <p>어느 플레이어가 카드 한 장을 뽑았을 때, 조합이 완성되면 <br>라운드는 종료가 됩니다. 라운드는 총 10,15,20라운드가 있습니다.</p><br>
+                    <p>첫 턴에 라운드가 종료 될 수는 없으며,<br>시계 반대 방향으로 차례가 바뀝니다.</p>
                 </div>
             </div>
             <div class = "btnWrapper">
@@ -79,7 +69,7 @@ export default {
     height: 55vw;
     border-radius:10px;
     overflow:hidden;         
-    background : rgba(255,255,255,0.8);
+    background : white;
     box-shadow: 5px 10px 10px 1px rgba(0,0,0,.3); 
 }
 
