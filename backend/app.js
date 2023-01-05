@@ -58,5 +58,27 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 module.exports = app;
-app.listen(port, () => console.log(`${port}포트에서 서버 작동중입니다.`));
 
+////// Create socket server with http server.
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const httpServer = createServer(app);
+const io = new Server(httpServer);
+
+// Set event in io.
+io.on('connection', (socket) => { // New client socket connected.
+  console.log('Client connected: ' + socket.id);
+
+  socket.on('SEND_FROM_CLIENT', function(data) { // Send message to all clients when message received.
+    socket.broadcast.emit('SEND_FROM_SERVER', data);
+  });
+
+  socket.on('disconnect', (reason) => { // Client disconnected.
+    console.log('Socket ' + socket.id + ' disconnected. [' + reason + ']');
+  });
+});
+
+// Listening from port.
+httpServer.listen(port, () => {
+  console.log(`${port}포트에서 서버 작동중입니다.`);
+});
