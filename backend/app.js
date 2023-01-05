@@ -64,17 +64,31 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+const sock_const = require("./constants/socket-constants.js");
+
+// Initializing constants related to sockets.
+sock_const.initSocketConstants();
 
 // Set event in io.
 io.on('connection', (socket) => { // New client socket connected.
   console.log('Client connected: ' + socket.id);
 
-  socket.on('SEND_FROM_CLIENT', function(data) { // Send message to all clients when message received.
-    socket.broadcast.emit('SEND_FROM_SERVER', data);
+  socket.on(String(sock_const.RequestType.JOIN_LOBBY), function(data) {
+    console.log("join:" + data);
+    socket.join(sock_const.ChatroomType.LOBBY);
+  });
+
+  socket.on(sock_const.RequestType.LEAVE_LOBBY, function(data) {
+    socket.leave(sock_const.ChatroomType.LOBBY);
+  });
+
+  socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function(data) { // Send message to all clients when message received.
+    console.log("send message:" + data);
+    socket.broadcast.to(sock_const.ChatroomType.LOBBY).emit(sock_const.ResponseType.BROADCAST_LOBBY_MSG, data);
   });
 
   socket.on('disconnect', (reason) => { // Client disconnected.
-    console.log('Socket ' + socket.id + ' disconnected. [' + reason + ']');
+    console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
   });
 });
 
