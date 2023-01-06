@@ -9,7 +9,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-
+const cors = require('cors');
+app.use(cors());
 const port = 3000;
 require("dotenv").config();
 //db 세팅
@@ -45,6 +46,11 @@ app.use(express.static(__dirname));
 app.get("*", function (req, res) {
 	res.sendFile(path.resolve(__dirname, "./public/index.html"));
 });
+app.all('/*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    next();
+  });
 // api용 
 app.use('/api/users/', usersRouter);
 
