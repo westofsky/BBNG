@@ -38,6 +38,7 @@ export default {
     },
     beforeCreate(){
         this.$store.commit("Users/setUser_oid","");
+        this.$store.commit("Users/setUser_nickname","");
     },
     data(){
         return {
