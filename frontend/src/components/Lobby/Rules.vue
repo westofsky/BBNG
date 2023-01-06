@@ -271,4 +271,12 @@ export default {
     border-right:1px solid #3b5fbf;
 }
 
+.contents {
+    user-select: none;
+}
+.wrapper .title h1{
+    user-select : none;
+    font-size: 3vw;
+}
+
 </style>

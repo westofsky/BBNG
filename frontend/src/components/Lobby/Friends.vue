@@ -1,13 +1,16 @@
 <template>
     <div class="Friends RoundBorder">
         <div style="position: relative; margin-top: 8px;">
+            <div class = "AddFriend">
+                <a href="#" class="btn">친구추가</a>
+            </div>
             <label class="Title">친구</label>
             <label class="OnlineCount">온라인: {{ friendList.length }}명</label>
         </div>
         <hr style="margin: 8px;" />
         <div class="FriendList">
             <div :class="friendInfo.state === 'online' ? 'FriendInfo Online' : 'FriendInfo Offline'"
-                v-for="friendInfo in friendList">
+                v-for="friendInfo in friendList" :key = "friendInfo">
                 <label class="Name">{{ friendInfo.nickname }}</label>
                 <label v-if="friendInfo.state === 'online'" class="Online">온라인</label>
                 <label v-else class="Offline">오프라인</label>
@@ -51,6 +54,22 @@ export default {
     border-radius: 8px;
 }
 
+.AddFriend{
+    position: absolute;
+    left : 8px;
+    bottom: 0px;
+    background-color: rgb(57, 59, 197);
+    border-radius: 15px;
+    overflow: hidden;
+    padding:2px;
+    cursor: pointer;
+    font-size: 1.2vw;
+}
+
+.AddFriend .btn{
+    color : white;
+    text-decoration: none;
+}
 .Title {
     font-size: 24pt;
     color: #000000;
