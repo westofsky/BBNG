@@ -41,8 +41,8 @@ import * as sock_const from "../../constants/socket-constants.js";
                 if(this.inputMessage.length == 0 || this.chattingDelayTime != 0) return;
 
                 // Implement send message to server logic.
-                this.socket.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, {user: 'user', message: this.inputMessage});
-                this.addMessageToList('user', this.inputMessage);
+                this.socket.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, {user: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage});
+                this.addMessageToList(this.$store.getters["Users/getUser_nickname"], this.inputMessage);
                 this.inputMessage = "";
 
                 var inputBox = document.querySelector(".ChattingInput");
