@@ -25,7 +25,7 @@ import * as sock_const from "../../constants/socket-constants.js";
                 inputMessage: '',
                 chattingDelayTimer: null,
                 chattingDelayTime: 0,
-                socket: io('http://localhost:3000'),
+                socket: io('http://localhost:3000', { transports : ['websocket'] }),
             }
         },
         methods: {
