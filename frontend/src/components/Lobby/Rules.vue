@@ -151,8 +151,8 @@ export default {
     align-content: center;
 }
 .wrapper {
-    width : 88vw;
-    height: 55vw;
+    width : 77vw;
+    height: 45vw;
     border-radius:10px;
     overflow:hidden;         
     background : white;
@@ -203,25 +203,25 @@ export default {
     justify-content: center;
 }
 .wrapper .page2 .wrap_content{
-    width: 26vw;
+    width: 24vw;
     margin: 1%;
-    height: 16vw;
+    height: 11vw;
 }
 
 .wrapper .page2 .wrap_content p{
-    font-size : 1.8vw;
+    font-size : 1.4vw;
 }
 .wrapper .page2 .wrap_content .wrap_cards{
     display : flex;
     align-items:center;
-    height: 13vw;
+    height: 11vw;
     justify-content: center;
     position:relative;
 }
 .wrapper .page2 .wrap_content .wrap_cards img{
     position: absolute;
     object-fit: cover;
-    height:12.5vw;
+    height:8.5vw;
 }
 .wrapper .page3{
     align-items: baseline;
@@ -237,7 +237,7 @@ export default {
     text-align : left;
 }
 .wrapper .contents p{
-    font-size :2.7vw;
+    font-size :2.2vw;
     margin : 0;
     padding : 0;
 }
