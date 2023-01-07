@@ -70,7 +70,7 @@ import * as sock_const from "../../constants/socket-constants.js";
         },
         mounted() {
             // Implement receive chatting message from server logic.
-            this.socket.emit(sock_const.RequestType.JOIN_LOBBY, '');
+            this.socket.emit(sock_const.RequestType.JOIN_LOBBY, {user: this.$store.getters["Users/getUser_oid"]});
             console.log(sock_const.ResponseType.BROADCAST_LOBBY_MSG);
             this.socket.on(sock_const.ResponseType.BROADCAST_LOBBY_MSG, (data) => {
                this.addMessageToList(data.user, data.message); 

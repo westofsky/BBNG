@@ -77,6 +77,7 @@ const { Server } = require("socket.io");
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 const sock_const = require("./constants/socket-constants.js");
+const allClients = []
 
 // Initializing constants related to sockets.
 sock_const.initSocketConstants();
@@ -86,8 +87,9 @@ io.on('connection', (socket) => { // New client socket connected.
   console.log('Client connected: ' + socket.id);
 
   socket.on(String(sock_const.RequestType.JOIN_LOBBY), function(data) {
-    console.log("join:" + data);
+    console.log("join:" + socket.id);
     socket.join(sock_const.ChatroomType.LOBBY);
+    allClients.push({user: data['user'], socket: socket});
   });
 
   socket.on(sock_const.RequestType.LEAVE_LOBBY, function(data) {
@@ -101,6 +103,12 @@ io.on('connection', (socket) => { // New client socket connected.
 
   socket.on('disconnect', (reason) => { // Client disconnected.
     console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
+    for(var loop = 0; loop < allClients.length; loop++){
+      if(allClients[loop].socket.id == socket.id){
+        allClients.splice(loop, 1);
+        break;
+      }
+    }
   });
 });
 
