@@ -53,6 +53,7 @@ app.all('/*', function(req, res, next) {
   });
 // api용 
 app.use('/api/users/', usersRouter);
+app.use('/api/friends/', friendsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
