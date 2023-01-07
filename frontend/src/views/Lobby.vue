@@ -2,6 +2,11 @@
     <div class="Lobby">
         <Ranking ref="RankingComponent" />
         <div>
+            <div class="RoomListHeader">
+                <div class="Btn BtnRule RoundBorder" @click="btnRuleClicked">
+                    <label class="BtnText" style="user-select: none; flex: 1;">How to Play?</label>
+                </div>
+            </div>
             <Rooms ref="RoomComponent" />
             <div class="BtnArea">
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
@@ -18,9 +23,6 @@
         <div>
             <Friends ref="FriendsComponent" />
             <Chatting ref="ChattingComponent" />
-        </div>
-        <div class="popup_rules" v-if="isRuleActive">
-            <Rules @event-isRules="setIsRuleActive" />
         </div>
         <div class="popup_rules" v-if="isRuleActive">
             <Rules @event-isRules="setIsRuleActive" />
@@ -53,16 +55,15 @@ export default {
         }
     },
     methods: {
-        btnQuickMatchClicked() {
+        btnRuleClicked() {
             this.isRuleActive = true;
         },
+        btnQuickMatchClicked() {
+        },
         btnRankMatchClicked() {
-            this.showCreateRoomDialog = true;
         },
         btnCreateRoomClicked() {
-
-        },
-        btnRuleClicked() {
+            this.showCreateRoomDialog = true;
         },
         setIsRuleActive() {
             this.isRuleActive = false;
@@ -244,30 +245,30 @@ export default {
     border-radius: 8px;
 }
 
-.RuleArea {
+.RoomListHeader {
+    width: 640px;
+    height: 48px;
     margin-left: 32px;
     margin-right: 32px;
     margin-bottom: 32px;
-    width: 640px;
-    height: 48px;
+    flex-direction: row;
     display: flex;
 }
 
 .BtnRule {
-    background-color: #6b5637;
+    background-color: #34e243;
     width: 180px;
     height: 48px;
-    margin-left: auto;
-    margin-top: 20px;
+    flex: 1;
     box-sizing: border-box;
 }
 
 .BtnRule:hover {
-    background-color: #4e3f29;
+    background-color: #2dc53a;
 }
 
 .BtnRule:active {
-    background-color: #362b1c;
+    background-color: #23992d;
 }
 
 .BtnArea {
