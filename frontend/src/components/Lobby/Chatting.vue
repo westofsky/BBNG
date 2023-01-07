@@ -1,7 +1,7 @@
 <template>
     <div class="Chatting RoundBorder">
         <div class="ChattingLog">
-            <div class="MessageSet" v-for="messageSet in messages">
+            <div class="MessageSet" v-for="messageSet in messages" :key = "messageSet">
                 <label class="Nickname">{{ messageSet.nickname }}:&nbsp</label>
                 <label class="Message">{{ messageSet.message }}</label>
             </div>

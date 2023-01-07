@@ -5,13 +5,6 @@ var User_t = require('../Schemas/User_t');
 const { OAuth2Client } = require("google-auth-library")
 const client = new OAuth2Client();
 router.post('/register', async (request, response) => {
-  User.find((err,users)=>{
-    users.forEach((item)=>{
-        console.log(item);
-    })
-  });
-  console.log('회원가입 중');
-  console.log(request.body);
   if (request.body.type == 1) {
     var flag = true;
     User.find((err, users) => {
@@ -41,25 +34,18 @@ router.post('/register', async (request, response) => {
     });
   }
   else if (request.body.type == 3) {
-    var flag = true;
-    User.findOne( {user_nickname : request.body.user_nickname})
-    .then((result) => {
-      if(result) 
-        flag = false;
-      else{
-          User_t.findOne( {user_nickname : request.body.user_nickname})
-          .then((result) => {
-            if(result) 
-              flag = false;
-          })
-      }
-      if(flag == true){
-        response.json({ status : "200" , msg : "닉네임 사용 가능"});
-      }
-      else{
-        response.json({ status: "500", msg :"닉네임 중복"});
-      }
-    })
+    try{
+        const result1 = await User.findOne({user_nickname : request.body.user_nickname});
+        const result2 = await User_t.findOne({user_nickname : request.body.user_nickname});
+        if(!result1 && !result2){
+            response.json({ status : "200" , msg : "닉네임 사용 가능"});
+        }
+        else{
+            response.json({ status: "500", msg :"닉네임 중복"});
+        }
+    } catch(err){
+        console.log(err);
+    }
   }
   else if (request.body.type == 4) {
     User.create({
@@ -106,6 +92,7 @@ router.post('/login', (request, response) => {
         if(item.user_id == request.body.user_id){
           flag = false;
           if(item.user_pw == request.body.user_pw){
+            
             response.json({ status: "200", _id : item._id.toString(),nickname : item.user_nickname , msg :"로그인 성공"});
           }
           else{

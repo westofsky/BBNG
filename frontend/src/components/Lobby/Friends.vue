@@ -2,7 +2,7 @@
     <div class="Friends RoundBorder">
         <div style="position: relative; margin-top: 8px;">
             <div class = "AddFriend">
-                <a href="#" class="btn">친구추가</a>
+                <a href="#" class="btn" @click = "Add_Friend">친구추가</a>
             </div>
             <label class="Title">친구</label>
             <label class="OnlineCount">온라인: {{ friendList.length }}명</label>
@@ -32,9 +32,32 @@ export default {
             this.friendList = friendList;
             this.friendList.sort((v1, v2) => v2.state.localeCompare(v1.state));
         },
+        Add_Friend(){
+            var Friend_nickname = prompt("친구추가할 닉네임을 적으시오");
+            this.$axios.post('/api/friends/AddFriend',{
+                requester_nickname : this.$store.getters["Users/getUser_nickname"].toString(),
+                recipient_nickname : Friend_nickname,
+            }).then((res) =>{
+                if(res.data.status == 200){
+                    alert(res.data.msg);
+                }
+                else if(res.data.status == 500){
+                    alert(res.data.msg);
+                }
+            });
+        }
     },
-    mounted() {
-        
+    beforeCreate() {
+        this.$axios.post('/api/friends/FriendRequest',{
+            nickname : this.$store.getters["Users/getUser_nickname"]
+        }).then((res) =>{
+            console.log(res.data);
+            if(res.data.status == 200){
+                for(var i=0;i<res.data.request_list.length;i++){
+                    alert(res.data.request_list[i]);
+                }
+            }
+        });
     },
 }
 </script>
