@@ -261,6 +261,7 @@ export default {
     height: 48px;
     flex: 1;
     box-sizing: border-box;
+    box-shadow: 2px 2px rgb(197, 197, 197);
 }
 
 .BtnRule:hover {
@@ -299,6 +300,7 @@ export default {
     height: 48px;
     flex: 1;
     box-sizing: border-box;
+    box-shadow: 2px 2px rgb(197, 197, 197);
 }
 
 .BtnQuickMatch:hover {
@@ -316,6 +318,7 @@ export default {
     margin: 0px 50px;
     flex: 1;
     box-sizing: border-box;
+    box-shadow: 2px 2px rgb(197, 197, 197);
 }
 
 .BtnRankMatch:hover {
@@ -332,6 +335,7 @@ export default {
     height: 48px;
     float: left;
     box-sizing: border-box;
+    box-shadow: 2px 2px rgb(197, 197, 197);
 }
 
 .BtnCreateRoom:hover {
