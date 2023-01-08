@@ -1,4 +1,5 @@
 var express = require('express');
+const { db } = require('../Schemas/Friends');
 var router = express.Router();
 var Friends = require('../Schemas/Friends');
 var User = require('../Schemas/User');
@@ -62,6 +63,16 @@ router.post('/FriendRequest', async (request, response) => {
     }
     else {
         response.json({ status: "200", request_list: request_list });
+    }
+});
+
+router.post('/AcceptFriend', async (request, response) => {
+    const result1 = await Friends.findOne({user_nickname : request.body.AcceptedJson.requester_nickname, friend_nickname : request.body.AcceptedJson.recipient_nickname}, (err, friends) =>{
+        friends.updateOne({$set : {status : 1}}).exec();
+        response.json({ status: "200", msg : "친구추가 되었습니다." });
+    });
+    if(!result1){
+        response.json({ status: "500",msg: "오류가 발생했습니다." });
     }
 });
 
