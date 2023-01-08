@@ -6,36 +6,28 @@ var User_t = require('../Schemas/User_t');
 
 router.post('/AddFriend', async (request, response) => {
     try {
-        console.log(request.body);
         const result1 = await User.findOne({ user_nickname: request.body.recipient_nickname })
         const result2 = await User_t.findOne({ user_nickname: request.body.recipient_nickname })
-        console.log(result1);
-        console.log(result2);
         if (result1 || result2) {
-            var flag = true;
-            const result3 = await Friends.find((err, friends) => {
-                friends.forEach((item) => {
-                    if (item.user_nickname == request.body.requester_nickname && item.friend_nickname == request.body.recipient_nickname) {
-                        if (item.status == 0) {
-                            response.json({ status: "500", msg: "이미 친구요청을 보냈습니다." })
-                        }
-                        else if (item.status == 1) {
-                            response.json({ status: "500", msg: "이미 해당 계정과 친구입니다." })
-                        }
-                        flag = false;
-                    }
-                    else if (item.user_nickname == request.body.recipient_nickname && item.friend_nickname == request.body.requester_nickname) {
-                        if (item.status == 0) {
-                            response.json({ status: "500", msg: "상대방이 이미 친구요청을 보냈습니다." })
-                        }
-                        else if (item.status == 1) {
-                            response.json({ status: "500", msg: "이미 해당 계정과 친구입니다." })
-                        }
-                        flag = false;
-                    }
-                })
-            })
-            if (flag) {
+            const result3 = await Friends.findOne({user_nickname : request.body.requester_nickname, friend_nickname : request.body.recipient_nickname});
+            const result4 = await Friends.findOne({user_nickname : request.body.recipient_nickname, friend_nickname : request.body.requester_nickname});
+            if(result3){
+                if (result3.status == 0) {
+                    response.json({ status: "500", msg: "이미 친구요청을 보냈습니다." })
+                }
+                else if (result3.status == 1) {
+                    response.json({ status: "500", msg: "이미 해당 계정과 친구입니다." })
+                }
+            }
+            if(result4){
+                if (result4.status == 0) {
+                    response.json({ status: "500", msg: "상대방이 이미 친구요청을 보냈습니다." })
+                }
+                else if (result4.status == 1) {
+                    response.json({ status: "500", msg: "이미 해당 계정과 친구입니다." })
+                }
+            }
+            if (!result3 && !result4) {
                 Friends.create({
                     user_nickname: request.body.requester_nickname,
                     friend_nickname: request.body.recipient_nickname,
@@ -59,7 +51,7 @@ router.post('/FriendRequest', async (request, response) => {
     const result2 = await Friends.find((err, friends) => {
         friends.forEach((item) => {
             if (item.friend_nickname == request.body.nickname && item.status == 0) {
-                request_list.push(item.user_nickname[0]);
+                request_list.push(item.user_nickname);
                 console.log("실행됨");
             }
         })
