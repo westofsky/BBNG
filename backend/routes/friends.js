@@ -12,6 +12,11 @@ router.post('/AddFriend', async (request, response) => {
         if (result1 || result2) {
             const result3 = await Friends.findOne({user_nickname : request.body.requester_nickname, friend_nickname : request.body.recipient_nickname});
             const result4 = await Friends.findOne({user_nickname : request.body.recipient_nickname, friend_nickname : request.body.requester_nickname});
+            var flag = true;
+            if(request.body.requester_nickname == request.body.recipient_nickname){
+                flag = false;
+                response.json({ status: "500", msg: "자기 자신에게는 친구요청을 보낼 수 없습니다." })
+            }
             if(result3){
                 if (result3.status == 0) {
                     response.json({ status: "500", msg: "이미 친구요청을 보냈습니다." })
@@ -28,7 +33,7 @@ router.post('/AddFriend', async (request, response) => {
                     response.json({ status: "500", msg: "이미 해당 계정과 친구입니다." })
                 }
             }
-            if (!result3 && !result4) {
+            if (!result3 && !result4 && flag) {
                 Friends.create({
                     user_nickname: request.body.requester_nickname,
                     friend_nickname: request.body.recipient_nickname,
