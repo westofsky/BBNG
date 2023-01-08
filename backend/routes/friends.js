@@ -72,10 +72,15 @@ router.post('/FriendRequest', async (request, response) => {
 });
 
 router.post('/AcceptFriend', async (request, response) => {
+    console.log(request.body);
     const result1 = await Friends.findOneAndUpdate({user_nickname : request.body.AcceptedJson.requester_nickname, friend_nickname : request.body.AcceptedJson.recipient_nickname},
         {status : 1});
+    console.log(result1);
     if(!result1){
         response.json({ status: "500",msg: "오류가 발생했습니다." });
+    }
+    else{
+        response.json({ status: "200",msg: "친구추가가 완료되었습니다." });
     }
 });
 
