@@ -1,6 +1,9 @@
 <template>
-    <div class="Friends RoundBorder">
+    <div class="Friends RoundBorder" v-if="!is_requested_clicked">
         <div style="position: relative; margin-top: 8px;">
+            <div class = "AccpetFriend" v-if="is_requested">
+                <a href="#" class="btnAccept" @click = "Accept_Friend">친구요청</a>
+            </div>
             <div class = "AddFriend">
                 <a href="#" class="btn" @click = "Add_Friend">친구추가</a>
             </div>
@@ -17,6 +20,22 @@
             </div>
         </div>
     </div>
+    <div class="Friends RoundBorder Requests" v-else>
+        <div style="position: relative; margin-top: 8px; display:flex ; justify-content: space-between;">
+            <div class="close close1" style="visibility : hidden"></div>
+            <label class="Title">친구요청</label>
+            <div class="close close1" @click = "close_accepted"></div>
+        </div>
+        <hr style="margin: 8px;" />
+        <div class="FriendList">
+            <div class = "FriendInfo"
+                v-for="friendInfo in is_requested_list" :key = "friendInfo">
+                <label class="Name">{{ friendInfo }}</label>
+                <label class="Accept" @click = "accept">O</label>
+                <label class="Reject" @click = "reject">X</label>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -25,6 +44,9 @@ export default {
     data() {
         return {
             friendList: [],
+            is_requested : false,
+            is_requested_clicked : false,
+            is_requested_list : [],
         }
     },
     methods: {
@@ -45,19 +67,51 @@ export default {
                     alert(res.data.msg);
                 }
             });
+        },
+        Accept_Friend(){
+            this.is_requested_clicked = true;
+        },
+        get_requests(){
+            this.$axios.post('/api/friends/FriendRequest',{
+            nickname : this.$store.getters["Users/getUser_nickname"]
+            }).then((res) =>{
+                console.log(res.data);
+                if(res.data.status == 200){
+                    this.is_requested = true;
+                    this.is_requested_list = res.data.request_list;
+                    for(var i=0;i<res.data.request_list.length;i++){
+                        var result = confirm(res.data.request_list[i]+"를 친구추가 하시겠습니까?");
+                        if(result){
+                            var AcceptedJson = new Object();
+                            AcceptedJson.requester_nickname = res.data.request_list[i];
+                            AcceptedJson.recipient_nickname = this.$store.getters["Users/getUser_nickname"].toString();
+                            this.$axios.post('/api/friends/AcceptFriend',{
+                                AcceptedJson : AcceptedJson,
+                            }).then((res) =>{
+                                if(res.data.status == 200){
+                                    alert(res.data.msg);
+                                }
+                                else if(res.data.status == 500){
+                                    alert(res.data.msg);
+                                }
+                            })
+                        }
+                    }
+                }
+            });
+        },
+        close_accepted(){
+            this.is_requested_clicked = false;
+        },
+        accept(){
+            
+        },
+        reject(){
+            
         }
     },
-    beforeCreate() {
-        this.$axios.post('/api/friends/FriendRequest',{
-            nickname : this.$store.getters["Users/getUser_nickname"]
-        }).then((res) =>{
-            console.log(res.data);
-            if(res.data.status == 200){
-                for(var i=0;i<res.data.request_list.length;i++){
-                    alert(res.data.request_list[i]);
-                }
-            }
-        });
+    mounted() {
+        this.get_requests();
     },
 }
 </script>
@@ -77,6 +131,24 @@ export default {
     border-radius: 8px;
 }
 
+.AccpetFriend{
+    position: absolute;
+    left : 8px;
+    bottom: 0px;
+    background-color: rgb(211, 235, 80);
+    border-radius: 15px;
+    overflow: hidden;
+    padding:2px;
+    cursor: pointer;
+    font-size: 0.6vw;
+    width:5vw;
+    margin-bottom : 8%;
+}
+
+.AccpetFriend .btnAccept{
+    color : black;
+    text-decoration: none;
+}
 .AddFriend{
     position: absolute;
     left : 8px;
@@ -86,7 +158,8 @@ export default {
     overflow: hidden;
     padding:2px;
     cursor: pointer;
-    font-size: 1.2vw;
+    font-size: 0.6vw;
+    width:5vw;
 }
 
 .AddFriend .btn{
@@ -150,5 +223,40 @@ export default {
     text-align: left;
     font-weight: bold;
     font-size: 14pt;
+}
+
+.Requests .close {
+    position:relative;
+    display:inline-block;
+    *display:inline;
+    width:50px;
+    height:50px;
+    text-align:center;
+    cursor:pointer
+}
+
+.Requests .close1:after {
+    content: "\00d7";
+    font-size:35pt;
+    line-height:50px;
+}
+
+.FriendInfo .Accept{
+    width: 50px;
+    background-color: #6eda6b;
+    padding: 8px;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor : pointer;
+}
+.FriendInfo .Reject{
+    width: 50px;
+    background-color: #ec5050;
+    padding: 8px;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor : pointer;
 }
 </style>
