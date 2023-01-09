@@ -22,7 +22,7 @@
         </div>
         <div>
             <Friends ref="FriendsComponent" />
-            <Chatting ref="ChattingComponent" />
+            <Chatting ref="ChattingComponent" v-bind:socket="socket"/>
         </div>
         <div class="popup_rules" v-if="isRuleActive">
             <Rules @event-isRules="setIsRuleActive" />
@@ -42,13 +42,17 @@ import Friends from '../components/Lobby/Friends.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
 import Rules from '../components/Lobby/Rules.vue';
 import CreateRoomDialog from '../components/Lobby/CreateRoomDialog.vue'
+import io from 'socket.io-client';
+import * as sock_const from "../constants/socket-constants.js";
 
 export default {
     name: 'Lobby',
+
     data() {
         return {
             isRuleActive: false,
             showCreateRoomDialog: false,
+            socket: io('http://localhost:3000', { transports : ['websocket'] }),
         }
     },
     methods: {

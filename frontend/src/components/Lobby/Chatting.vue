@@ -1,9 +1,11 @@
 <template>
     <div class="Chatting RoundBorder">
         <div class="ChattingLog">
-            <div class="MessageSet" v-for="messageSet in messages" :key = "messageSet">
+            <div class="MessageSet" v-for="messageSet in messages" :key="messageSet">
                 <label class="Nickname" v-if="messageSet.state == 0">{{ messageSet.nickname }}:&nbsp</label>
-                <label class="Message" style="text-align : right" v-if="messageSet.state == 1">{{ messageSet.message }}</label>
+                <label class="Message" style="text-align : right" v-if="messageSet.state == 1">{{
+                    messageSet.message
+                }}</label>
                 <label class="Message" v-else>{{ messageSet.message }}</label>
             </div>
         </div>
@@ -13,71 +15,74 @@
 </template>
 
 <script>
+import { Socket } from 'engine.io-client';
 import io from 'socket.io-client';
 import * as sock_const from "../../constants/socket-constants.js";
 
-    export default {
-        name: 'Chatting',
-        data() {
-            return {
-                messages: [
+export default {
+    name: 'Chatting',
+    data() {
+        return {
+            messages: [
 
-                ],
-                inputMessage: '',
-                chattingDelayTimer: null,
-                chattingDelayTime: 0,
-                socket: io('http://localhost:3000', { transports : ['websocket'] }),
-            }
+            ],
+            inputMessage: '',
+            chattingDelayTimer: null,
+            chattingDelayTime: 0,
+        }
+    },
+    props: {
+        socket: { type: Socket, required: true },
+    },
+    methods: {
+        addMessageToList(user, message, state) {
+            this.messages.push({ nickname: user, message: message, state: state });
+            this.scrollToEnd();
         },
-        methods: {
-            addMessageToList(user, message,state) {
-                this.messages.push({nickname: user, message: message, state : state});
-                this.scrollToEnd();
-            },
-            setMessages(messages) {
-                this.messages = messages;
-                this.scrollToEnd();
-            },
-            sendMessage() {
-                if(this.inputMessage.length == 0 || this.chattingDelayTime != 0) return;
-
-                // Implement send message to server logic.
-                this.socket.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, {user: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage});
-                this.addMessageToList(this.$store.getters["Users/getUser_nickname"], this.inputMessage,1);
-                this.inputMessage = "";
-
-                var inputBox = document.querySelector(".ChattingInput");
-                inputBox.disabled = true;
-                this.chattingDelayTime = 3;
-                inputBox.placeholder = this.chattingDelayTime + "초 후에 전송 가능";
-
-                this.chattingDelayTimer = setInterval(()=> {
-                    this.chattingDelayTime -= 1;
-                    if(this.chattingDelayTime == 0) {
-                        inputBox.disabled = false;
-                        inputBox.placeholder = "메세지를 입력해주세요...";
-                        clearInterval(this.chattingDelayTimer);
-                    } else {
-                        inputBox.placeholder = this.chattingDelayTime + "초 후에 전송 가능";
-                    }
-                }, 1000);
-            },
-            async scrollToEnd() {
-                await this.$nextTick();
-                var chattingLog = document.querySelector(".ChattingLog");
-                var scrollHeight = chattingLog.scrollHeight;
-                chattingLog.scrollTop = scrollHeight;
-            }
+        setMessages(messages) {
+            this.messages = messages;
+            this.scrollToEnd();
         },
-        mounted() {
-            // Implement receive chatting message from server logic.
-            this.socket.emit(sock_const.RequestType.JOIN_LOBBY, {user: this.$store.getters["Users/getUser_oid"]});
-            console.log(sock_const.ResponseType.BROADCAST_LOBBY_MSG);
-            this.socket.on(sock_const.ResponseType.BROADCAST_LOBBY_MSG, (data) => {
-               this.addMessageToList(data.user, data.message,0); 
-            });
+        sendMessage() {
+            if (this.inputMessage.length == 0 || this.chattingDelayTime != 0) return;
+
+            // Implement send message to server logic.
+            this.socket.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, { user: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage });
+            this.addMessageToList(this.$store.getters["Users/getUser_nickname"], this.inputMessage, 1);
+            this.inputMessage = "";
+
+            var inputBox = document.querySelector(".ChattingInput");
+            inputBox.disabled = true;
+            this.chattingDelayTime = 3;
+            inputBox.placeholder = this.chattingDelayTime + "초 후에 전송 가능";
+
+            this.chattingDelayTimer = setInterval(() => {
+                this.chattingDelayTime -= 1;
+                if (this.chattingDelayTime == 0) {
+                    inputBox.disabled = false;
+                    inputBox.placeholder = "메세지를 입력해주세요...";
+                    clearInterval(this.chattingDelayTimer);
+                } else {
+                    inputBox.placeholder = this.chattingDelayTime + "초 후에 전송 가능";
+                }
+            }, 1000);
         },
-    }
+        async scrollToEnd() {
+            await this.$nextTick();
+            var chattingLog = document.querySelector(".ChattingLog");
+            var scrollHeight = chattingLog.scrollHeight;
+            chattingLog.scrollTop = scrollHeight;
+        }
+    },
+    mounted() {
+        // Implement receive chatting message from server logic.
+        this.socket.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
+        console.log(sock_const.ResponseType.BROADCAST_LOBBY_MSG);
+        this.socket.on(sock_const.ResponseType.BROADCAST_LOBBY_MSG, (data) => {
+            this.addMessageToList(data.user, data.message, 0);
+        });
+    },
+}
 </script>
 
 <style scoped>
@@ -114,7 +119,7 @@ import * as sock_const from "../../constants/socket-constants.js";
 }
 
 .ChattingLog .Message {
-    flex : 1;
+    flex: 1;
 }
 
 .ChattingInput {
