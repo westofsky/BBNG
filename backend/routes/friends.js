@@ -1,4 +1,5 @@
 var express = require('express');
+const { request } = require('../app');
 const { db } = require('../Schemas/Friends');
 var router = express.Router();
 var Friends = require('../Schemas/Friends');
@@ -76,12 +77,43 @@ router.post('/AcceptFriend', async (request, response) => {
     const result1 = await Friends.findOneAndUpdate({user_nickname : request.body.AcceptedJson.requester_nickname, friend_nickname : request.body.AcceptedJson.recipient_nickname},
         {status : 1});
     console.log(result1);
-    if(!result1){
-        response.json({ status: "500",msg: "오류가 발생했습니다." });
-    }
-    else{
+    if(result1){
         response.json({ status: "200",msg: "친구추가가 완료되었습니다." });
     }
+    else{
+        response.json({ status: "500",msg: "오류가 발생했습니다." });
+    }
 });
+
+router.post('/RejectFreind', async (request, response) => {
+    const result1 = await Friends.findOneAndDelete({user_nickname: request.body.RejectedJson.requester_nickname, friend_nickname: request.body.RejectedJson.recipient_nickname})
+    if(result1){
+        response.json({ status: "200",msg: "친구요청을 거절하였습니다." });
+    }
+    else{
+        response.json({ status: "500",msg: "오류가 발생했습니다." });
+    }
+})
+
+router.post('/getFriend', async (request, response) => {
+    var friend_list = [];
+    const result1 = await Friends.find((err, friends) => {
+        friends.forEach((item) => {
+            if (item.user_nickname == request.body.user_nickname && item.status == 1) {
+                friend_list.push(item.friend_nickname);
+            }
+            else if(item.friend_nickname == request.body.user_nickname && item.status == 1){
+                friend_list.push(item.user_nickname);
+            }
+        })
+    }).clone().catch(function (err) { console.log(err) });
+    console.log(friend_list);
+    if (friend_list.length == 0) {
+        response.json({ status: "200", msg: "친구가 없습니다." });
+    }
+    else {
+        response.json({ status: "200", friend_list: friend_list });
+    }
+})
 
 module.exports = router;
