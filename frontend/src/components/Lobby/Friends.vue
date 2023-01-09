@@ -29,10 +29,10 @@
         <hr style="margin: 8px;" />
         <div class="FriendList">
             <div class = "FriendInfo"
-                v-for="friendInfo in is_requested_list" :key = "friendInfo">
+                v-for="(friendInfo, index) in is_requested_list" :key = "friendInfo">
                 <label class="Name">{{ friendInfo }}</label>
-                <label class="Accept" @click = "accept">O</label>
-                <label class="Reject" @click = "reject">X</label>
+                <label class="Accept" @click = "accept(index)">O</label>
+                <label class="Reject" @click = "reject(index)">X</label>
             </div>
         </div>
     </div>
@@ -56,17 +56,19 @@ export default {
         },
         Add_Friend(){
             var Friend_nickname = prompt("친구추가할 닉네임을 적으시오");
-            this.$axios.post('/api/friends/AddFriend',{
-                requester_nickname : this.$store.getters["Users/getUser_nickname"].toString(),
-                recipient_nickname : Friend_nickname,
-            }).then((res) =>{
-                if(res.data.status == 200){
-                    alert(res.data.msg);
-                }
-                else if(res.data.status == 500){
-                    alert(res.data.msg);
-                }
-            });
+            if(Friend_nickname){
+                this.$axios.post('/api/friends/AddFriend',{
+                    requester_nickname : this.$store.getters["Users/getUser_nickname"].toString(),
+                    recipient_nickname : Friend_nickname,
+                }).then((res) =>{
+                    if(res.data.status == 200){
+                        alert(res.data.msg);
+                    }
+                    else if(res.data.status == 500){
+                        alert(res.data.msg);
+                    }
+                });
+            }
         },
         Accept_Friend(){
             this.is_requested_clicked = true;
@@ -103,11 +105,41 @@ export default {
         close_accepted(){
             this.is_requested_clicked = false;
         },
-        accept(){
-            
+        accept(index){
+            var result = confirm(this.is_requested_list[index]+"을(를) 친구추가 하시겠습니까?");
+            if(result){
+                var AcceptedJson = new Object();
+                AcceptedJson.requester_nickname = this.is_requested_list[index];
+                AcceptedJson.recipient_nickname = this.$store.getters["Users/getUser_nickname"].toString();
+                this.$axios.post('/api/friends/AcceptFriend',{
+                    AcceptedJson : AcceptedJson,
+                }).then((res) =>{
+                    if(res.data.status == 200){
+                        alert(res.data.msg);
+                    }
+                    else if(res.data.status == 500){
+                        alert(res.data.msg);
+                    }
+                })
+            }
         },
-        reject(){
-            
+        reject(index){
+            var result = confirm(this.is_requested_list[index]+"의 친구신청을 거절하시겠습니까?");
+            if(result){
+                var RejectedJson = new Object();
+                RejectedJson.requester_nickname = this.is_requested_list[index];
+                RejectedJson.recipient_nickname = this.$store.getters["Users/getUser_nickname"].toString();
+                this.$axios.post('/api/friends/RejectFriend',{
+                    RejectedJson : RejectedJson,
+                }).then((res) =>{
+                    if(res.data.status == 200){
+                        alert(res.data.msg);
+                    }
+                    else if(res.data.status == 500){
+                        alert(res.data.msg);
+                    }
+                })
+            }
         }
     },
     mounted() {
