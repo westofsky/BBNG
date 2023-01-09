@@ -83,7 +83,7 @@ router.post('/AcceptFriend', async (request, response) => {
     }
 });
 
-router.post('/RejectFreind', async (request, response) => {
+router.post('/RejectFriend', async (request, response) => {
     const result1 = await Friends.findOneAndDelete({user_nickname: request.body.RejectedJson.requester_nickname, friend_nickname: request.body.RejectedJson.recipient_nickname})
     if(result1){
         response.json({ status: "200",msg: "친구요청을 거절하였습니다." });
