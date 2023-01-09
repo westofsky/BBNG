@@ -32,7 +32,7 @@ export default {
         }
     },
     props: {
-        socket: { type: Socket, required: true },
+        socket: { type: io.Socket, required: true },
     },
     methods: {
         addMessageToList(user, message, state) {
