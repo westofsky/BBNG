@@ -2,8 +2,9 @@
     <div class="Chatting RoundBorder">
         <div class="ChattingLog">
             <div class="MessageSet" v-for="messageSet in messages" :key = "messageSet">
-                <label class="Nickname">{{ messageSet.nickname }}:&nbsp</label>
-                <label class="Message">{{ messageSet.message }}</label>
+                <label class="Nickname" v-if="messageSet.state == 0">{{ messageSet.nickname }}:&nbsp</label>
+                <label class="Message" style="text-align : right" v-if="messageSet.state == 1">{{ messageSet.message }}</label>
+                <label class="Message" v-else>{{ messageSet.message }}</label>
             </div>
         </div>
         <input class="ChattingInput" type="input" placeholder="메세지를 입력해주세요..." v-model="inputMessage"
@@ -29,8 +30,8 @@ import * as sock_const from "../../constants/socket-constants.js";
             }
         },
         methods: {
-            addMessageToList(user, message) {
-                this.messages.push({nickname: user, message: message});
+            addMessageToList(user, message,state) {
+                this.messages.push({nickname: user, message: message, state : state});
                 this.scrollToEnd();
             },
             setMessages(messages) {
@@ -42,7 +43,7 @@ import * as sock_const from "../../constants/socket-constants.js";
 
                 // Implement send message to server logic.
                 this.socket.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, {user: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage});
-                this.addMessageToList(this.$store.getters["Users/getUser_nickname"], this.inputMessage);
+                this.addMessageToList(this.$store.getters["Users/getUser_nickname"], this.inputMessage,1);
                 this.inputMessage = "";
 
                 var inputBox = document.querySelector(".ChattingInput");
@@ -73,7 +74,7 @@ import * as sock_const from "../../constants/socket-constants.js";
             this.socket.emit(sock_const.RequestType.JOIN_LOBBY, {user: this.$store.getters["Users/getUser_oid"]});
             console.log(sock_const.ResponseType.BROADCAST_LOBBY_MSG);
             this.socket.on(sock_const.ResponseType.BROADCAST_LOBBY_MSG, (data) => {
-               this.addMessageToList(data.user, data.message); 
+               this.addMessageToList(data.user, data.message,0); 
             });
         },
     }
@@ -113,7 +114,7 @@ import * as sock_const from "../../constants/socket-constants.js";
 }
 
 .ChattingLog .Message {
-    flex: 1;
+    flex : 1;
 }
 
 .ChattingInput {

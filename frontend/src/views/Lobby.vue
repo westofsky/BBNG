@@ -201,26 +201,6 @@ export default {
         let chattingList = [
             { nickname: 'Player1', message: 'Hi' },
             { nickname: 'Player2', message: 'Hello' },
-            { nickname: 'Player3', message: 'qwer' },
-            { nickname: 'Player4', message: '반갑습니다' },
-            { nickname: 'Player2', message: 'Hello' },
-            { nickname: 'Player3', message: 'qwer' },
-            { nickname: 'Player4', message: '반갑습니다' },
-            { nickname: 'Player2', message: 'Hello' },
-            { nickname: 'Player3', message: 'qwer' },
-            { nickname: 'Player4', message: '반갑습니다' },
-            { nickname: 'Player2', message: 'Hello' },
-            { nickname: 'Player3', message: 'qwer' },
-            { nickname: 'Player4', message: '반갑습니다' },
-            { nickname: 'Player2', message: 'Hello' },
-            { nickname: 'Player3', message: 'qwer' },
-            { nickname: 'Player4', message: '반갑습니다' },
-            { nickname: 'Player2', message: 'Hello' },
-            { nickname: 'Player3', message: 'qwer' },
-            { nickname: 'Player4', message: '반갑습니다' },
-            { nickname: 'Player2', message: 'Hello' },
-            { nickname: 'Player3', message: 'qwer' },
-            { nickname: 'Player4', message: '반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다반갑습니다' },
         ];
         this.$refs.RankingComponent.setRanking(rankList);
         this.$refs.RoomComponent.setRooms(roomList);
