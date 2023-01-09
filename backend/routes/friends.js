@@ -53,14 +53,10 @@ router.post('/AddFriend', async (request, response) => {
 
 router.post('/FriendRequest', async (request, response) => {
     var request_list = [];
-    const result2 = await Friends.find((err, friends) => {
-        friends.forEach((item) => {
-            if (item.friend_nickname == request.body.nickname && item.status == 0) {
-                request_list.push(item.user_nickname);
-                console.log("실행됨");
-            }
-        })
-    }).clone().catch(function (err) { console.log(err) });
+    const result1 = await Friends.find({friend_nickname: request.body.nickname, status: 0});
+    for(var i = 0; i < result1.length; i++){
+        request_list.push(result1[i].user_nickname);
+    }
     console.log(request_list);
     if (request_list.length == 0) {
         response.json({ status: "500" });
