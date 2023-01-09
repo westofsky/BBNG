@@ -120,6 +120,7 @@ export default {
 
 .ChattingLog .Message {
     flex: 1;
+    display: block;
 }
 
 .ChattingInput {
