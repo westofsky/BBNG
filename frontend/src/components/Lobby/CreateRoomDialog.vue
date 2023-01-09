@@ -1,14 +1,6 @@
-<script>
-export default {
-    props: {
-        show: Boolean
-    }
-}
-</script>
-
 <template>
     <Transition name="CreateRoomDialog">
-        <div v-if="show" class="CreateRoomDialog-Mask">
+        <div v-if="show" class="CreateRoomDialog-Mask" @keyup.esc="$emit('close')" tabindex="0">
             <div class="CreateRoomDialog-Wrapper">
                 <div class="CreateRoomDialog-Container">
                     <div class="CreateRoomDialog-Header">
@@ -18,34 +10,66 @@ export default {
                         <div class="OptionGroup">
                             <label class="OptionTitle">방 이름</label>
                             <div class="OptionArea">
-                                <label>옵션</label>
+                                <input class="Name" type="text" />
                             </div>
                         </div>
                         <div class="OptionGroup">
-                            <label class="OptionTitle">방 이름</label>
+                            <label class="OptionTitle">비밀번호</label>
                             <div class="OptionArea">
-                                <label>옵션</label>
+                                <input class="Password" type="text" />
                             </div>
                         </div>
                         <div class="OptionGroup">
-                            <label class="OptionTitle">방 이름</label>
+                            <label class="OptionTitle">플레이어 수</label>
                             <div class="OptionArea">
-                                <label>옵션</label>
+                                <div class="PlayerRadioGroup">
+                                    <input class="Player" type="radio" value="player_3" v-model="playerCount">
+                                    <label class="PlayerLabel">3명</label>
+                                </div>
+                                <div class="PlayerRadioGroup">
+                                    <input class="Player" type="radio" value="player_4" v-model="playerCount">
+                                    <label class="PlayerLabel">4명</label>
+                                </div>
+                                <div class="PlayerRadioGroup">
+                                    <input class="Player" type="radio" value="player_5" v-model="playerCount">
+                                    <label class="PlayerLabel">5명</label>
+                                </div>
                             </div>
                         </div>
                         <div class="OptionGroup">
-                            <label class="OptionTitle">방 이름</label>
+                            <label class="OptionTitle">점수 표시</label>
                             <div class="OptionArea">
-                                <label>옵션</label>
+                                <input class="Player" type="checkbox" value="show" v-model="showScore">
+                                <label class="ShowScoreLabel">게임 중 표시</label>
                             </div>
                         </div>
-                        <!-- <slot name="body">default body</slot> -->
+                        <div class="OptionGroup">
+                            <label class="OptionTitle">라운드 수</label>
+                            <div class="OptionArea">
+                                <div class="PlayerRadioGroup">
+                                    <input class="Player" type="radio" value="round_10" v-model="roundCount">
+                                    <label class="RoundLabel">10회</label>
+                                </div>
+                                <div class="PlayerRadioGroup">
+                                    <input class="Player" type="radio" value="round_15" v-model="roundCount">
+                                    <label class="RoundLabel">15회</label>
+                                </div>
+                                <div class="PlayerRadioGroup">
+                                    <input class="Player" type="radio" value="round_20" v-model="roundCount">
+                                    <label class="RoundLabel">20회</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="CreateRoomDialog-Footer">
                         <slot name="footer">
-                            default footer
-                            <button @click="$emit('close')">OK</button>
+                            <div class="BtnCancel" @click="$emit('close')">
+                                <label class="BtnText">취소</label>
+                            </div>
+                            <div class="BtnCreate">
+                                <label class="BtnText">생성</label>
+                            </div>
                         </slot>
                     </div>
                 </div>
@@ -54,7 +78,36 @@ export default {
     </Transition>
 </template>
 
-<style>
+<script>
+export default {
+    name: 'CreateRoomDialog',
+    data() {
+        return {
+            name: '',
+            password: '',
+            playerCount: 'player_3',
+            showScore: false,
+            roundCount: 'round_10',
+        }
+    },
+    props: {
+        show: Boolean,
+    },
+    methods: {
+        mounted() {
+        },
+        init() {
+            this.name = '';
+            this.password = '';
+            this.playerCount = 'player_3';
+            this.showScore = false;
+            this.roundCount = 'round_10';
+        }
+    }
+}
+</script>
+
+<style scoped>
 .CreateRoomDialog-Mask {
     position: fixed;
     z-index: 9998;
@@ -65,6 +118,7 @@ export default {
     background-color: rgba(0, 0, 0, 0.5);
     display: table;
     transition: opacity 0.3s ease;
+    text-align: center;
 }
 
 .CreateRoomDialog-Wrapper {
@@ -73,23 +127,25 @@ export default {
 }
 
 .CreateRoomDialog-Container {
-    width: 300px;
+    width: 400px;
     margin: 0px auto;
     background-color: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
     transition: all 0.3s ease;
     border-radius: 8px;
     overflow: hidden;
+    display: inline-block;
 }
 
 .CreateRoomDialog-Header {
+    height: 48px;
     display: flex;
     justify-content: center;
     background-color: rgb(70, 199, 135);
 }
 
 .CreateRoomDialog-Title {
-    font-size: 16pt;
+    font-size: 18pt;
     font-weight: bold;
     padding: 8px;
     color: #ffffff;
@@ -98,20 +154,121 @@ export default {
 .CreateRoomDialog-Body {
     display: flex;
     flex-direction: column;
+    padding: 16px 0px;
+}
+
+.CreateRoomDialog-Footer {
+    height: 48px;
+    background-color: #525252;
+    display: flex;
+    flex-direction: row;
 }
 
 .OptionGroup {
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
 .OptionTitle {
-    background-color: #d81c1c;
+    width: 35%;
+    font-weight: bold;
+    color: #525252;
+    font-size: 16pt;
+    padding: 8px;
 }
 
 .OptionArea {
     flex: 1;
-    background-color: aqua;
+    display: flex;
+    padding: 16px;
+    justify-content: center;
+}
+
+.Name {
+    width: 100%;
+    flex: 1;
+    font-size: 14pt;
+    text-align: center;
+}
+
+.Password {
+    width: 100%;
+    flex: 1;
+    font-size: 14pt;
+    text-align: center;
+}
+
+.PlayerRadioGroup {
+    width: 33%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.PlayerLabel {
+    flex: 1;
+    margin-right: 8px;
+    font-weight: bold;
+    color: #777777;
+}
+
+.ShowScoreLabel {
+    font-weight: bold;
+    color: #777777;
+    margin-left: 16px;
+}
+
+.RoundRadioGroup {
+    width: 33%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.RoundLabel {
+    flex: 1;
+    margin-right: 8px;
+    font-weight: bold;
+    color: #777777;
+}
+
+.BtnCancel {
+    background-color: #e75b5b;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.BtnCancel:hover {
+    background-color: #d15252;
+}
+
+.BtnCancel:active {
+    background-color: #c44d4d;
+}
+
+.BtnCreate {
+    background-color: #6884e0;
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.BtnCreate:hover {
+    background-color: #5e77ca;
+}
+
+.BtnCreate:active {
+    background-color: #5268b3;
+}
+
+.BtnText {
+    font-size: 16pt;
+    font-weight: bold;
+    color: #ffffff;
 }
 
 /*

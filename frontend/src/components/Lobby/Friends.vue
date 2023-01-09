@@ -120,7 +120,7 @@ export default {
 .Friends {
     background-color: #F9F6F6;
     width: 320px;
-    height: 384px;
+    height: 388px;
     text-align: center;
     flex-direction: column;
     display: flex;

@@ -30,7 +30,7 @@
     </div>
     <Teleport to="body">
         <!-- use the modal component, pass in the prop -->
-        <CreateRoomDialog :show="showCreateRoomDialog" @close="showCreateRoomDialog = false">
+        <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog" @close="showCreateRoomDialog = false">
             <template #header>
                 <h3>custom1 header</h3>
             </template>
@@ -64,6 +64,7 @@ export default {
         },
         btnCreateRoomClicked() {
             this.showCreateRoomDialog = true;
+            this.$refs.CreateRoomDialogComponent.init();
         },
         setIsRuleActive() {
             this.isRuleActive = false;
@@ -344,13 +345,6 @@ export default {
 
 .BtnCreateRoom:active {
     background-color: #79623e;
-}
-
-
-.Friends {
-    width: 320px;
-    height: 384px;
-    margin-bottom: 32px;
 }
 
 .popup_rules {
