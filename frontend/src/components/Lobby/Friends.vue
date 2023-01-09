@@ -81,24 +81,6 @@ export default {
                 if(res.data.status == 200){
                     this.is_requested = true;
                     this.is_requested_list = res.data.request_list;
-                    for(var i=0;i<res.data.request_list.length;i++){
-                        var result = confirm(res.data.request_list[i]+"를 친구추가 하시겠습니까?");
-                        if(result){
-                            var AcceptedJson = new Object();
-                            AcceptedJson.requester_nickname = res.data.request_list[i];
-                            AcceptedJson.recipient_nickname = this.$store.getters["Users/getUser_nickname"].toString();
-                            this.$axios.post('/api/friends/AcceptFriend',{
-                                AcceptedJson : AcceptedJson,
-                            }).then((res) =>{
-                                if(res.data.status == 200){
-                                    alert(res.data.msg);
-                                }
-                                else if(res.data.status == 500){
-                                    alert(res.data.msg);
-                                }
-                            })
-                        }
-                    }
                 }
             });
         },
