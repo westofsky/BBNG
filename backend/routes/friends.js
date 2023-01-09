@@ -84,7 +84,7 @@ router.post('/AcceptFriend', async (request, response) => {
 });
 
 router.post('/RejectFriend', async (request, response) => {
-    const result1 = await Friends.findOneAndDelete({user_nickname: request.body.RejectedJson.requester_nickname, friend_nickname: request.body.RejectedJson.recipient_nickname})
+    const result1 = await Friends.findOneAndDelete({user_nickname: request.body.RejectedJson.requester_nickname, friend_nickname: request.body.RejectedJson.recipient_nickname}).exec();
     if(result1){
         response.json({ status: "200",msg: "친구요청을 거절하였습니다." });
     }
@@ -95,16 +95,14 @@ router.post('/RejectFriend', async (request, response) => {
 
 router.post('/getFriend', async (request, response) => {
     var friend_list = [];
-    const result1 = await Friends.find((err, friends) => {
-        friends.forEach((item) => {
-            if (item.user_nickname == request.body.user_nickname && item.status == 1) {
-                friend_list.push(item.friend_nickname);
-            }
-            else if(item.friend_nickname == request.body.user_nickname && item.status == 1){
-                friend_list.push(item.user_nickname);
-            }
-        })
-    }).clone().catch(function (err) { console.log(err) });
+    const result1 = await Friends.find({user_nickname : request.body.user_nickname,status : 1});
+    for(var i = 0 ;i<result1.length;i++){
+        friend_list.push(result1[i].friend_nickname);
+    }
+    const result2 = await Friends.find({friend_nickname : request.body.user_nickname,status : 1});
+    for(var i = 0 ;i<result2.length;i++){
+        friend_list.push(result2[i].user_nickname);
+    }
     console.log(friend_list);
     if (friend_list.length == 0) {
         response.json({ status: "200", msg: "친구가 없습니다." });
