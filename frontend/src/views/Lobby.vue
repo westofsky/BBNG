@@ -31,9 +31,6 @@
     <Teleport to="body">
         <!-- use the modal component, pass in the prop -->
         <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog" @close="showCreateRoomDialog = false">
-            <template #header>
-                <h3>custom1 header</h3>
-            </template>
         </CreateRoomDialog>
     </Teleport>
 </template>
@@ -68,6 +65,9 @@ export default {
         },
         setIsRuleActive() {
             this.isRuleActive = false;
+        },
+        createRoom(name, password, playerCount, showScore, roundCount) {
+            
         }
     },
     components: {

@@ -9,18 +9,21 @@
                     <div class="CreateRoomDialog-Body">
                         <div class="OptionGroup">
                             <label class="OptionTitle">방 이름</label>
+                            <div class="VerticalLine" />
                             <div class="OptionArea">
-                                <input class="Name" type="text" />
+                                <input class="Name" type="text" ref="Name" v-model="name" />
                             </div>
                         </div>
                         <div class="OptionGroup">
                             <label class="OptionTitle">비밀번호</label>
+                            <div class="VerticalLine" />
                             <div class="OptionArea">
-                                <input class="Password" type="text" />
+                                <input class="Password" type="text" v-model="password"/>
                             </div>
                         </div>
                         <div class="OptionGroup">
                             <label class="OptionTitle">플레이어 수</label>
+                            <div class="VerticalLine" />
                             <div class="OptionArea">
                                 <div class="PlayerRadioGroup">
                                     <input class="Player" type="radio" value="player_3" v-model="playerCount">
@@ -38,6 +41,7 @@
                         </div>
                         <div class="OptionGroup">
                             <label class="OptionTitle">점수 표시</label>
+                            <div class="VerticalLine" />
                             <div class="OptionArea">
                                 <input class="Player" type="checkbox" value="show" v-model="showScore">
                                 <label class="ShowScoreLabel">게임 중 표시</label>
@@ -45,6 +49,7 @@
                         </div>
                         <div class="OptionGroup">
                             <label class="OptionTitle">라운드 수</label>
+                            <div class="VerticalLine" />
                             <div class="OptionArea">
                                 <div class="PlayerRadioGroup">
                                     <input class="Player" type="radio" value="round_10" v-model="roundCount">
@@ -63,14 +68,12 @@
                     </div>
 
                     <div class="CreateRoomDialog-Footer">
-                        <slot name="footer">
-                            <div class="BtnCancel" @click="$emit('close')">
-                                <label class="BtnText">취소</label>
-                            </div>
-                            <div class="BtnCreate">
-                                <label class="BtnText">생성</label>
-                            </div>
-                        </slot>
+                        <div class="BtnCancel" @click="$emit('close')">
+                            <label class="BtnText">취소</label>
+                        </div>
+                        <div class="BtnCreate" @click="this.$parent.createRoom(this.name, this.password, this.playerCount, this.showScore, this.roundCount); $emit('close');">
+                            <label class="BtnText">생성</label>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -102,6 +105,7 @@ export default {
             this.playerCount = 'player_3';
             this.showScore = false;
             this.roundCount = 'round_10';
+            this.$nextTick(() => this.$refs.Name.focus());
         }
     }
 }
@@ -127,7 +131,7 @@ export default {
 }
 
 .CreateRoomDialog-Container {
-    width: 400px;
+    width: 480px;
     margin: 0px auto;
     background-color: #ffffff;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
@@ -149,6 +153,7 @@ export default {
     font-weight: bold;
     padding: 8px;
     color: #ffffff;
+    user-select: none;
 }
 
 .CreateRoomDialog-Body {
@@ -176,6 +181,14 @@ export default {
     color: #525252;
     font-size: 16pt;
     padding: 8px;
+    user-select: none;
+}
+
+.VerticalLine {
+    width: 2px;
+    height: 24px;
+    background-color: #6b6b6b;
+    margin-right: 16px;
 }
 
 .OptionArea {
@@ -211,12 +224,14 @@ export default {
     margin-right: 8px;
     font-weight: bold;
     color: #777777;
+    user-select: none;
 }
 
 .ShowScoreLabel {
     font-weight: bold;
     color: #777777;
     margin-left: 16px;
+    user-select: none;
 }
 
 .RoundRadioGroup {
@@ -231,6 +246,7 @@ export default {
     margin-right: 8px;
     font-weight: bold;
     color: #777777;
+    user-select: none;
 }
 
 .BtnCancel {
@@ -269,6 +285,7 @@ export default {
     font-size: 16pt;
     font-weight: bold;
     color: #ffffff;
+    user-select: none;
 }
 
 /*
