@@ -1,6 +1,4 @@
 var express = require('express');
-const { request } = require('../app');
-const { db } = require('../Schemas/Friends');
 var router = express.Router();
 var Friends = require('../Schemas/Friends');
 var User = require('../Schemas/User');
