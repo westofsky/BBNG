@@ -110,7 +110,8 @@ router.post('/getFriend', async (request, response) => {
 
 router.post('/RemoveFriend', async (request, response) => {
     const result1 = await Friends.findOneAndDelete({user_nickname: request.body.user_nickname1, friend_nickname: request.body.user_nickname2})
-    if(result1){
+    const result2 = await Friends.findOneAndDelete({user_nickname: request.body.user_nickname2, friend_nickname: request.body.user_nickname1})
+    if(result1 || result2){
         response.json({ status: "200",msg: "친구삭제 되었습니다." });
     }
     else{
