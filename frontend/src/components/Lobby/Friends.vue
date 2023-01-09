@@ -8,13 +8,13 @@
                 <a href="#" class="btn" @click = "Add_Friend">친구추가</a>
             </div>
             <label class="Title">친구</label>
-            <label class="OnlineCount">온라인: {{ friendList.length }}명</label>
+            <label class="OnlineCount">온라인: {{ friendList?.length }}명</label>
         </div>
         <hr style="margin: 8px;" />
         <div class="FriendList">
             <div :class="friendInfo.state === 'online' ? 'FriendInfo Online' : 'FriendInfo Offline'"
                 v-for="friendInfo in friendList" :key = "friendInfo">
-                <label class="Name">{{ friendInfo.nickname }}</label>
+                <label class="Name">{{ friendInfo }}</label>
                 <label v-if="friendInfo.state === 'online'" class="Online">온라인</label>
                 <label v-else class="Offline">오프라인</label>
             </div>
@@ -73,9 +73,21 @@ export default {
         Accept_Friend(){
             this.is_requested_clicked = true;
         },
-        get_requests(){
-            this.$axios.post('/api/friends/FriendRequest',{
-            nickname : this.$store.getters["Users/getUser_nickname"]
+        async get_friends(){
+            var user_nickname = await this.$store.getters["Users/getUser_nickname"];
+            await this.$axios.post('/api/friends/getFriend',{
+                user_nickname : user_nickname
+            }).then((res) =>{
+                console.log(res.data);
+                if(res.data.status == 200){
+                    this.friendList = res.data.friend_list;
+                }
+            });
+        },
+        async get_requests(){
+            var user_nickname = await this.$store.getters["Users/getUser_nickname"];
+            await this.$axios.post('/api/friends/FriendRequest',{
+                nickname : user_nickname
             }).then((res) =>{
                 console.log(res.data);
                 if(res.data.status == 200){
@@ -98,6 +110,7 @@ export default {
                 }).then((res) =>{
                     if(res.data.status == 200){
                         alert(res.data.msg);
+                        this.is_requested_list.splice(index,1);
                     }
                     else if(res.data.status == 500){
                         alert(res.data.msg);
@@ -116,6 +129,7 @@ export default {
                 }).then((res) =>{
                     if(res.data.status == 200){
                         alert(res.data.msg);
+                        this.is_requested_list.splice(index,1);
                     }
                     else if(res.data.status == 500){
                         alert(res.data.msg);
@@ -124,8 +138,9 @@ export default {
             }
         }
     },
-    mounted() {
-        this.get_requests();
+    async mounted() {
+        await this.get_requests();
+        await this.get_friends();
     },
 }
 </script>
