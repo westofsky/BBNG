@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { Socket } from 'engine.io-client';
 import io from 'socket.io-client';
 import * as sock_const from "../../constants/socket-constants.js";
 
