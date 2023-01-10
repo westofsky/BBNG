@@ -71,7 +71,7 @@
                         <div class="BtnCancel" @click="$emit('close')">
                             <label class="BtnText">취소</label>
                         </div>
-                        <div class="BtnCreate" @click="this.$parent.createRoom(this.name, this.password, this.playerCount, this.showScore, this.roundCount); $emit('close');">
+                        <div class="BtnCreate" @click="createRoom">
                             <label class="BtnText">생성</label>
                         </div>
                     </div>
@@ -82,6 +82,9 @@
 </template>
 
 <script>
+import io from 'socket.io-client';
+import * as sock_const from "../../constants/socket-constants.js";
+
 export default {
     name: 'CreateRoomDialog',
     data() {
@@ -95,6 +98,7 @@ export default {
     },
     props: {
         show: Boolean,
+        socket: { type: io.Socket, required: true },
     },
     methods: {
         mounted() {
@@ -106,6 +110,18 @@ export default {
             this.showScore = false;
             this.roundCount = 'round_10';
             this.$nextTick(() => this.$refs.Name.focus());
+        },
+        createRoom() {
+            this.$emit('close');
+            this.socket.emit(sock_const.RequestType.CREATE_ROOM, {
+                oid: this.$store.getters["Users/getUser_nickname"]
+                , nickname: this.$store.getters["Users/getUser_oid"]
+                , room_name: this.name
+                , room_password: this.password
+                , room_player_count: this.playerCount
+                , room_show_score: this.showScore
+                , room_round_count: this.roundCount
+            });
         }
     }
 }

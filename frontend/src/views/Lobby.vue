@@ -30,10 +30,9 @@
     </div>
     <Teleport to="body">
         <!-- use the modal component, pass in the prop -->
-        <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog" @close="showCreateRoomDialog = false">
-        </CreateRoomDialog>
+        <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog" @close="showCreateRoomDialog = false" v-bind:socket="socket"/>
     </Teleport>
-</template>
+</template> 
 
 <script>
 import Ranking from '../components/Lobby/Ranking.vue';
@@ -70,9 +69,6 @@ export default {
         setIsRuleActive() {
             this.isRuleActive = false;
         },
-        createRoom(name, password, playerCount, showScore, roundCount) {
-            
-        }
     },
     components: {
         Ranking: Ranking,
