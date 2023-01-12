@@ -79,7 +79,8 @@ const { Server } = require("socket.io");
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 const sock_const = require("./constants/socket-constants.js");
-const allClients = []
+let clientList = []
+let roomList = []
 
 // Initializing constants related to sockets.
 sock_const.initSocketConstants();
@@ -91,7 +92,7 @@ io.on('connection', (socket) => { // New client socket connected.
   socket.on(String(sock_const.RequestType.JOIN_LOBBY), function(data) {
     console.log("join:" + socket.id);
     socket.join(sock_const.ChatroomType.LOBBY);
-    allClients.push({user: data['user'], socket: socket});
+    clientList.push({user: data['user'], socket: socket});
   });
 
   socket.on(sock_const.RequestType.LEAVE_LOBBY, function(data) {
@@ -105,12 +106,21 @@ io.on('connection', (socket) => { // New client socket connected.
 
   socket.on('disconnect', (reason) => { // Client disconnected.
     console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
-    for(var loop = 0; loop < allClients.length; loop++){
-      if(allClients[loop].socket.id == socket.id){
-        allClients.splice(loop, 1);
+    for(var loop = 0; loop < clientList.length; loop++){
+      if(clientList[loop].socket.id == socket.id){
+        clientList.splice(loop, 1);
         break;
       }
     }
+  });
+
+  socket.on(sock_const.RequestType.CREATE_ROOM, function(data) {
+    let room = data;
+    room['rid'] = createRoomId((data['host'] + (new Date()).toLocaleString()));
+    room['state'] = 
+    roomList.push(room);
+    socket.join(room['rid']);
+    console.log(roomList);
   });
 });
 
@@ -118,3 +128,15 @@ io.on('connection', (socket) => { // New client socket connected.
 httpServer.listen(port, () => {
   console.log(`${port}포트에서 서버 작동중입니다.`);
 });
+
+const crypto = require('crypto');
+
+function createRoomId(roomName, roomType) {
+  return createHashFromString(roomName + roomType + (new Date()).toLocaleString());
+}
+
+function createHashFromString(string) {
+  const hash = crypto.createHash('sha256');
+  hash.update(string);
+  return hash.digest('hex').slice(0, 32);
+}
