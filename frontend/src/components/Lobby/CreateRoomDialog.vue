@@ -26,15 +26,15 @@
                             <div class="VerticalLine" />
                             <div class="OptionArea">
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value="player_3" v-model="playerCount">
+                                    <input class="Player" type="radio" value=3 v-model="playerCount">
                                     <label class="PlayerLabel">3명</label>
                                 </div>
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value="player_4" v-model="playerCount">
+                                    <input class="Player" type="radio" value=4 v-model="playerCount">
                                     <label class="PlayerLabel">4명</label>
                                 </div>
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value="player_5" v-model="playerCount">
+                                    <input class="Player" type="radio" value=5 v-model="playerCount">
                                     <label class="PlayerLabel">5명</label>
                                 </div>
                             </div>
@@ -43,7 +43,7 @@
                             <label class="OptionTitle">점수 표시</label>
                             <div class="VerticalLine" />
                             <div class="OptionArea">
-                                <input class="Player" type="checkbox" value="show" v-model="showScore">
+                                <input class="Player" type="checkbox" value=true v-model="showScore">
                                 <label class="ShowScoreLabel">게임 중 표시</label>
                             </div>
                         </div>
@@ -52,15 +52,15 @@
                             <div class="VerticalLine" />
                             <div class="OptionArea">
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value="round_10" v-model="roundCount">
+                                    <input class="Player" type="radio" value=10 v-model="roundCount">
                                     <label class="RoundLabel">10회</label>
                                 </div>
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value="round_15" v-model="roundCount">
+                                    <input class="Player" type="radio" value=15 v-model="roundCount">
                                     <label class="RoundLabel">15회</label>
                                 </div>
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value="round_20" v-model="roundCount">
+                                    <input class="Player" type="radio" value=20 v-model="roundCount">
                                     <label class="RoundLabel">20회</label>
                                 </div>
                             </div>
@@ -81,7 +81,9 @@
 
 <script>
 import io from 'socket.io-client';
-import * as sock_const from "../../constants/socket-constants.js";
+import * as sock_const from "../../../../common/constant/socket-constants.js";
+import * as game from "../../../../common/class/Game.js";
+import * as game_const from "../../../../common/constant/game-constants.js";
 
 export default {
     name: 'CreateRoomDialog',
@@ -89,9 +91,9 @@ export default {
         return {
             name: '',
             password: '',
-            playerCount: 'player_3',
+            playerCount: 3,
             showScore: false,
-            roundCount: 'round_10',
+            roundCount: 10,
         }
     },
     props: {
@@ -104,21 +106,24 @@ export default {
         init() {
             this.name = '';
             this.password = '';
-            this.playerCount = 'player_3';
+            this.playerCount = 3;
             this.showScore = false;
-            this.roundCount = 'round_10';
+            this.roundCount = 10;
             this.$nextTick(() => this.$refs.Name.focus());
         },
         createRoom() {
             this.$emit('close');
-            this.socket.emit(sock_const.RequestType.CREATE_ROOM, {
-                host: this.$store.getters["Users/getUser_nickname"]
-                , room_name: this.name
-                , room_password: this.password
-                , room_player_count: this.playerCount
-                , room_show_score: this.showScore
-                , room_round_count: this.roundCount
-            });
+            let gameRoom = new game.GameRoom(
+                '',
+                this.$store.getters["Users/getUser_nickname"],
+                this.name,
+                this.password,
+                this.playerCount,
+                this.showScore,
+                this.roundCount,
+                game_const.GameState.WAITING
+            );
+            this.socket.emit(sock_const.RequestType.CREATE_ROOM, gameRoom);
         }
     }
 }
