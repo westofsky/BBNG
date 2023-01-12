@@ -42,7 +42,7 @@ import Chatting from '../components/Lobby/Chatting.vue';
 import Rules from '../components/Lobby/Rules.vue';
 import CreateRoomDialog from '../components/Lobby/CreateRoomDialog.vue'
 import io from 'socket.io-client';
-import * as sock_const from "../constants/socket-constants.js";
+import * as sock_const from "../../../common/constant/socket-constants";
 
 export default {
     name: 'Lobby',
