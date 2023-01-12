@@ -74,3 +74,7 @@ class GameRoom {
         this._state = state;
       }
 }
+
+module.exports = {
+    GameRoom
+}
