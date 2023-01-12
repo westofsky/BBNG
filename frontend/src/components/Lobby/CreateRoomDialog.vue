@@ -11,7 +11,7 @@
                             <label class="OptionTitle">방 이름</label>
                             <div class="VerticalLine" />
                             <div class="OptionArea">
-                                <input class="Name" type="text" ref="Name" v-model="name" />
+                                <input class="Name" type="text" ref="Name" v-model="name"/>
                             </div>
                         </div>
                         <div class="OptionGroup">
@@ -71,9 +71,7 @@
                         <div class="BtnCancel" @click="$emit('close')">
                             <label class="BtnText">취소</label>
                         </div>
-                        <div class="BtnCreate" @click="createRoom">
-                            <label class="BtnText">생성</label>
-                        </div>
+                        <button v-bind:disabled="name.length == 0" class="BtnCreate BtnText" @click="createRoom">생성</button>
                     </div>
                 </div>
             </div>
@@ -114,8 +112,7 @@ export default {
         createRoom() {
             this.$emit('close');
             this.socket.emit(sock_const.RequestType.CREATE_ROOM, {
-                oid: this.$store.getters["Users/getUser_nickname"]
-                , nickname: this.$store.getters["Users/getUser_oid"]
+                host: this.$store.getters["Users/getUser_nickname"]
                 , room_name: this.name
                 , room_password: this.password
                 , room_player_count: this.playerCount
@@ -287,14 +284,19 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 0px;
 }
 
-.BtnCreate:hover {
+.BtnCreate:hover:enabled {
     background-color: #5e77ca;
 }
 
-.BtnCreate:active {
+.BtnCreate:active:enabled {
     background-color: #5268b3;
+}
+
+.BtnCreate:disabled {
+    background-color: #374677;
 }
 
 .BtnText {
@@ -302,6 +304,10 @@ export default {
     font-weight: bold;
     color: #ffffff;
     user-select: none;
+}
+
+.BtnText:disabled {
+    color: #777777;
 }
 
 /*
