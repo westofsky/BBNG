@@ -94,7 +94,7 @@
                 <div class = "wrap_contents">
                     <div class="content1">
                         <p>&bull;뽕</p>
-                        <p>다른 플레이어가 버린 카드를 2장 가지고 있을 때, 뽕을 할 수 있습니다. </p>
+                        <p style="font-size: 1.5vw;">다른 플레이어가 버린 카드를 2장 가지고 있을 때, 뽕을 할 수 있습니다. </p>
                     </div>
                     <div class="content2">
                         <div class = "section1">
@@ -308,9 +308,6 @@ export default {
     text-align : left;
 }
 
-.wrapper .page3 .wrap_contents .content1 p{
-    font-size: 2vw;
-}
 .wrapper .page3 .wrap_contents .content2{
     display:flex;
     height:100%;
