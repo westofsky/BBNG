@@ -16,20 +16,20 @@ const port = 3000;
 require("dotenv").config();
 //db 세팅
 const mongoose = require('mongoose');
-mongoose.set('strictQuery',true);
+mongoose.set('strictQuery', true);
 mongoose.connect(
   process.env.DB_URL,
   {
-  // useNewUrlPaser: true,
-  // useUnifiedTofology: true,
-  // useCreateIndex: true,
-  // useFindAndModify: false,
+    // useNewUrlPaser: true,
+    // useUnifiedTofology: true,
+    // useCreateIndex: true,
+    // useFindAndModify: false,
   }
 ).then(() => {
-    console.log('MongoDB 연결됨');
-    
+  console.log('MongoDB 연결됨');
+
 }).catch((err) => {
-    console.log(err);
+  console.log(err);
 });
 
 // view engine setup
@@ -45,24 +45,24 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use(express.static(__dirname));
 app.get("*", function (req, res) {
-	res.sendFile(path.resolve(__dirname, "./public/index.html"));
+  res.sendFile(path.resolve(__dirname, "./public/index.html"));
 });
-app.all('/*', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    next();
-  });
+app.all('/*', function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
 // api용 
 app.use('/api/users/', usersRouter);
 app.use('/api/friends/', friendsRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -80,9 +80,9 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 const sock_const = require(path.join(__dirname, '..', 'common', 'constant', 'socket-constants.js'));
 const game_const = require(path.join(__dirname, '..', 'common', 'constant', 'game-constants.js'));
-const game = require(path.join(__dirname, '..', 'common', 'class', 'Game.js'));
-let clientList = []
-let gameRoomList = []
+let clientListBySocket = new Map();
+let clientListByNickname = new Map();
+let gameRoomList = {};
 
 // Initializing constants.
 sock_const.initSocketConstants();
@@ -92,49 +92,61 @@ game_const.initGameConstants();
 io.on('connection', (socket) => { // New client socket connected.
   console.log('Client connected: ' + socket.id);
 
-  socket.on(String(sock_const.RequestType.JOIN_LOBBY), function(data) {
+  socket.on(sock_const.RequestType.ADD_USER_TO_LIST, function (data) {
+    clientListBySocket.set(socket.id, data);
+    clientListByNickname.set(data, socket.id);
+
+    console.log('Client List: ');
+    let mapString = '';
+    clientListBySocket.forEach((value, key) => {
+      mapString += `socket id: ${key}, nickname: ${value}\n`;
+    });
+    clientListByNickname.forEach((value, key) => {
+      mapString += `nickname: ${key}, socket id: ${value}\n`;
+    });
+    console.log(mapString);
+  });
+
+  socket.on(sock_const.RequestType.JOIN_LOBBY, function (data) {
     console.log("join:" + socket.id);
     socket.join(sock_const.ChatroomType.LOBBY);
-    clientList.push({user: data['user'], socket: socket});
   });
 
   // Leave lobby chatting.
-  socket.on(sock_const.RequestType.LEAVE_LOBBY, function(data) {
+  socket.on(sock_const.RequestType.LEAVE_LOBBY, function (data) {
     socket.leave(sock_const.ChatroomType.LOBBY);
   });
 
   // Receive message from client.
-  socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function(data) {
+  socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function (data) {
     console.log("send message:" + data);
     socket.broadcast.to(sock_const.ChatroomType.LOBBY).emit(sock_const.ResponseType.BROADCAST_LOBBY_MSG, data);
   });
 
   // Create custom room.
-  socket.on(sock_const.RequestType.CREATE_ROOM, (data) => {
-    let gameRoom = new game.GameRoom(
-      createRoomId((data._host + (new Date()).toLocaleString())),
-      data._host,
-      data._name,
-      data._password,
-      data._player_count,
-      data._show_score,
-      data._round_count,
-      data._state
-    );
-    gameRoomList.push(gameRoom);
-    socket.join('rid: ' + gameRoom.rid);
-    console.log(gameRoom.toString());
+  socket.on(sock_const.RequestType.CREATE_ROOM, (gameRoom) => {
+    gameRoom.rid = createRoomId((gameRoom.host + (new Date()).toLocaleString()));
+    gameRoomList[gameRoom.rid] = gameRoom;
+    socket.join(gameRoom.rid);
+    console.log('Game room created: ' + JSON.stringify(gameRoomList));
   });
 
   // Client disconnected.
-  socket.on('disconnect', (reason) => { 
+  socket.on('disconnect', (reason) => {
     console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
-    for(var loop = 0; loop < clientList.length; loop++){
-      if(clientList[loop].socket.id == socket.id){
-        clientList.splice(loop, 1);
-        break;
-      }
-    }
+
+    clientListByNickname.delete(clientListBySocket.get(socket.id));
+    clientListBySocket.delete(socket.id);
+
+    console.log('Client List: ');
+    let mapString = '';
+    clientListBySocket.forEach((value, key) => {
+      mapString += `socket id: ${key}, nickname: ${value}\n`;
+    });
+    clientListByNickname.forEach((value, key) => {
+      mapString += `nickname: ${key}, socket id: ${value}\n`;
+    });
+    console.log(mapString);
   });
 });
 
