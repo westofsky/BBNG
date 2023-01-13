@@ -89,7 +89,7 @@
             </div>
             <div class = "contents page3" v-if = "page==3">
                 <div class ="wrap_p">
-                    <p>플레이어가 본인 차례가 아닐 때 취할 수 있는 행동</p><br>
+                    <p>플레이어가 본인 차례가 아닐 때 취할 수 있는 행동</p>
                 </div>
                 <div class = "wrap_contents">
                     <div class="content1">
@@ -98,10 +98,69 @@
                     </div>
                     <div class="content2">
                         <div class = "section1">
-
+                            <div class="wrap_divs">
+                                <div class="wrap_cards">
+                                    <img src = "../../assets/images/cards/heart_12.png" style="left : 0%; z-index : 1;">
+                                    <img src = "../../assets/images/cards/diamond_12.png" style="left : 13%; z-index : 2;">
+                                    <img src = "../../assets/images/cards/heart_10.png" style="left : 26%; z-index : 3;">
+                                    <img src = "../../assets/images/cards/spade_6.png" style="left : 39%; z-index : 4;">
+                                    <img src = "../../assets/images/cards/clover_6.png" style="left : 52%; z-index : 5;">
+                                </div>
+                            </div>
+                            <p>이런 경우 Q뽕이며, Q 2장을 내고 원하는 카드 한 장을 더 버릴 수 있습니다.(10을 버린 경우)</p>
+                            <div class="wrap_divs">
+                                <div class="wrap_cards">
+                                    <img src = "../../assets/images/cards/spade_6.png" style="left : 0%; z-index : 4;">
+                                    <img src = "../../assets/images/cards/clover_6.png" style="left : 13%; z-index : 5;">
+                                </div>
+                            </div>
                         </div>
                         <div class = "section2">
-
+                            <p>남은 2장의 카드가 같을 경우 바가지이며, 다른 사람이 해당 카드를 내면 뽕을 할 수 있습니다. 해당 카드를 낸 플레이어는 바가지(+30점)을 받게 되고, 뽕을 한 플레이어는 0점을 얻게 됩니다. </p>
+                            <div class="wrap_divs">
+                                <div class="wrap_cards">
+                                    <img src = "../../assets/images/cards/spade_6.png" style="left : 0%; z-index : 4;">
+                                    <img src = "../../assets/images/cards/clover_6.png" style="left : 13%; z-index : 5;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class = "contents page4" v-if = "page==4">
+                <div class ="wrap_p">
+                    <p>플레이어가 본인 차례가 아닐 때 취할 수 있는 행동</p>
+                </div>
+                <div class = "wrap_contents">
+                    <div class="content1">
+                        <p>&bull;뽕</p>
+                        <div class="p_content">
+                            <p>한 플레이어가 뽕을 하게 되면, 순서는 뽕을 한 플레이어부터 다시 시계방향으로 턴이 진행됩니다.</p>
+                            <p>뽕을 하여 숫자가 다른 카드 2장을 갖고 있을 때, 카드 뽑고 버리기를 통해 같은 카드 2장을 만들 수 있으며, 이때는 다시 바가지가 됩니다.</p>
+                            <p>카드 2장을 갖고 있는 상태에서 다른 플레이어가 라운드를 끝낸다면, 본인은 갖고 있는 2장의 숫자 합 만큼의 점수를 얻게 됩니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class = "contents page5" v-if = "page==5">
+                <div class ="wrap_p">
+                    <p>플레이어가 본인 차례일 때 취할 수 있는 행동</p>
+                </div>
+                <div class = "wrap_contents">
+                    <div class="content1">
+                        <p>&bull;카드 뽑고 버리기</p>
+                        <div class="p_content">
+                            <p>카드 한 장을 뽑고 원하는 카드 한 장을 버릴 수 있습니다. 이때 조합이 완성되면 게임을 끝낼 수 있습니다.</p>
+                        </div>
+                        <p>&bull;자연</p>
+                        <div class="p_content">
+                            <p>카드 한 장을 뽑은 뒤, 같은 숫자의 카드가 3장 있으면 자연을 외치고 한 장을 더 버릴 수 있습니다.</p>
+                            <p>이때 남은 카드가 같으면 마찬가지로 뽕을 할 수 있습니다.</p>
+                        </div>
+                        <p>&bull;스톱</p>
+                        <div class="p_content">
+                            <p>뽕을 하게 되어 카드가 2장이 남고, 다른 플레이어도 뽕을 하여 2장의 카드가 남았을 때,본인의 카드 숫자 합이 4이하면 스톱을 할 수 있습니다. </p>
+                            <p>이때 뽕을 한 다른 플레이어의 카드 숫자 합보다 크거나 같으면 스톱을 한 플레이어가 바가지(+30점)을 받게 됩니다.</p>
                         </div>
                     </div>
                 </div>
@@ -134,7 +193,7 @@ export default {
             }
         },
         next_page(){
-            if(this.page == 5)
+            if(this.page ==5)
                 return;
             else{
                 this.page++;
@@ -192,6 +251,11 @@ export default {
     text-align: center;
 }
 
+.wrapper .contents p{
+    font-size :2.2vw;
+    margin : 0;
+    padding : 0;
+}
 .wrapper .page2{
     align-items: baseline;
     display : block;
@@ -207,9 +271,13 @@ export default {
     margin: 1%;
     height: 11vw;
 }
-
+.wrapper .page2 .wrap_p p{
+    font-size : 2vw;
+    padding-top:1.5vw;
+}
 .wrapper .page2 .wrap_content p{
     font-size : 1.4vw;
+    margin-top:1vw;
 }
 .wrapper .page2 .wrap_content .wrap_cards{
     display : flex;
@@ -229,17 +297,102 @@ export default {
 }
 .wrapper .page3 .wrap_p{
     font-size: 1.8vw;
+    padding-top:1.5vw;
 }
 .wrapper .page3 .wrap_contents{
     margin-left : 4vw;
+    margin-right : 4vw;
+    height:100%;
 }
 .wrapper .page3 .wrap_contents .content1{
     text-align : left;
 }
-.wrapper .contents p{
-    font-size :2.2vw;
-    margin : 0;
-    padding : 0;
+
+.wrapper .page3 .wrap_contents .content1 p{
+    font-size: 2vw;
+}
+.wrapper .page3 .wrap_contents .content2{
+    display:flex;
+    height:100%;
+}
+
+.wrapper .page3 .wrap_contents .content2 .section1{
+    width:50%;
+    height:100%;
+}
+
+.wrapper .page3 .wrap_contents .wrap_cards{
+    display : flex;
+    align-items:center;
+    height: 10vw;
+    justify-content: center;
+    position:relative;
+}
+.wrapper .page3 .wrap_contents .wrap_cards img{
+    position: absolute;
+    object-fit: cover;
+    height:8.5vw;
+}
+
+.wrapper .page3 .wrap_contents .content2 .section1 p{
+    font-size: 1.5vw;
+    text-align : left;
+}
+
+.wrapper .page3 .wrap_contents .content2 .section2{
+    width : 50%;
+    height:100%;
+    padding-top:6vw;
+}
+.wrapper .page3 .wrap_contents .content2 .section2 p{
+    font-size: 1.5vw;
+    text-align : left;
+}
+
+.wrapper .page4{
+    display:block;
+}
+.wrapper .page4 .wrap_contents{
+    margin-left:4vw;
+    margin-right:4vw;
+    height:100%;
+}
+.wrapper .page4 .wrap_p{
+    font-size: 1.8vw;
+    padding-top:1.5vw;
+}
+.wrapper .page4 .wrap_contents .content1{
+    text-align : left;
+}
+.wrapper .page4 .wrap_contents .content1 .p_content{
+    margin-top:1vw;
+}
+.wrapper .page4 .wrap_contents .content1 .p_content p{
+    font-size: 1.8vw;
+    margin-top:1vw;
+}
+.wrapper .page5{
+    display:block;
+}
+.wrapper .page5 .wrap_contents{
+    margin-left:4vw;
+    margin-right:4vw;
+    height:100%;
+}
+.wrapper .page5 .wrap_p{
+    font-size: 1.8vw;
+    padding-top:1vw;
+}
+.wrapper .page5 .wrap_contents .content1{
+    text-align : left;
+}
+.wrapper .page5 .wrap_contents .content1 .p_content{
+    margin-top:1vw;
+    margin-bottom:1vw;
+}
+.wrapper .page5 .wrap_contents .content1 .p_content p{
+    font-size: 1.4vw;
+    margin-top:1vw;
 }
 .wrapper .btnWrapper{
     width:100%;
