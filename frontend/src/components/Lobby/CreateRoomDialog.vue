@@ -26,15 +26,15 @@
                             <div class="VerticalLine" />
                             <div class="OptionArea">
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value=3 v-model="playerCount">
+                                    <input class="Player" type="radio" value=3 v-model="playerLimit">
                                     <label class="PlayerLabel">3명</label>
                                 </div>
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value=4 v-model="playerCount">
+                                    <input class="Player" type="radio" value=4 v-model="playerLimit">
                                     <label class="PlayerLabel">4명</label>
                                 </div>
                                 <div class="PlayerRadioGroup">
-                                    <input class="Player" type="radio" value=5 v-model="playerCount">
+                                    <input class="Player" type="radio" value=5 v-model="playerLimit">
                                     <label class="PlayerLabel">5명</label>
                                 </div>
                             </div>
@@ -82,7 +82,6 @@
 <script>
 import io from 'socket.io-client';
 import * as sock_const from "../../../../common/constant/socket-constants.js";
-import * as game from "../../../../common/class/Game.js";
 import * as game_const from "../../../../common/constant/game-constants.js";
 
 export default {
@@ -91,7 +90,7 @@ export default {
         return {
             name: '',
             password: '',
-            playerCount: 3,
+            playerLimit: 3,
             showScore: false,
             roundCount: 10,
         }
@@ -106,24 +105,29 @@ export default {
         init() {
             this.name = '';
             this.password = '';
-            this.playerCount = 3;
+            this.playerLimit = 3;
             this.showScore = false;
             this.roundCount = 10;
             this.$nextTick(() => this.$refs.Name.focus());
         },
         createRoom() {
             this.$emit('close');
-            let gameRoom = new game.GameRoom(
-                '',
-                this.$store.getters["Users/getUser_nickname"],
-                this.name,
-                this.password,
-                this.playerCount,
-                this.showScore,
-                this.roundCount,
-                game_const.GameState.WAITING
-            );
-            this.socket.emit(sock_const.RequestType.CREATE_ROOM, gameRoom);
+            this.socket.emit(sock_const.RequestType.CREATE_ROOM,{
+                rid: '',
+                host: this.$store.getters["Users/getUser_nickname"],
+                name: this.name,
+                password: this.password,
+                player_limit: this.playerLimit,
+                current_player_count: 0,
+                show_score: this.showScore,
+                round_count: this.roundCount,
+                state: game_const.GameState.WAITING,
+                players: {
+                    socket_id: this.socket.id,
+                    oid: this.$store.getters["Users/getUser_oid"],
+                    nickname: this.$store.getters["Users/getUser_nickname"]
+                }
+            });
         }
     }
 }
