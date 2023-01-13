@@ -79,6 +79,8 @@ export default {
         CreateRoomDialog: CreateRoomDialog,
     },
     mounted() {
+        this.socket.emit(sock_const.RequestType.ADD_USER_TO_LIST, this.$store.getters["Users/getUser_nickname"]);
+
         // Implement load initial datas from server.
         let rankList = [{ tier: "Challenger", nick: "Nickname1", rank_point: 99999 },
         { tier: "Challenger", nick: "Nickname2", rank_point: 99999 },
