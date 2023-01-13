@@ -4,6 +4,7 @@ const ChatroomType = {
 }
 
 const RequestType = {
+    ADD_USER_TO_LIST: 0,
     JOIN_LOBBY: 0,
     LEAVE_LOBBY: 0,
     ADD_FRIEND: 0,
