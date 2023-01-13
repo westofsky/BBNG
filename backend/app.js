@@ -78,12 +78,15 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const httpServer = createServer(app);
 const io = new Server(httpServer);
-const sock_const = require("./constants/socket-constants.js");
+const sock_const = require(path.join(__dirname, '..', 'common', 'constant', 'socket-constants.js'));
+const game_const = require(path.join(__dirname, '..', 'common', 'constant', 'game-constants.js'));
+const game = require(path.join(__dirname, '..', 'common', 'class', 'Game.js'));
 let clientList = []
-let roomList = []
+let gameRoomList = []
 
-// Initializing constants related to sockets.
+// Initializing constants.
 sock_const.initSocketConstants();
+game_const.initGameConstants();
 
 // Set event in io.
 io.on('connection', (socket) => { // New client socket connected.
@@ -95,16 +98,36 @@ io.on('connection', (socket) => { // New client socket connected.
     clientList.push({user: data['user'], socket: socket});
   });
 
+  // Leave lobby chatting.
   socket.on(sock_const.RequestType.LEAVE_LOBBY, function(data) {
     socket.leave(sock_const.ChatroomType.LOBBY);
   });
 
-  socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function(data) { // Send message to all clients when message received.
+  // Receive message from client.
+  socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function(data) {
     console.log("send message:" + data);
     socket.broadcast.to(sock_const.ChatroomType.LOBBY).emit(sock_const.ResponseType.BROADCAST_LOBBY_MSG, data);
   });
 
-  socket.on('disconnect', (reason) => { // Client disconnected.
+  // Create custom room.
+  socket.on(sock_const.RequestType.CREATE_ROOM, (data) => {
+    let gameRoom = new game.GameRoom(
+      createRoomId((data._host + (new Date()).toLocaleString())),
+      data._host,
+      data._name,
+      data._password,
+      data._player_count,
+      data._show_score,
+      data._round_count,
+      data._state
+    );
+    gameRoomList.push(gameRoom);
+    socket.join('rid: ' + gameRoom.rid);
+    console.log(gameRoom.toString());
+  });
+
+  // Client disconnected.
+  socket.on('disconnect', (reason) => { 
     console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
     for(var loop = 0; loop < clientList.length; loop++){
       if(clientList[loop].socket.id == socket.id){
@@ -112,15 +135,6 @@ io.on('connection', (socket) => { // New client socket connected.
         break;
       }
     }
-  });
-
-  socket.on(sock_const.RequestType.CREATE_ROOM, function(data) {
-    let room = data;
-    room['rid'] = createRoomId((data['host'] + (new Date()).toLocaleString()));
-    room['state'] = 
-    roomList.push(room);
-    socket.join(room['rid']);
-    console.log(roomList);
   });
 });
 

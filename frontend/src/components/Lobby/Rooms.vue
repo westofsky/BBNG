@@ -12,9 +12,9 @@
                 <div class="Round">
                     <select v-model="filterRound" name="FilterRound" style="font-size: 14pt" @change="applyFilter">
                         <option value="all">전체</option>
-                        <option value="round_10">10 라운드</option>
-                        <option value="round_15">15 라운드</option>
-                        <option value="round_20">20 라운드</option>
+                        <option value=10>10 라운드</option>
+                        <option value=15>15 라운드</option>
+                        <option value=20>20 라운드</option>
                     </select>
                 </div>
                 <div class="ShowScore">
@@ -79,11 +79,11 @@ export default {
 
             if(this.filterRound == "all") {
                 this.filteredRoomList = this.filteredRoomList;
-            } else if(this.filterRound == "round_10") {
+            } else if(this.filterRound == 10) {
                 this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 10)
-            } else if(this.filterRound == "round_15") {
+            } else if(this.filterRound == 15) {
                 this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 15)
-            } else if(this.filterRound == "round_20") {
+            } else if(this.filterRound == 20) {
                 this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 20)
             }
 
@@ -91,7 +91,7 @@ export default {
                 this.filteredRoomList = this.filteredRoomList;
             } else if(this.filterShowScore == "show") {
                 this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_show_score)
-            } else if(this.filterShowScore == "not_show") {
+            } else {
                 this.filteredRoomList = this.filteredRoomList.filter(roomInfo => !roomInfo.roomopt_show_score)
             }
 

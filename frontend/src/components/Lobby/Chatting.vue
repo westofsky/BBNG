@@ -16,7 +16,7 @@
 
 <script>
 import io from 'socket.io-client';
-import * as sock_const from "../../constants/socket-constants.js";
+import * as sock_const from "../../../../common/constant/socket-constants.js";
 
 export default {
     name: 'Chatting',
