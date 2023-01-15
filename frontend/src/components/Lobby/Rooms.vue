@@ -18,30 +18,33 @@
                     </select>
                 </div>
                 <div class="ShowScore">
-                    <select v-model="filterShowScore" name="FilterShowScore" style="font-size: 14pt" @change="applyFilter">
+                    <select v-model="filterShowScore" name="FilterShowScore" style="font-size: 14pt"
+                        @change="applyFilter">
                         <option value="all">전체</option>
                         <option value="show">표시</option>
                         <option value="not_show">미표시</option>
                     </select>
                 </div>
-                <input class="SearchInput" type="search" placeholder="검색할 방 이름 입력" v-model="filterName" v-on:input="applyFilter"/>
+                <input class="SearchInput" type="search" placeholder="검색할 방 이름 입력" v-model="filterName"
+                    v-on:input="applyFilter" />
             </div>
             <div class="BtnRefresh" v-on:click="btnRefreshClicked">
                 <img src="../../assets/images/icon_refresh.png" style="width: 32px; height: 32px;" />
             </div>
         </div>
         <div class="RoomList">
-            <div :class="roomInfo.room_state === '대기중'? 'RoomInfo Enable':'RoomInfo Disable'" v-for="roomInfo in filteredRoomList" v-on:click="onRoomClicked(roomInfo)">
+            <div :class="roomInfo.state === 0 ? 'RoomInfo Enable' : 'RoomInfo Disable'"
+                v-for="roomInfo in filteredRoomList" :key="roomInfo.rid" v-on:click="onRoomClicked(roomInfo)">
                 <div class="RoomInfo1">
-                    <img v-if="roomInfo.roomopt_lock" class="Lock" src="../../assets/images/icon_lock.png"/>
-                    <label class="Name">{{roomInfo.room_name}}</label>
-                    <label class="Player">{{roomInfo.room_current_player}} / {{roomInfo.roomopt_max_player}}</label>
+                    <img v-if="roomInfo.password_required" class="Lock" src="../../assets/images/icon_lock.png" />
+                    <label class="Name">{{ roomInfo.name }}</label>
+                    <label class="Player">{{ roomInfo.current_player_count }} / {{ roomInfo.player_limit }}</label>
                 </div>
                 <div class="RoomInfo2">
-                    <label class="Round">{{roomInfo.roomopt_round}} 라운드</label>
-                    <label v-if="roomInfo.roomopt_show_score" class="ShowScore">점수표시</label>
-                    <label v-if="roomInfo.room_state === '대기중'" class="Waiting">{{roomInfo.room_state}}</label>
-                    <label v-else-if="roomInfo.room_state === '진행중'" class="Playing">{{roomInfo.room_state}}</label>
+                    <label class="Round">{{ roomInfo.round_count }} 라운드</label>
+                    <label v-if="roomInfo.show_score" class="ShowScore">점수표시</label>
+                    <label v-if="roomInfo.state === 0" class="Waiting">대기중</label>
+                    <label v-else-if="roomInfo.state === 1" class="Playing">진행중</label>
                 </div>
             </div>
         </div>
@@ -49,6 +52,10 @@
 </template>
 
 <script>
+import io from 'socket.io-client';
+import * as sock_const from "../../../../common/constant/socket-constants.js";
+import * as game_const from "../../../../common/constant/game-constants.js";
+
 export default {
     name: 'Rooms',
     data() {
@@ -56,10 +63,13 @@ export default {
             filterPasswordRequired: 'all',
             filterRound: 'all',
             filterShowScore: 'all',
-            filterName: '', 
+            filterName: '',
             filteredRoomList: [],
             roomList: [],
         }
+    },
+    props: {
+        socket: { type: io.Socket, required: true },
     },
     methods: {
         setRooms(roomList) {
@@ -67,51 +77,56 @@ export default {
             this.filteredRoomList = this.roomList;
             this.applyFilter();
         },
-        applyFilter(){
-            this.filteredRoomList = [];
-            if(this.filterPasswordRequired == "all") {
+        applyFilter() {
+            this.filteredRoomList = {};
+            if (this.filterPasswordRequired == "all") {
                 this.filteredRoomList = this.roomList;
-            } else if(this.filterPasswordRequired == "required") {
-                this.filteredRoomList = this.roomList.filter(roomInfo => roomInfo.roomopt_lock)
-            } else if(this.filterPasswordRequired == "not_required") {
-                this.filteredRoomList = this.roomList.filter(roomInfo => !roomInfo.roomopt_lock)
+            } else if (this.filterPasswordRequired == "required") {
+                this.filteredRoomList = Object.values(this.roomList).filter(roomInfo => roomInfo.password_required);
+            } else if (this.filterPasswordRequired == "not_required") {
+                this.filteredRoomList = Object.values(this.roomList).filter(roomInfo => !roomInfo.password_required);
             }
 
-            if(this.filterRound == "all") {
+            if (this.filterRound == "all") {
                 this.filteredRoomList = this.filteredRoomList;
-            } else if(this.filterRound == 10) {
-                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 10)
-            } else if(this.filterRound == 15) {
-                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 15)
-            } else if(this.filterRound == 20) {
-                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_round == 20)
+            } else if (this.filterRound == 10) {
+                this.filteredRoomList = Object.values(this.filteredRoomList).filter(roomInfo => roomInfo.round_count == 10);
+            } else if (this.filterRound == 15) {
+                this.filteredRoomList = Object.values(this.filteredRoomList).filter(roomInfo => roomInfo.round_count == 15);
+            } else if (this.filterRound == 20) {
+                this.filteredRoomList = Object.values(this.filteredRoomList).filter(roomInfo => roomInfo.round_count == 20);
             }
 
-            if(this.filterShowScore == "all") {
+            if (this.filterShowScore == "all") {
                 this.filteredRoomList = this.filteredRoomList;
-            } else if(this.filterShowScore == "show") {
-                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.roomopt_show_score)
+            } else if (this.filterShowScore == "show") {
+                this.filteredRoomList = Object.values(this.filteredRoomList).filter(roomInfo => roomInfo.show_score);
             } else {
-                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => !roomInfo.roomopt_show_score)
+                this.filteredRoomList = Object.values(this.filteredRoomList).filter(roomInfo => !roomInfo.show_score);
             }
 
-            if(this.filterName == "") {
+            if (this.filterName == "") {
                 this.filteredRoomList = this.filteredRoomList;
             } else {
-                this.filteredRoomList = this.filteredRoomList.filter(roomInfo => roomInfo.room_name.indexOf(this.filterName) == 0);
+                this.filteredRoomList = Object.values(this.filteredRoomList).filter(roomInfo => roomInfo.name.indexOf(this.filterName) == 0);
             }
         },
         btnRefreshClicked() {
-
+            this.socket.emit(sock_const.RequestType.ROOM_LIST, '');
         },
         onRoomClicked(roomInfo) {
-            if(roomInfo.room_state == "진행중") {
+            if (roomInfo.room_state == "진행중") {
                 alert("이미 게임이 진행중인 방입니다!");
             }
         },
     },
     mounted() {
+        this.socket.on(sock_const.ResponseType.RES_ROOM_LIST, (data) => {
+            this.roomList = data;
+            this.applyFilter();
+        });
 
+        this.socket.emit(sock_const.RequestType.ROOM_LIST, '');
     },
 }
 </script>
@@ -146,6 +161,7 @@ export default {
     margin: 0px 8px 8px 8px;
     overflow: auto;
 }
+
 .FilterOptionArea {
     flex: 1;
     margin-right: 8px;
@@ -198,12 +214,12 @@ export default {
     flex-direction: column;
 }
 
-.Enable{
+.Enable {
     background-color: #ffffff;
     box-shadow: 2px 2px rgb(209, 209, 209);
 }
 
-.Disable{
+.Disable {
     user-select: none;
     pointer-events: none;
     background-color: #888888;
@@ -273,18 +289,20 @@ export default {
     padding: 4px;
     margin-right: 8px;
 }
+
 .RoomInfo2 .Waiting {
     color: #4EF05E;
     font-weight: bold;
     font-size: 14pt;
     user-select: none;
-    float:right;
+    float: right;
 }
+
 .RoomInfo2 .Playing {
     color: #a11414;
     font-weight: bold;
     font-size: 14pt;
     user-select: none;
-    float:right;
+    float: right;
 }
 </style>

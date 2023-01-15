@@ -131,6 +131,18 @@ io.on('connection', (socket) => { // New client socket connected.
     console.log('Game room created: ' + JSON.stringify(gameRoomList));
   });
 
+  // Send room list to client.
+  socket.on(sock_const.RequestType.ROOM_LIST, () => {
+    let gameRoomListSendData = {};
+    let excludeProps = ['password', 'players'];
+    for (let key in gameRoomList) {
+      gameRoomListSendData[key] = Object.assign({}, gameRoomList[key]);
+      excludeProps.forEach(prop => delete gameRoomListSendData[key][prop]);
+      gameRoomListSendData[key]['password_required'] = (gameRoomList[key].password != '');
+    }
+    socket.emit(sock_const.ResponseType.RES_ROOM_LIST, gameRoomListSendData);
+  });
+
   // Client disconnected.
   socket.on('disconnect', (reason) => {
     console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
