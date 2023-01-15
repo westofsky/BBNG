@@ -7,7 +7,7 @@
                     <label class="BtnText" style="user-select: none; flex: 1;">How to Play?</label>
                 </div>
             </div>
-            <Rooms ref="RoomComponent" />
+            <Rooms ref="RoomComponent" v-bind:socket="socket"/>
             <div class="BtnArea">
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
@@ -105,98 +105,11 @@ export default {
         { tier: "Challenger", nick: "Nickname19", rank_point: 99999 },
         { tier: "Challenger", nick: "Nickname20", rank_point: 99999 },
         { tier: "Challenger", nick: "Nickname21", rank_point: 99999 }];
-        let roomList = [
-            {
-                room_name: "Player1의 방",
-                room_state: "대기중",
-                room_current_player: 2,
-                roomopt_round: 15,
-                roomopt_show_score: true,
-                roomopt_max_player: 5,
-                roomopt_lock: true
-            },
-            {
-                room_name: "초보만",
-                room_state: "대기중",
-                room_current_player: 1,
-                roomopt_round: 10,
-                roomopt_show_score: false,
-                roomopt_max_player: 4,
-                roomopt_lock: false
-            },
-            {
-                room_name: "고수만 초보 사절",
-                room_state: "대기중",
-                room_current_player: 2,
-                roomopt_round: 20,
-                roomopt_show_score: true,
-                roomopt_max_player: 4,
-                roomopt_lock: false
-            },
-            {
-                room_name: "qwer1234",
-                room_state: "대기중",
-                room_current_player: 3,
-                roomopt_round: 15,
-                roomopt_show_score: true,
-                roomopt_max_player: 3,
-                roomopt_lock: true
-            },
-            {
-                room_name: "초보만",
-                room_state: "진행중",
-                room_current_player: 3,
-                roomopt_round: 15,
-                roomopt_show_score: true,
-                roomopt_max_player: 3,
-                roomopt_lock: true
-            },
-            {
-                room_name: "초보만",
-                room_state: "진행중",
-                room_current_player: 3,
-                roomopt_round: 15,
-                roomopt_show_score: true,
-                roomopt_max_player: 3,
-                roomopt_lock: true
-            },
-            {
-                room_name: "초보만",
-                room_state: "진행중",
-                room_current_player: 3,
-                roomopt_round: 15,
-                roomopt_show_score: true,
-                roomopt_max_player: 3,
-                roomopt_lock: true
-            },
-            {
-                room_name: "초보만",
-                room_state: "진행중",
-                room_current_player: 3,
-                roomopt_round: 15,
-                roomopt_show_score: true,
-                roomopt_max_player: 3,
-                roomopt_lock: true
-            },
-            {
-                room_name: "초보만",
-                room_state: "진행중",
-                room_current_player: 3,
-                roomopt_round: 15,
-                roomopt_show_score: true,
-                roomopt_max_player: 3,
-                roomopt_lock: true
-            },
-        ];
-        let friendList = [
-        ];
         let chattingList = [
             { nickname: 'Player1', message: 'Hi' },
             { nickname: 'Player2', message: 'Hello' },
         ];
         this.$refs.RankingComponent.setRanking(rankList);
-        this.$refs.RoomComponent.setRooms(roomList);
-        this.$refs.FriendsComponent.setFriends(friendList);
         this.$refs.ChattingComponent.setMessages(chattingList);
     },
 }
