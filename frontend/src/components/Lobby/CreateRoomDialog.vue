@@ -122,11 +122,11 @@ export default {
                 show_score: this.showScore,
                 round_count: this.roundCount,
                 state: game_const.GameState.WAITING,
-                players: {
+                players: [{
                     socket_id: this.socket.id,
                     oid: this.$store.getters["Users/getUser_oid"],
                     nickname: this.$store.getters["Users/getUser_nickname"]
-                }
+                }]
             });
         }
     }
