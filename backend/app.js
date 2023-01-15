@@ -80,8 +80,8 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 const sock_const = require(path.join(__dirname, '..', 'common', 'constant', 'socket-constants.js'));
 const game_const = require(path.join(__dirname, '..', 'common', 'constant', 'game-constants.js'));
-let clientListBySocket = new Map();
-let clientListByNickname = new Map();
+let clientListBySocket = {};
+let clientListByNickname = {};
 let gameRoomList = {};
 
 // Initializing constants.
@@ -93,18 +93,14 @@ io.on('connection', (socket) => { // New client socket connected.
   console.log('Client connected: ' + socket.id);
 
   socket.on(sock_const.RequestType.ADD_USER_TO_LIST, function (data) {
-    clientListBySocket.set(socket.id, data);
-    clientListByNickname.set(data, socket.id);
-
-    console.log('Client List: ');
-    let mapString = '';
-    clientListBySocket.forEach((value, key) => {
-      mapString += `socket id: ${key}, nickname: ${value}\n`;
-    });
-    clientListByNickname.forEach((value, key) => {
-      mapString += `nickname: ${key}, socket id: ${value}\n`;
-    });
-    console.log(mapString);
+    clientListBySocket[socket.id] = {
+      nickname: data,
+      rid: '',
+    };
+    clientListByNickname[data] = {
+      socket_id: socket.id,
+      rid: '',
+    };
   });
 
   socket.on(sock_const.RequestType.JOIN_LOBBY, function (data) {
@@ -128,18 +124,22 @@ io.on('connection', (socket) => { // New client socket connected.
     gameRoom.rid = createRoomId((gameRoom.host + (new Date()).toLocaleString()));
     gameRoomList[gameRoom.rid] = gameRoom;
     socket.join(gameRoom.rid);
+    clientListBySocket[socket.id].rid = gameRoom.rid;
+    clientListByNickname[clientListBySocket[socket.id].nickname].rid = gameRoom.rid;
     console.log('Game room created: ' + JSON.stringify(gameRoomList));
   });
 
   // Join custom room.
   socket.on(sock_const.RequestType.JOIN_ROOM, (data) => {
-    if(data.password == gameRoomList[data.rid].password) {
+    if (data.password == gameRoomList[data.rid].password) {
       gameRoomList[data.rid].players.push({
         socket_id: data.socket_id,
         oid: data.oid,
         nickname: data.nickname
       });
       gameRoomList[data.rid].current_player_count += 1;
+      clientListBySocket[socket.id].rid = data.rid;
+      clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.rid;
     }
     console.log(JSON.stringify(gameRoomList));
   });
@@ -160,18 +160,18 @@ io.on('connection', (socket) => { // New client socket connected.
   socket.on('disconnect', (reason) => {
     console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
 
-    clientListByNickname.delete(clientListBySocket.get(socket.id));
-    clientListBySocket.delete(socket.id);
-
-    console.log('Client List: ');
-    let mapString = '';
-    clientListBySocket.forEach((value, key) => {
-      mapString += `socket id: ${key}, nickname: ${value}\n`;
-    });
-    clientListByNickname.forEach((value, key) => {
-      mapString += `nickname: ${key}, socket id: ${value}\n`;
-    });
-    console.log(mapString);
+    if (clientListBySocket[socket.id].rid != '') {
+      gameRoomList[clientListBySocket[socket.id].rid].current_player_count -= 1;
+      if (gameRoomList[clientListBySocket[socket.id].rid].current_player_count == 0) {
+        delete gameRoomList[clientListBySocket[socket.id].rid];
+      } else {
+        gameRoomList[clientListBySocket[socket.id].rid].players = gameRoomList[clientListBySocket[socket.id].rid].players.filter(function (player) {
+          return player.nickname !== clientListBySocket[socket.id].nickname
+        });
+      }
+    }
+    delete clientListByNickname[clientListBySocket[socket.id].nickname];
+    delete clientListBySocket[socket.id];
   });
 });
 
