@@ -131,6 +131,19 @@ io.on('connection', (socket) => { // New client socket connected.
     console.log('Game room created: ' + JSON.stringify(gameRoomList));
   });
 
+  // Join custom room.
+  socket.on(sock_const.RequestType.JOIN_ROOM, (data) => {
+    if(data.password == gameRoomList[data.rid].password) {
+      gameRoomList[data.rid].players.push({
+        socket_id: data.socket_id,
+        oid: data.oid,
+        nickname: data.nickname
+      });
+      gameRoomList[data.rid].current_player_count += 1;
+    }
+    console.log(JSON.stringify(gameRoomList));
+  });
+
   // Send room list to client.
   socket.on(sock_const.RequestType.ROOM_LIST, () => {
     let gameRoomListSendData = {};
