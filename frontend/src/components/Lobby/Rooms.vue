@@ -49,17 +49,22 @@
             </div>
         </div>
     </div>
+    <Teleport to="body">
+        <InputPasswordDialog ref="InputPasswordDialogComponent" :show="showInputPasswordDialog" @close="showInputPasswordDialog = false" v-bind:socket="socket"/>
+    </Teleport>
 </template>
 
 <script>
 import io from 'socket.io-client';
 import * as sock_const from "../../../../common/constant/socket-constants.js";
 import * as game_const from "../../../../common/constant/game-constants.js";
+import InputPasswordDialog from '@/components/Lobby/InputPasswordDialog.vue';
 
 export default {
     name: 'Rooms',
     data() {
         return {
+            showInputPasswordDialog: false,
             filterPasswordRequired: 'all',
             filterRound: 'all',
             filterShowScore: 'all',
@@ -70,6 +75,9 @@ export default {
     },
     props: {
         socket: { type: io.Socket, required: true },
+    },
+    components: {
+        InputPasswordDialog: InputPasswordDialog
     },
     methods: {
         setRooms(roomList) {
@@ -115,8 +123,18 @@ export default {
             this.socket.emit(sock_const.RequestType.ROOM_LIST, '');
         },
         onRoomClicked(roomInfo) {
-            if (roomInfo.room_state == "진행중") {
-                alert("이미 게임이 진행중인 방입니다!");
+            if (roomInfo.state == game_const.GameState.WAITING) {
+                if(roomInfo.password_required) {
+                    this.showInputPasswordDialog = true;
+                    this.$refs.InputPasswordDialogComponent.init(roomInfo.rid);
+                } else {
+                    this.socket.emit(sock_const.RequestType.JOIN_ROOM, {
+                        rid: roomInfo.rid,
+                        socket_id: this.socket.id,
+                        oid: this.$store.getters["Users/getUser_oid"],
+                        nickname: this.$store.getters["Users/getUser_nickname"]
+                    });
+                }
             }
         },
     },
