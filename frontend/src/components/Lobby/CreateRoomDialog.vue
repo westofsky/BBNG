@@ -118,7 +118,7 @@ export default {
                 name: this.name,
                 password: this.password,
                 player_limit: this.playerLimit,
-                current_player_count: 0,
+                current_player_count: 1,
                 show_score: this.showScore,
                 round_count: this.roundCount,
                 state: game_const.GameState.WAITING,
