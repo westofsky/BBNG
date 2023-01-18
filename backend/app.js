@@ -131,15 +131,22 @@ io.on('connection', (socket) => { // New client socket connected.
 
   // Join custom room.
   socket.on(sock_const.RequestType.JOIN_ROOM, (data) => {
-    if (data.password == gameRoomList[data.rid].password) {
-      gameRoomList[data.rid].players.push({
-        socket_id: data.socket_id,
-        oid: data.oid,
-        nickname: data.nickname
-      });
-      gameRoomList[data.rid].current_player_count += 1;
-      clientListBySocket[socket.id].rid = data.rid;
-      clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.rid;
+    if (gameRoomList.hasOwnProperty(data.rid)) {
+      // GameRoomList에 플레이어가 참여하려는 rid 값의 방이 존재할 경우
+      if (data.password == gameRoomList[data.rid].password) {
+        // 플레이어가 입력한 비밀번호와 참여하려는 방의 비밀번호가 일치할 경우
+        gameRoomList[data.rid].players.push({
+          socket_id: data.socket_id,
+          oid: data.oid,
+          nickname: data.nickname
+        });
+        gameRoomList[data.rid].current_player_count += 1;
+        clientListBySocket[socket.id].rid = data.rid;
+        clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.rid;
+      } else {
+        // 플레이어가 입력한 비밀번호와 참여하려는 방의 비밀번호가 일치하지 않을 경우
+
+      }
     }
     console.log(JSON.stringify(gameRoomList));
   });
