@@ -21,7 +21,7 @@
             </div>
         </div>
         <div>
-            <Friends ref="FriendsComponent" />
+            <Friends ref="FriendsComponent" v-bind:socket="socket"/>
             <Chatting ref="ChattingComponent" v-bind:socket="socket"/>
         </div>
         <div class="popup_rules" v-if="isRuleActive">

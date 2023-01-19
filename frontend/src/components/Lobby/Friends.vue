@@ -14,8 +14,8 @@
         <div class="FriendList">
             <div :class="friendInfo.state === 'online' ? 'FriendInfo Online' : 'FriendInfo Offline'"
                 v-for="friendInfo in friendList" :key = "friendInfo">
-                <label class="Name">{{ friendInfo }}</label>
-                <label v-if="friendInfo.state === 'online'" class="Online">온라인</label>
+                <label class="Name">{{ friendInfo.nickname }}</label>
+                <label v-if="friendInfo.online === 1" class="Online">온라인</label>
                 <label v-else class="Offline">오프라인</label>
             </div>
         </div>
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import io from 'socket.io-client';
+import * as sock_const from "../../../../common/constant/socket-constants.js";
 export default {
     name: 'Friends',
     data() {
@@ -47,7 +49,11 @@ export default {
             is_requested : false,
             is_requested_clicked : false,
             is_requested_list : [],
+            online_list : [],
         }
+    },
+    props: {
+        socket: { type: io.Socket, required: true },
     },
     methods: {
         setFriends(friendList) {
@@ -80,7 +86,17 @@ export default {
             }).then((res) =>{
                 console.log(res.data);
                 if(res.data.status == 200){
-                    this.friendList = res.data.friend_list;
+                    for(var i =0;i<res.data.friend_list.length;i++){
+                        let friend_dict = {};
+                        friend_dict['nickname'] = res.data.friend_list[i];
+                        if(this.online_list.includes(res.data.friend_list[i])){
+                            friend_dict['online'] = 1;
+                        }
+                        else{
+                            friend_dict['online'] = 0;
+                        }
+                        this.friendList.push(friend_dict);
+                    }
                 }
             });
         },
@@ -139,6 +155,10 @@ export default {
         }
     },
     async mounted() {
+        this.socket.emit(sock_const.RequestType.GET_ONLINE_LIST,true);
+        this.socket.on(sock_const.ResponseType.RES_ONLINE_LIST, (data) => {
+            this.online_list = data;
+        });
         await this.get_requests();
         await this.get_friends();
     },
