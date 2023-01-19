@@ -83,6 +83,7 @@ const game_const = require(path.join(__dirname, '..', 'common', 'constant', 'gam
 let clientListBySocket = {};
 let clientListByNickname = {};
 let gameRoomList = {};
+let onlineUserList = [];
 
 // Initializing constants.
 sock_const.initSocketConstants();
@@ -91,7 +92,6 @@ game_const.initGameConstants();
 // Set event in io.
 io.on('connection', (socket) => { // New client socket connected.
   console.log('Client connected: ' + socket.id);
-
   socket.on(sock_const.RequestType.ADD_USER_TO_LIST, function (data) {
     clientListBySocket[socket.id] = {
       nickname: data,
@@ -101,6 +101,15 @@ io.on('connection', (socket) => { // New client socket connected.
       socket_id: socket.id,
       rid: '',
     };
+    onlineUserList.push(data);
+    console.log(clientListBySocket);
+  });
+  socket.on(sock_const.RequestType.GET_ONLINE_LIST,() =>{
+    let onlineList = [];
+    for(var i=0;i<Object.values(clientListBySocket).length;i++){
+        onlineList.push(Object.values(clientListBySocket)[i].nickname);
+    }
+    socket.emit(sock_const.ResponseType.RES_ONLINE_LIST, onlineList);
   });
 
   socket.on(sock_const.RequestType.JOIN_LOBBY, function (data) {
@@ -166,7 +175,7 @@ io.on('connection', (socket) => { // New client socket connected.
   // Client disconnected.
   socket.on('disconnect', (reason) => {
     console.log('Client disconnected: ' + socket.id + ' [' + reason + ']');
-
+    onlineUserList.splice(onlineUserList.indexOf(clientListBySocket[socket.id].nickname),1);
     if (clientListBySocket[socket.id].rid != '') {
       gameRoomList[clientListBySocket[socket.id].rid].current_player_count -= 1;
       if (gameRoomList[clientListBySocket[socket.id].rid].current_player_count == 0) {

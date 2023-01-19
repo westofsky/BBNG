@@ -29,6 +29,7 @@ const RequestType = {
     SEND_MSG_TO_LOBBY: 0,
     SEND_MSG_TO_ROOM: 0,
     SEND_MSG_TO_INGAME: 0,
+    GET_ONLINE_LIST : 0,
 }
 
 const ResponseType = {
@@ -56,6 +57,8 @@ const ResponseType = {
     BROADCAST_LOBBY_MSG: 0,
     BROADCAST_ROOM_MSG: 0,
     BROADCAST_INGAME_MSG: 0,
+    RES_ONLINE_LIST : 0,
+    
 }
 
 function initSocketConstants() {
