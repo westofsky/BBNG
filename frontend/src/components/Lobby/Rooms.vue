@@ -50,7 +50,8 @@
         </div>
     </div>
     <Teleport to="body">
-        <InputPasswordDialog ref="InputPasswordDialogComponent" :show="showInputPasswordDialog" @close="showInputPasswordDialog = false" v-bind:socket="socket"/>
+        <InputPasswordDialog ref="InputPasswordDialogComponent" :show="showInputPasswordDialog"
+            @close="showInputPasswordDialog = false" v-bind:socket="socket" />
     </Teleport>
 </template>
 
@@ -124,7 +125,7 @@ export default {
         },
         onRoomClicked(roomInfo) {
             if (roomInfo.state == game_const.GameState.WAITING) {
-                if(roomInfo.password_required) {
+                if (roomInfo.password_required) {
                     this.showInputPasswordDialog = true;
                     this.$refs.InputPasswordDialogComponent.init(roomInfo.rid);
                 } else {
@@ -142,6 +143,22 @@ export default {
         this.socket.on(sock_const.ResponseType.RES_ROOM_LIST, (data) => {
             this.roomList = data;
             this.applyFilter();
+        });
+        this.socket.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
+            switch (data) {
+                case sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS:
+                    alert('Join success');
+                    break;
+                case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST:
+                    alert('Room not exist');
+                    break;
+                case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_WRONG_PASSWORD:
+                    alert('Wrong Password');
+                    break;
+                case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_ROOM_FULL:
+                    alert('Room is full');
+                    break;
+            }
         });
 
         this.socket.emit(sock_const.RequestType.ROOM_LIST, '');

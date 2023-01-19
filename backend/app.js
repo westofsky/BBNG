@@ -131,22 +131,30 @@ io.on('connection', (socket) => { // New client socket connected.
 
   // Join custom room.
   socket.on(sock_const.RequestType.JOIN_ROOM, (data) => {
-    if (gameRoomList.hasOwnProperty(data.rid)) {
-      // GameRoomList에 플레이어가 참여하려는 rid 값의 방이 존재할 경우
-      if (data.password == gameRoomList[data.rid].password) {
-        // 플레이어가 입력한 비밀번호와 참여하려는 방의 비밀번호가 일치할 경우
-        gameRoomList[data.rid].players.push({
-          socket_id: data.socket_id,
-          oid: data.oid,
-          nickname: data.nickname
-        });
-        gameRoomList[data.rid].current_player_count += 1;
-        clientListBySocket[socket.id].rid = data.rid;
-        clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.rid;
-      } else {
-        // 플레이어가 입력한 비밀번호와 참여하려는 방의 비밀번호가 일치하지 않을 경우
+    console.log(data);
+    if (gameRoomList.hasOwnProperty(data.rid)) { // rid 값의 방이 존재할 경우
+      if (gameRoomList[data.rid].current_player_count < gameRoomList[data.rid].player_limit) { // 방에 빈 자리가 있을 경우
+        if (data.password == gameRoomList[data.rid].password) { // 참여하려는 방의 비밀번호가 일치할 경우
 
+          gameRoomList[data.rid].players.push({
+            socket_id: data.socket_id,
+            oid: data.oid,
+            nickname: data.nickname
+          });
+          gameRoomList[data.rid].current_player_count += 1;
+          clientListBySocket[socket.id].rid = data.rid;
+          clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.rid;
+
+          socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS);
+        } else { // 참여하려는 방의 비밀번호가 일치하지 않을 경우
+          socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_WRONG_PASSWORD);
+        }
+      } else { // 방에 빈 자리가 없을 경우
+        socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_ROOM_FULL);
       }
+    } else {
+      // rid 값의 방이 존재하지 않을 경우
+      socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST);
     }
     console.log(JSON.stringify(gameRoomList));
   });

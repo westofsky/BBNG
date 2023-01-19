@@ -58,6 +58,13 @@ const ResponseType = {
     BROADCAST_INGAME_MSG: 0,
 }
 
+const ResponseResult = {
+    RES_JOIN_ROOM_SUCCESS: 0,
+    RES_JOIN_ROOM_FAILED_NOT_EXIST: 0,
+    RES_JOIN_ROOM_FAILED_WRONG_PASSWORD: 0,
+    RES_JOIN_ROOM_FAILED_ROOM_FULL: 0,
+}
+
 function initSocketConstants() {
     var count = 0;
     for(var key in ChatroomType){
@@ -77,11 +84,18 @@ function initSocketConstants() {
         count++;
     }
     Object.freeze(ResponseType);
+
+    for(var key in ResponseResult) {
+        ResponseResult[key] = count;
+        count++;
+    }
+    Object.freeze(ResponseResult);
 }
 
 module.exports = {
     ChatroomType
     , RequestType
     , ResponseType
+    , ResponseResult
     , initSocketConstants
 }
