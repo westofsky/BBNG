@@ -8,7 +8,7 @@
                 <a href="#" class="btn" @click = "Add_Friend">친구추가</a>
             </div>
             <label class="Title">친구</label>
-            <label class="OnlineCount">온라인: {{ friendList?.length }}명</label>
+            <label class="OnlineCount">온라인: {{ online_count }}명</label>
         </div>
         <hr style="margin: 8px;" />
         <div class="FriendList">
@@ -50,6 +50,7 @@ export default {
             is_requested_clicked : false,
             is_requested_list : [],
             online_list : [],
+            online_count : 0,
         }
     },
     props: {
@@ -91,6 +92,7 @@ export default {
                         friend_dict['nickname'] = res.data.friend_list[i];
                         if(this.online_list.includes(res.data.friend_list[i])){
                             friend_dict['online'] = 1;
+                            this.online_count++;
                         }
                         else{
                             friend_dict['online'] = 0;
