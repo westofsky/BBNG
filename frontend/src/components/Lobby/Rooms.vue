@@ -54,6 +54,7 @@
             @close="showInputPasswordDialog = false" v-bind:socket="socket" />
         <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog"
             @close="showCreateRoomDialog = false" v-bind:socket="socket" />
+        <MessageDialog ref="MessageDialogComponent" :show="showMessageDialog" @close="showMessageDialog = false" />
     </Teleport>
 </template>
 
@@ -63,6 +64,7 @@ import * as sock_const from "../../../../common/constant/socket-constants.js";
 import * as game_const from "../../../../common/constant/game-constants.js";
 import InputPasswordDialog from '@/components/Dialog/InputPasswordDialog.vue';
 import CreateRoomDialog from '@/components/Dialog/CreateRoomDialog.vue';
+import MessageDialog from '@/components/Dialog/MessageDialog.vue';
 
 export default {
     name: 'Rooms',
@@ -70,6 +72,7 @@ export default {
         return {
             showCreateRoomDialog: false,
             showInputPasswordDialog: false,
+            showMessageDialog: false,
             filterPasswordRequired: 'all',
             filterRound: 'all',
             filterShowScore: 'all',
@@ -83,7 +86,8 @@ export default {
     },
     components: {
         CreateRoomDialog: CreateRoomDialog,
-        InputPasswordDialog: InputPasswordDialog
+        InputPasswordDialog: InputPasswordDialog,
+        MessageDialog: MessageDialog,
     },
     methods: {
         setRooms(roomList) {
@@ -159,13 +163,16 @@ export default {
                     alert('Join success');
                     break;
                 case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST:
-                    alert('Room not exist');
+                    this.showMessageDialog = true;
+                    this.$refs.MessageDialogComponent.init('방 입장 불가', '해당 방이 존재하지 않습니다!');
                     break;
                 case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_WRONG_PASSWORD:
-                    alert('Wrong Password');
+                    this.showMessageDialog = true;
+                    this.$refs.MessageDialogComponent.init('방 입장 불가', '비밀번호가 일치하지 않습니다!');
                     break;
                 case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_ROOM_FULL:
-                    alert('Room is full');
+                    this.showMessageDialog = true;
+                    this.$refs.MessageDialogComponent.init('방 입장 불가', '게임이 가득 찼습니다!');
                     break;
             }
         });
