@@ -142,7 +142,8 @@ export default {
                         rid: roomInfo.rid,
                         socket_id: this.socket.id,
                         oid: this.$store.getters["Users/getUser_oid"],
-                        nickname: this.$store.getters["Users/getUser_nickname"]
+                        nickname: this.$store.getters["Users/getUser_nickname"],
+                        password: '',
                     });
                 }
             }
