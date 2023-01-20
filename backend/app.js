@@ -144,7 +144,7 @@ io.on('connection', (socket) => { // New client socket connected.
     if (gameRoomList.hasOwnProperty(data.rid)) { // rid 값의 방이 존재할 경우
       if (gameRoomList[data.rid].current_player_count < gameRoomList[data.rid].player_limit) { // 방에 빈 자리가 있을 경우
         if (data.password == gameRoomList[data.rid].password) { // 참여하려는 방의 비밀번호가 일치할 경우
-
+          socket.join(data.rid);
           gameRoomList[data.rid].players.push({
             socket_id: data.socket_id,
             oid: data.oid,
