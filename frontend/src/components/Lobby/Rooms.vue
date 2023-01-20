@@ -52,6 +52,8 @@
     <Teleport to="body">
         <InputPasswordDialog ref="InputPasswordDialogComponent" :show="showInputPasswordDialog"
             @close="showInputPasswordDialog = false" v-bind:socket="socket" />
+        <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog"
+            @close="showCreateRoomDialog = false" v-bind:socket="socket" />
     </Teleport>
 </template>
 
@@ -59,12 +61,14 @@
 import io from 'socket.io-client';
 import * as sock_const from "../../../../common/constant/socket-constants.js";
 import * as game_const from "../../../../common/constant/game-constants.js";
-import InputPasswordDialog from '@/components/Lobby/InputPasswordDialog.vue';
+import InputPasswordDialog from '@/components/Dialog/InputPasswordDialog.vue';
+import CreateRoomDialog from '@/components/Dialog/CreateRoomDialog.vue';
 
 export default {
     name: 'Rooms',
     data() {
         return {
+            showCreateRoomDialog: false,
             showInputPasswordDialog: false,
             filterPasswordRequired: 'all',
             filterRound: 'all',
@@ -78,6 +82,7 @@ export default {
         socket: { type: io.Socket, required: true },
     },
     components: {
+        CreateRoomDialog: CreateRoomDialog,
         InputPasswordDialog: InputPasswordDialog
     },
     methods: {
@@ -138,6 +143,10 @@ export default {
                 }
             }
         },
+        createRoom() {
+            this.showCreateRoomDialog = true;
+            this.$refs.CreateRoomDialogComponent.init();
+        }
     },
     mounted() {
         this.socket.on(sock_const.ResponseType.RES_ROOM_LIST, (data) => {

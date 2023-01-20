@@ -28,10 +28,6 @@
             <Rules @event-isRules="setIsRuleActive" />
         </div>
     </div>
-    <Teleport to="body">
-        <!-- use the modal component, pass in the prop -->
-        <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog" @close="showCreateRoomDialog = false" v-bind:socket="socket"/>
-    </Teleport>
 </template> 
 
 <script>
@@ -40,7 +36,6 @@ import Rooms from '../components/Lobby/Rooms.vue';
 import Friends from '../components/Lobby/Friends.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
 import Rules from '../components/Lobby/Rules.vue';
-import CreateRoomDialog from '../components/Lobby/CreateRoomDialog.vue'
 import io from 'socket.io-client';
 import * as sock_const from "../../../common/constant/socket-constants";
 
@@ -50,7 +45,6 @@ export default {
     data() {
         return {
             isRuleActive: false,
-            showCreateRoomDialog: false,
             socket: io('http://localhost:3000', { transports : ['websocket'] }),
         }
     },
@@ -63,8 +57,7 @@ export default {
         btnRankMatchClicked() {
         },
         btnCreateRoomClicked() {
-            this.showCreateRoomDialog = true;
-            this.$refs.CreateRoomDialogComponent.init();
+            this.$refs.RoomComponent.createRoom();
         },
         setIsRuleActive() {
             this.isRuleActive = false;
@@ -76,7 +69,6 @@ export default {
         Friends: Friends,
         Chatting: Chatting,
         Rules: Rules,
-        CreateRoomDialog: CreateRoomDialog,
     },
     mounted() {
         this.socket.emit(sock_const.RequestType.ADD_USER_TO_LIST, this.$store.getters["Users/getUser_nickname"]);
