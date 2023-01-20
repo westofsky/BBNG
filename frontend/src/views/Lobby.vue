@@ -12,7 +12,7 @@
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
                 </div>
-                <div class="Btn BtnRankMatch RoundBorder" @click="btnRankMatchClicked">
+                <div class="Btn BtnRankMatch RoundBorder" @click="Logout">
                     <label class="BtnText" style="user-select: none; flex: 1;">랭크매칭</label>
                 </div>
                 <div class="Btn BtnCreateRoom RoundBorder" @click="btnCreateRoomClicked">
@@ -62,6 +62,12 @@ export default {
         setIsRuleActive() {
             this.isRuleActive = false;
         },
+        Logout(){
+            alert("로그아웃 되었습니다.");
+            this.$store.commit("Users/setUser_oid",'');
+            this.$store.commit("Users/setUser_nickname",'');
+            this.$router.push({name : 'Home'});
+        }
     },
     components: {
         Ranking: Ranking,
