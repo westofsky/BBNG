@@ -16,8 +16,8 @@ const RequestType = {
     DESTROY_ROOM: 0,
     JOIN_ROOM: 0,
     LEAVE_ROOM: 0,
-    READY_ROOM: 0,
-    NOT_READY_ROOM: 0,
+    READY: 0,
+    NOT_READY: 0,
     JOIN_NORMAL_QUEUE: 0,
     LEAVE_NORMAL_QUEUE: 0,
     ACCEPT_NORMAL_QUEUE: 0,
@@ -33,6 +33,7 @@ const RequestType = {
 }
 
 const ResponseType = {
+    RES_ADD_USER_TO_LIST: 0,
     RES_JOIN_LOBBY: 0,
     RES_LEAVE_LOBBY: 0,
     RES_ADD_FRIEND: 0,
@@ -44,8 +45,10 @@ const ResponseType = {
     RES_DESTROY_ROOM: 0,
     RES_JOIN_ROOM: 0,
     RES_LEAVE_ROOM: 0,
-    RES_READY_ROOM: 0,
-    RES_NOT_READY_ROOM: 0,
+    RES_PLAYER_READY: 0,
+    RES_PLAYER_NOT_READY: 0,
+    RES_PLAYER_JOIN: 0,
+    RES_PLAYER_LEAVE: 0,
     RES_JOIN_NORMAL_QUEUE: 0,
     RES_LEAVE_NORMAL_QUEUE: 0,
     RES_ACCEPT_NORMAL_QUEUE: 0,
