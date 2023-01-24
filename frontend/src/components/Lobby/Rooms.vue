@@ -90,6 +90,10 @@ export default {
         MessageDialog: MessageDialog,
     },
     methods: {
+
+        refreshData() {
+            this.socket.emit(sock_const.RequestType.ROOM_LIST);
+        },
         setRooms(roomList) {
             this.roomList = roomList;
             this.filteredRoomList = this.roomList;
@@ -177,8 +181,6 @@ export default {
                     break;
             }
         });
-
-        this.socket.emit(sock_const.RequestType.ROOM_LIST, '');
     },
 }
 </script>

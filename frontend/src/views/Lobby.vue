@@ -77,6 +77,13 @@ export default {
         Rules: Rules,
     },
     mounted() {
+        this.socket.on(sock_const.ResponseType.RES_ADD_USER_TO_LIST, () => {
+            this.socket.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
+        });
+        this.socket.on(sock_const.ResponseType.RES_JOIN_LOBBY, () => {
+            this.$refs.RoomComponent.refreshData();
+            this.$refs.FriendsComponent.refreshData();
+        });
         this.socket.emit(sock_const.RequestType.ADD_USER_TO_LIST, this.$store.getters["Users/getUser_nickname"]);
 
         // Implement load initial datas from server.
