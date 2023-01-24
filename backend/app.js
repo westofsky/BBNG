@@ -91,7 +91,7 @@ game_const.initGameConstants();
 
 // Set event in io.
 io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
-  console.log('IO Event(connection): ' + socket.id + ' connected');
+  console.log("IO Event(connection): '" + socket.id + "' connected");
 
   // Socket Listener Event - Client가 연결되었을 때, 접속 중인 Client 리스트에 해당 Client 추가
   socket.on(sock_const.RequestType.ADD_USER_TO_LIST, function (data) {
@@ -105,6 +105,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     };
     onlineUserList.push(data);
 
+    socket.emit(sock_const.ResponseType.RES_ADD_USER_TO_LIST);
     console.log('Socket Event(ADD_USER_TO_LIST): Connected client list\n########################\n' + JSON.stringify(clientListBySocket) + '\n########################');
   });
 
@@ -115,28 +116,28 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       onlineList.push(Object.values(clientListBySocket)[i].nickname);
     }
     socket.emit(sock_const.ResponseType.RES_ONLINE_LIST, onlineList);
-    console.log("Socket Event(GET_ONLINE_LIST): Client '" + socket.id  + "' request online friend list");
+    console.log("Socket Event(GET_ONLINE_LIST): Player '" + clientListBySocket[socket.id].nickname  + "' request online friend list");
   });
 
-  // Socket Listener Event - Client가 Lobby에 참여
+  // Socket Listener Event - Lobby에 참여
   socket.on(sock_const.RequestType.JOIN_LOBBY, function (data) {
     socket.join(sock_const.ChatroomType.LOBBY);
-
-    console.log("Socket Event(JOIN_LOBBY): Client '" + socket.id + "' joins the lobby");
+    socket.emit(sock_const.ResponseType.RES_JOIN_LOBBY);
+    console.log("Socket Event(JOIN_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' joins the lobby");
   });
 
-  // Socket Listener Event - Client가 Lobby에서 떠남
+  // Socket Listener Event - Lobby에서 떠남
   socket.on(sock_const.RequestType.LEAVE_LOBBY, function (data) {
     socket.leave(sock_const.ChatroomType.LOBBY);
 
-    console.log("Socket Event(LEAVE_LOBBY): Client '" + socket.id + "' leaves the lobby");
+    console.log("Socket Event(LEAVE_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' leaves the lobby");
   });
 
   // Socket Listener Event - Lobby로 전체 메세지 전달
   socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function (data) {
     socket.broadcast.to(sock_const.ChatroomType.LOBBY).emit(sock_const.ResponseType.BROADCAST_LOBBY_MSG, data);
 
-    console.log("Socket Event(SEND_MSG_TO_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' send message '" + data + "' to lobby");
+    console.log("Socket Event(SEND_MSG_TO_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' send message '" + JSON.stringify(data) + "' to lobby");
   });
 
   // Socket Listener Event - 사용자 설정 방 생성
@@ -153,6 +154,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       message_key: '',
     }
     gameRoomList[gameRoom.rid] = gameRoom;
+    socket.leave(sock_const.ChatroomType.LOBBY);
     socket.join(gameRoom.rid);
     clientListBySocket[socket.id].rid = gameRoom.rid;
     clientListByNickname[clientListBySocket[socket.id].nickname].rid = gameRoom.rid;
@@ -162,10 +164,10 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // Socket Listener Event - 사용자 설정 방 참여
   socket.on(sock_const.RequestType.JOIN_ROOM, (data) => {
-    console.log(data);
     if (gameRoomList.hasOwnProperty(data.rid)) { // rid 값의 방이 존재할 경우
       if (gameRoomList[data.rid].current_player_count < gameRoomList[data.rid].player_limit) { // 방에 빈 자리가 있을 경우
         if (data.password == gameRoomList[data.rid].password) { // 참여하려는 방의 비밀번호가 일치할 경우
+          socket.leave(sock_const.ChatroomType.LOBBY);
           socket.join(data.rid);
           gameRoomList[data.rid].players.push({
             socket_id: data.socket_id,
@@ -203,7 +205,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       gameRoomListSendData[key]['password_required'] = (gameRoomList[key].password != '');
     }
     socket.emit(sock_const.ResponseType.RES_ROOM_LIST, gameRoomListSendData);
-    console.log("Socket Event(ROOM_LIST): Client '" + socket.id + "' request created room list");
+    console.log("Socket Event(ROOM_LIST): Player '" + clientListBySocket[socket.id].nickname + "' request created room list");
   });
 
   // Socket Listener Event - Client 연결 끊김
@@ -221,7 +223,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         console.log("Room Event: Room '" + JSON.stringify(gameRoomList[joinedGameRoom]) + "' removed due to lack of active players");
         delete gameRoomList[joinedGameRoom];
       } else { // 방에 다른 플레이어가 남아있을 경우
-        console.log("Room Event: Player '" + nickname + "' has been removed from room '" + gameRoomList[joinedGameRoom] + "'");
+        console.log("Room Event: Player '" + nickname + "' has been removed from room '" + JSON.stringify(gameRoomList[joinedGameRoom]) + "'");
         gameRoomList[joinedGameRoom].players = gameRoomList[joinedGameRoom].players.filter(function (player) {
           return player.nickname !== nickname
         });
