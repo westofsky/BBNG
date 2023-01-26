@@ -7,7 +7,7 @@
                     <label class="BtnText" style="user-select: none; flex: 1;">How to Play?</label>
                 </div>
             </div>
-            <Rooms ref="RoomComponent" v-bind:socket="socket"/>
+            <Rooms ref="RoomComponent" v-bind:socket="socket" />
             <div class="BtnArea">
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
@@ -21,8 +21,12 @@
             </div>
         </div>
         <div>
-            <Friends ref="FriendsComponent" v-bind:socket="socket"/>
-            <Chatting ref="ChattingComponent" v-bind:socket="socket"/>
+            <div class="UserInfo">
+                <img class="AccountImage" src="../assets/images/icon_account.png" />
+                <label class="UserName">{{nickname}}</label>
+            </div>
+            <Friends ref="FriendsComponent" v-bind:socket="socket" />
+            <Chatting ref="ChattingComponent" v-bind:socket="socket" />
         </div>
         <div class="popup_rules" v-if="isRuleActive">
             <Rules @event-isRules="setIsRuleActive" />
@@ -45,7 +49,8 @@ export default {
     data() {
         return {
             isRuleActive: false,
-            socket: io('http://localhost:3000', { transports : ['websocket'] }),
+            socket: io('http://localhost:3000', { transports: ['websocket'] }),
+            nickname: '',
         }
     },
     methods: {
@@ -62,11 +67,11 @@ export default {
         setIsRuleActive() {
             this.isRuleActive = false;
         },
-        Logout(){
+        Logout() {
             alert("로그아웃 되었습니다.");
-            this.$store.commit("Users/setUser_oid",'');
-            this.$store.commit("Users/setUser_nickname",'');
-            this.$router.push({name : 'Home'});
+            this.$store.commit("Users/setUser_oid", '');
+            this.$store.commit("Users/setUser_nickname", '');
+            this.$router.push({ name: 'Home' });
         }
     },
     components: {
@@ -77,6 +82,8 @@ export default {
         Rules: Rules,
     },
     mounted() {
+        this.nickname = this.$store.getters["Users/getUser_nickname"];
+
         this.socket.on(sock_const.ResponseType.RES_ADD_USER_TO_LIST, () => {
             this.socket.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
         });
@@ -130,6 +137,27 @@ export default {
     justify-content: center;
     align-items: center;
     background-color: #E1D5D5;
+}
+
+.UserInfo {
+    height: 48px;
+    width: 320px;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+}
+
+.AccountImage {
+    user-select: none;
+    width: 32px;
+    height: 32px;
+}
+.UserName {
+    margin: 8px;
+    font-size: 14pt;
+    color: #727272;
+    font-weight: bold;
 }
 
 .RoundBorder {
