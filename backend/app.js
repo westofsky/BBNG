@@ -158,7 +158,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     socket.join(gameRoom.rid);
     clientListBySocket[socket.id].rid = gameRoom.rid;
     clientListByNickname[clientListBySocket[socket.id].nickname].rid = gameRoom.rid;
-
+    socket.emit(sock_const.ResponseType.RES_GET_ROOM_RID, gameRoom.rid);
     console.log("Socket Event(CREATE_ROOM): Created room list\n########################\n" + JSON.stringify(gameRoomList) + '\n########################');
   });
 

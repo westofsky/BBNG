@@ -129,6 +129,12 @@ export default {
                 }]
             });
         }
+    },
+    mounted(){
+        this.socket.on(sock_const.ResponseType.RES_GET_ROOM_RID, (data) => {
+            this.$store.commit("Games/setGame_rid",data);
+            this.$router.push({name : 'Game'});
+        });
     }
 }
 </script>

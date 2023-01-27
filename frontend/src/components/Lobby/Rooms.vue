@@ -79,6 +79,7 @@ export default {
             filterName: '',
             filteredRoomList: [],
             roomList: [],
+            clicked_room_rid : '',
         }
     },
     props: {
@@ -137,6 +138,7 @@ export default {
             this.socket.emit(sock_const.RequestType.ROOM_LIST, '');
         },
         onRoomClicked(roomInfo) {
+            this.clicked_room_rid = roomInfo.rid;
             if (roomInfo.state == game_const.GameState.WAITING) {
                 if (roomInfo.password_required) {
                     this.showInputPasswordDialog = true;
@@ -165,6 +167,8 @@ export default {
         this.socket.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
             switch (data) {
                 case sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS:
+                    this.$store.commit("Games/setGame_rid",this.clicked_room_rid);
+                    this.$router.push({name : 'Game'});
                     alert('Join success');
                     break;
                 case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST:

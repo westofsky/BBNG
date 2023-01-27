@@ -42,6 +42,7 @@ const ResponseType = {
     RES_ACCEPT_INVITE: 0,
     RES_ROOM_LIST: 0,
     RES_CREATE_ROOM: 0,
+    RES_GET_ROOM_RID : 0,
     RES_DESTROY_ROOM: 0,
     RES_JOIN_ROOM: 0,
     RES_LEAVE_ROOM: 0,
