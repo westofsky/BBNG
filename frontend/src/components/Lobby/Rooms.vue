@@ -83,7 +83,6 @@ export default {
         }
     },
     props: {
-        socket: { type: io.Socket, required: true },
     },
     components: {
         CreateRoomDialog: CreateRoomDialog,
@@ -93,7 +92,7 @@ export default {
     methods: {
 
         refreshData() {
-            this.socket.emit(sock_const.RequestType.ROOM_LIST);
+            this.$socket.value.emit(sock_const.RequestType.ROOM_LIST);
         },
         setRooms(roomList) {
             this.roomList = roomList;
@@ -135,7 +134,7 @@ export default {
             }
         },
         btnRefreshClicked() {
-            this.socket.emit(sock_const.RequestType.ROOM_LIST, '');
+            this.$socket.value.emit(sock_const.RequestType.ROOM_LIST, '');
         },
         onRoomClicked(roomInfo) {
             this.clicked_room_rid = roomInfo.rid;
@@ -144,9 +143,9 @@ export default {
                     this.showInputPasswordDialog = true;
                     this.$refs.InputPasswordDialogComponent.init(roomInfo.rid);
                 } else {
-                    this.socket.emit(sock_const.RequestType.JOIN_ROOM, {
+                    this.$socket.value.emit(sock_const.RequestType.JOIN_ROOM, {
                         rid: roomInfo.rid,
-                        socket_id: this.socket.id,
+                        socket_id: this.$socket.value.id,
                         oid: this.$store.getters["Users/getUser_oid"],
                         nickname: this.$store.getters["Users/getUser_nickname"],
                         password: '',
@@ -160,11 +159,11 @@ export default {
         }
     },
     mounted() {
-        this.socket.on(sock_const.ResponseType.RES_ROOM_LIST, (data) => {
+        this.$socket.value.on(sock_const.ResponseType.RES_ROOM_LIST, (data) => {
             this.roomList = data;
             this.applyFilter();
         });
-        this.socket.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
+        this.$socket.value.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
             switch (data) {
                 case sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS:
                     this.$store.commit("Games/setGame_rid",this.clicked_room_rid);

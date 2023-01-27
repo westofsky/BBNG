@@ -97,7 +97,6 @@ export default {
     },
     props: {
         show: Boolean,
-        socket: { type: io.Socket, required: true },
     },
     methods: {
         mounted() {
@@ -112,7 +111,7 @@ export default {
         },
         createRoom() {
             this.$emit('close');
-            this.socket.emit(sock_const.RequestType.CREATE_ROOM,{
+            this.$socket.value.emit(sock_const.RequestType.CREATE_ROOM,{
                 rid: '',
                 host: this.$store.getters["Users/getUser_nickname"],
                 name: this.name,
@@ -123,7 +122,7 @@ export default {
                 round_count: this.roundCount,
                 state: game_const.GameState.WAITING,
                 players: [{
-                    socket_id: this.socket.id,
+                    socket_id: this.$socket.value.id,
                     oid: this.$store.getters["Users/getUser_oid"],
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 }]
@@ -131,7 +130,7 @@ export default {
         }
     },
     mounted(){
-        this.socket.on(sock_const.ResponseType.RES_GET_ROOM_RID, (data) => {
+        this.$socket.value.on(sock_const.ResponseType.RES_GET_ROOM_RID, (data) => {
             this.$store.commit("Games/setGame_rid",data);
             this.$router.push({name : 'Game'});
         });

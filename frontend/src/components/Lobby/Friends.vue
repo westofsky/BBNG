@@ -53,11 +53,10 @@ export default {
         }
     },
     props: {
-        socket: { type: io.Socket, required: true },
     },
     methods: {
         async refreshData() {
-            this.socket.emit(sock_const.RequestType.GET_ONLINE_LIST);
+            this.$socket.value.emit(sock_const.RequestType.GET_ONLINE_LIST);
             await this.get_requests();
             await this.get_friends();
         },
@@ -161,7 +160,7 @@ export default {
         }
     },
     mounted() {
-        this.socket.on(sock_const.ResponseType.RES_ONLINE_LIST, (data) => {
+        this.$socket.value.on(sock_const.ResponseType.RES_ONLINE_LIST, (data) => {
             this.online_list = data;
         });
     }

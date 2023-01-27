@@ -31,7 +31,6 @@ export default {
         }
     },
     props: {
-        socket: { type: io.Socket, required: true },
     },
     methods: {
         addMessageToList(user, message, state) {
@@ -46,7 +45,7 @@ export default {
             if (this.inputMessage.length == 0 || this.chattingDelayTime != 0) return;
 
             // Implement send message to server logic.
-            this.socket.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, { user: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage });
+            this.$socket.value.emit(sock_const.RequestType.SEND_MSG_TO_LOBBY, { user: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage });
             this.addMessageToList(this.$store.getters["Users/getUser_nickname"], this.inputMessage, 1);
             this.inputMessage = "";
 
@@ -76,7 +75,7 @@ export default {
     mounted() {
         // Implement receive chatting message from server logic.
         console.log(sock_const.ResponseType.BROADCAST_LOBBY_MSG);
-        this.socket.on(sock_const.ResponseType.BROADCAST_LOBBY_MSG, (data) => {
+        this.$socket.value.on(sock_const.ResponseType.BROADCAST_LOBBY_MSG, (data) => {
             this.addMessageToList(data.user, data.message, 0);
         });
     },

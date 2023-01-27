@@ -38,7 +38,6 @@ export default {
     },
     props: {
         show: Boolean,
-        socket: { type: io.Socket, required: true },
     },
     methods: {
         mounted() {
@@ -49,9 +48,9 @@ export default {
         },
         joinRoom() {
             this.$emit('close');
-            this.socket.emit(sock_const.RequestType.JOIN_ROOM, {
+            this.$socket.value.emit(sock_const.RequestType.JOIN_ROOM, {
                 rid: this.rid,
-                socket_id: this.socket.id,
+                socket_id: this.$socket.value.id,
                 oid: this.$store.getters["Users/getUser_oid"],
                 nickname: this.$store.getters["Users/getUser_nickname"],
                 password: this.password

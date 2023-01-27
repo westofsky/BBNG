@@ -30,6 +30,7 @@
 <script>
 import Register from '../components/Home/Register.vue';
 import {googleTokenLogin} from 'vue3-google-login';
+import io from 'socket.io-client';
 
 export default {
     name: 'Home',
@@ -72,6 +73,7 @@ export default {
                 user_pw : this.login_pw,
             }).then((res) =>{
                 if(res.data.status == 200){
+                    this.$socket.value = io('http://localhost:3000', { transports: ['websocket'] });
                     alert(res.data.msg);
                     this.$store.commit("Users/setUser_oid",res.data._id);
                     this.$store.commit("Users/setUser_nickname",res.data.nickname);

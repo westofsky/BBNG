@@ -49,7 +49,6 @@ export default {
     data() {
         return {
             isRuleActive: false,
-            socket: io('http://localhost:3000', { transports: ['websocket'] }),
             nickname: '',
         }
     },
@@ -84,14 +83,14 @@ export default {
     mounted() {
         this.nickname = this.$store.getters["Users/getUser_nickname"];
 
-        this.socket.on(sock_const.ResponseType.RES_ADD_USER_TO_LIST, () => {
-            this.socket.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
+        this.$socket.value.on(sock_const.ResponseType.RES_ADD_USER_TO_LIST, () => {
+            this.$socket.value.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
         });
-        this.socket.on(sock_const.ResponseType.RES_JOIN_LOBBY, () => {
+        this.$socket.value.on(sock_const.ResponseType.RES_JOIN_LOBBY, () => {
             this.$refs.RoomComponent.refreshData();
             this.$refs.FriendsComponent.refreshData();
         });
-        this.socket.emit(sock_const.RequestType.ADD_USER_TO_LIST, this.$store.getters["Users/getUser_nickname"]);
+        this.$socket.value.emit(sock_const.RequestType.ADD_USER_TO_LIST, this.$store.getters["Users/getUser_nickname"]);
 
         // Implement load initial datas from server.
         let rankList = [{ tier: "Challenger", nick: "Nickname1", rank_point: 99999 },
