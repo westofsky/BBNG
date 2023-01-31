@@ -281,6 +281,16 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     })
     gameRoomList[data.rid].game_data.ready_count -= 1;
   })
+  // 게임방 카드 한장 뽑기
+  socket.on(sock_const.RequestType.GET_CARD, (data) => {
+    socket.emit(sock_const.ResponseType.RES_GET_CARD, {
+      card : gameRoomList[data.rid].game_data.deck.slice(0, 1)
+    })
+    gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0,1)
+    if(gameRoomList[data.rid].game_data.deck.length == 0){
+      gameRoomList[data.rid].game_data.deck = shuffleDeck(gameRoomList[data.rid].game_data.push_deck)
+    }
+  })
 });
 
 // 서버 실행
