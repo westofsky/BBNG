@@ -36,6 +36,11 @@ const RequestType = {
     ACCEPT_RANK_QUEUE: 0,
     REJECT_RANK_QUEUE: 0,
 
+    // Game Event
+    GET_CARD: 0,
+    DRAW_CARD: 0,
+    BBONG: 0,
+
     // Chatting Event
     SEND_MSG_TO_LOBBY: 0,
     SEND_MSG_TO_ROOM: 0,
@@ -83,6 +88,7 @@ const ResponseType = {
     RES_ROUND_START: 0,
     RES_SPREAD_CARD: 0,
     RES_CHANGE_TURN: 0,
+    RES_BBONG: 0,
 
     // Chatting Event
     BROADCAST_LOBBY_MSG: 0,
