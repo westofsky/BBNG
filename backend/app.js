@@ -180,6 +180,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
           socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS);
           console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' joins room '" + data.rid + "'");
+          socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_JOIN, {
+            nickname: data.nickname
+          });
         } else { // 참여하려는 방의 비밀번호가 일치하지 않을 경우
           socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_WRONG_PASSWORD);
           console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' failed to join room '" + data.rid + "' => Incorrect password");
@@ -193,6 +196,13 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST);
       console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' failed to join room '" + data.rid + "' => Room does not exist");
     }
+  });
+
+  // Socket Listener Event - 사용자 설정 방 떠나기
+  socket.on(sock_const.RequestType.LEAVE_ROOM, (data) => {
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
+      nickname: data.nickname
+    });
   });
 
   // Socket Listener Event - 사용자 설정 방 목록 요청
@@ -234,6 +244,43 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   });
 
   // 게임방 관련 socket 처리
+  // 게임방 READY 및 시작
+  socket.on(sock_const.RequestType.READY, (data) => {
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_READY, {
+      nickname: data.nickname
+    })
+    gameRoomList[data.rid].game_data.ready_count += 1;
+    if(gameRoomList[data.rid].player_limit == gameRoomList[data.rid].game_data.ready_count){
+        socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START);
+        setTimeout(function() {
+          console.log('delay');
+        }, 3000)
+        socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
+            player_turn: 
+            gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname
+        })
+        setTimeout(function() {
+          console.log('delay');
+        }, 3000)
+        var j = 0;
+        gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
+        for(var i = 0; i < gameRoomList[data.rid].player_limit; i++){
+            io.to(gameRoomList[data.rid].player[i].socket_id).emit(sock_const.ResponseType.RES.SPREAD_CARD, {
+              cards: gameRoomList[data.rid].game_data.deck.slice(j, j+5)
+            })
+            j += 5;
+        }
+        gameRoomList[data.rid].game_data.deck =  gameRoomList[data.rid].game_data.deck.splice(0, 5* gameRoomList[data.rid].player_limit);
+    }
+  })
+
+  // 게임방 NOT READY
+  socket.on(sock_const.RequestType.NOT_READY, (data) => {
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_NOT_READY, {
+      nickname: data.nickname
+    })
+    gameRoomList[data.rid].game_data.ready_count -= 1;
+  })
 });
 
 // 서버 실행
