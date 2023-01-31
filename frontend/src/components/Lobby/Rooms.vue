@@ -51,9 +51,9 @@
     </div>
     <Teleport to="body">
         <InputPasswordDialog ref="InputPasswordDialogComponent" :show="showInputPasswordDialog"
-            @close="showInputPasswordDialog = false" v-bind:socket="socket" />
+            @close="showInputPasswordDialog = false"/>
         <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog"
-            @close="showCreateRoomDialog = false" v-bind:socket="socket" />
+            @close="showCreateRoomDialog = false"/>
         <MessageDialog ref="MessageDialogComponent" :show="showMessageDialog" @close="showMessageDialog = false" />
     </Teleport>
 </template>
