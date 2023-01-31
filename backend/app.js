@@ -80,10 +80,10 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 const sock_const = require(path.join(__dirname, '..', 'common', 'constant', 'socket-constants.js'));
 const game_const = require(path.join(__dirname, '..', 'common', 'constant', 'game-constants.js'));
-let clientListBySocket = {};
-let clientListByNickname = {};
-let gameRoomList = {};
-let onlineUserList = [];
+let clientListBySocket = {};  // Map that holds the information of all connected clients using socketID as the key
+let clientListByNickname = {}; // Map that holds the information of all conncected clients using user nickname as the key.
+let playingClientList = {}; // Map for storing list of clients currently playing the game, using user nickname as the key.
+let gameRoomList = {}; // Map to hold the list of created rooms, with room id as the key.
 
 // Initializing constants.
 sock_const.initSocketConstants();
@@ -103,7 +103,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       socket_id: socket.id,
       rid: '',
     };
-    onlineUserList.push(data);
 
     socket.emit(sock_const.ResponseType.RES_ADD_USER_TO_LIST);
     console.log('Socket Event(ADD_USER_TO_LIST): Connected client list\n########################\n' + JSON.stringify(clientListBySocket) + '\n########################');
@@ -216,7 +215,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     var nickname = clientListBySocket[socketId].nickname;
     var joinedGameRoom = clientListBySocket[socket.id].rid;
 
-    onlineUserList.splice(onlineUserList.indexOf(nickname), 1);
     if (joinedGameRoom != '') { // 방에 참여한 상태인 경우
       gameRoomList[joinedGameRoom].current_player_count -= 1;
       if (gameRoomList[joinedGameRoom].current_player_count == 0) { // 방에 다른 플레이어가 없을 경우
