@@ -59,7 +59,7 @@ export default {
             }
             return 0;
         },
-        bbong(bbongCards) {
+        bbong(bbongCards, drawCard) {
             let bbongNumber = Number(this.game_data.push_deck[this.game_data.push_deck.length - 1].slice(-1));
             let bbongCards = this.game_data.player_deck.filter(card => Number(card.slice(1)) === lastCardNumber).slice(0, 2);
             this.game_data.player_deck = this.game_data.player_deck.filter(card => !bbongCards.includes(card));
@@ -68,7 +68,7 @@ export default {
                 rid: this.$store.getters['Games/getGame_rid'],
                 nickname: this.$store.getters["Users/getUser_nickname"],
                 bbong_cards: bbongCards,
-                draw
+                draw_card: drawCard
             });
         }
     },
@@ -112,7 +112,7 @@ export default {
         });
 
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
-            
+
         });
 
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
