@@ -80,10 +80,10 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 const sock_const = require(path.join(__dirname, '..', 'common', 'constant', 'socket-constants.js'));
 const game_const = require(path.join(__dirname, '..', 'common', 'constant', 'game-constants.js'));
-let clientListBySocket = {};
-let clientListByNickname = {};
-let gameRoomList = {};
-let onlineUserList = [];
+let clientListBySocket = {};  // Map that holds the information of all connected clients using socketID as the key
+let clientListByNickname = {}; // Map that holds the information of all conncected clients using user nickname as the key.
+let playingClientList = {}; // Map for storing list of clients currently playing the game, using user nickname as the key.
+let gameRoomList = {}; // Map to hold the list of created rooms, with room id as the key.
 
 // Initializing constants.
 sock_const.initSocketConstants();
@@ -103,7 +103,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       socket_id: socket.id,
       rid: '',
     };
-    onlineUserList.push(data);
 
     socket.emit(sock_const.ResponseType.RES_ADD_USER_TO_LIST);
     console.log('Socket Event(ADD_USER_TO_LIST): Connected client list\n########################\n' + JSON.stringify(clientListBySocket) + '\n########################');
@@ -226,7 +225,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     var nickname = clientListBySocket[socketId].nickname;
     var joinedGameRoom = clientListBySocket[socket.id].rid;
 
-    onlineUserList.splice(onlineUserList.indexOf(nickname), 1);
     if (joinedGameRoom != '') { // 방에 참여한 상태인 경우
       gameRoomList[joinedGameRoom].current_player_count -= 1;
       if (gameRoomList[joinedGameRoom].current_player_count == 0) { // 방에 다른 플레이어가 없을 경우
@@ -315,10 +313,10 @@ function createHashFromString(string) {
 // Function - 새로운 카드 덱 생성
 function createDeck() {
   return [
-    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'HJ', 'HQ',
-    'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'CJ', 'CQ',
-    'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'DJ', 'DQ',
-    'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'SJ', 'SQ',
+    'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'H11', 'H12',
+    'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'C9', 'C10', 'C11', 'C12',
+    'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8', 'D9', 'D10', 'D11', 'D12',
+    'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S9', 'S10', 'S11', 'S12',
   ];
 }
 
