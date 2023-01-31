@@ -43,7 +43,7 @@ export default {
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.$store.getters["Games/getGame_rid"],
                 nickname: this.$store.getters["Users/getUser_nickname"],
-                card: card,
+                card: { [card]: { x: [x], y: [y]} },
                 over_price: this.checkOverPrice()
             });
         },
