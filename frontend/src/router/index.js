@@ -2,6 +2,7 @@ import { createWebHistory, createRouter, routerKey } from "vue-router";
 import Home from "../views/Home.vue";
 import Lobby from "../views/Lobby.vue";
 import Game from "../views/Game.vue";
+import test from "../views/test.vue";
 import store from "../vuex/store";
 import * as sock_const from "../../../common/constant/socket-constants.js";
 
@@ -30,6 +31,12 @@ const routes = [
     path: "/Game",
     name: "Game",
     component: Game,
+    beforeEnter : requireAuth(),
+  },
+  {
+    path: "/test",
+    name: "test",
+    component: test,
     beforeEnter : requireAuth(),
   },
 ];

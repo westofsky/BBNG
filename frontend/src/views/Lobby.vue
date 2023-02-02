@@ -7,7 +7,7 @@
                     <label class="BtnText" style="user-select: none; flex: 1;">How to Play?</label>
                 </div>
             </div>
-            <Rooms ref="RoomComponent" v-bind:socket="socket" />
+            <Rooms ref="RoomComponent"/>
             <div class="BtnArea">
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
@@ -23,10 +23,10 @@
         <div>
             <div class="UserInfo">
                 <img class="AccountImage" src="../assets/images/icon_account.png" />
-                <label class="UserName">{{nickname}}</label>
+                <label class="UserName">{{ nickname }}</label>
             </div>
-            <Friends ref="FriendsComponent" v-bind:socket="socket" />
-            <Chatting ref="ChattingComponent" v-bind:socket="socket" />
+            <Friends ref="FriendsComponent"/>
+            <Chatting ref="ChattingComponent"/>
         </div>
         <div class="popup_rules" v-if="isRuleActive">
             <Rules @event-isRules="setIsRuleActive" />
@@ -66,8 +66,8 @@ export default {
         setIsRuleActive() {
             this.isRuleActive = false;
         },
-        Logout() {
-            alert("로그아웃 되었습니다.");
+        logout() {
+            this.$socket.value.disconnect();
             this.$store.commit("Users/setUser_oid", '');
             this.$store.commit("Users/setUser_nickname", '');
             this.$router.push({ name: 'Home' });
@@ -83,14 +83,11 @@ export default {
     mounted() {
         this.nickname = this.$store.getters["Users/getUser_nickname"];
 
-        this.$socket.value.on(sock_const.ResponseType.RES_ADD_USER_TO_LIST, () => {
-            this.$socket.value.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
-        });
         this.$socket.value.on(sock_const.ResponseType.RES_JOIN_LOBBY, () => {
             this.$refs.RoomComponent.refreshData();
             this.$refs.FriendsComponent.refreshData();
         });
-        this.$socket.value.emit(sock_const.RequestType.ADD_USER_TO_LIST, this.$store.getters["Users/getUser_nickname"]);
+        this.$socket.value.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
 
         // Implement load initial datas from server.
         let rankList = [{ tier: "Challenger", nick: "Nickname1", rank_point: 99999 },
@@ -152,6 +149,7 @@ export default {
     width: 32px;
     height: 32px;
 }
+
 .UserName {
     margin: 8px;
     font-size: 14pt;
