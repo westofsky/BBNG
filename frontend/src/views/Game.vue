@@ -60,10 +60,18 @@ export default {
             return 0;
         },
         bbong(bbongCards, drawCard) {
-            let bbongNumber = Number(this.game_data.push_deck[this.game_data.push_deck.length - 1].slice(-1));
-            let bbongCards = this.game_data.player_deck.filter(card => Number(card.slice(1)) === lastCardNumber).slice(0, 2);
-            this.game_data.player_deck = this.game_data.player_deck.filter(card => !bbongCards.includes(card));
+            for(let loop = 0; loop < this.game_data.player_deck.length; loop++){
+                if(bbongCards.hasOwnProperty(this.game_data.player_deck[loop])){
+                    this.game_data.player_deck.splice(loop, 1);
+                    loop--;
+                }
+            }
 
+            var drawCardIndex = this.game_data.player_deck.indexOf(drawCard.draw_card);
+            if(drawCardIndex > -1) {
+                this.game_data.player_deck.splice(drawCardIndex, 1);
+            }
+            
             this.$socket.value.emit(sock_const.RequestType.BBONG, {
                 rid: this.$store.getters['Games/getGame_rid'],
                 nickname: this.$store.getters["Users/getUser_nickname"],
