@@ -1,15 +1,37 @@
 <template>
-    <div class="Game">
-        {{ rid }}
+   <div class="Game">
+        <div class = "logs">
+            <Log ref="LogComponent" />
+            <Chatting ref="ChattingComponent" style="width:280px"/>
+        </div>
+        <div class = "game_zone">
+            <div class="game_table">
+                <!-- 여기 안에 다른 card들 component들어가야함-->    
+            </div>
+            <div class = "nickname_mine">
+                <p>player1</p>
+            </div>
+            <div class ="card_mine">
+                
+            </div>
+            
+        </div>
+        <div class = "menu">
+        </div>
     </div>
 </template>
 
 <script>
+import Log from '../components/Game/Log.vue';
+import Chatting from '../components/Lobby/Chatting.vue';
 import * as sock_const from "../../../../common/constant/socket-constants.js";
 import * as game_const from "../../../../common/constant/game-constants.js";
-
 export default {
     name: 'Game',
+    components: {
+        Log : Log,
+        Chatting : Chatting,
+    },
     data() {
         return {
             rid: '',
@@ -82,7 +104,16 @@ export default {
     },
     mounted() {
         this.rid = this.$store.getters["Games/getGame_rid"];
-
+        let chattingList = [
+            { nickname: 'Player1', message: '인게임' },
+            { nickname: 'Player2', message: '메세지테스트' },
+        ];
+        let LogList = [
+            { message: '인게임' },
+            { message: '메세지테스트' },
+        ];
+        this.$refs.LogComponent.setLogs(LogList);
+        this.$refs.ChattingComponent.setMessages(chattingList);
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
             /**
              * data: {
@@ -91,7 +122,6 @@ export default {
              */
             this.game_data.players.push(data.nickname);
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
             /**
              * data: {
@@ -102,7 +132,6 @@ export default {
                 return player != data.nickname;
             });
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
             /**
              * data: {
@@ -110,7 +139,6 @@ export default {
              * }
              */
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어가 준비해제 했을 때
             /**
              * data: {
@@ -118,25 +146,18 @@ export default {
              * }
              */
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
-
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
             /**
              * data: {
              *  player_turn: 'Player1'
              * }
              */
-
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
-
             } else { // 플레이어가 첫 번째 차례가 아닐 때
-
             }
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
             /**
              * data: {
@@ -145,7 +166,6 @@ export default {
              */
             this.game_data.player_deck = data.cards;
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
              * data: {
@@ -153,12 +173,9 @@ export default {
              * }
              */
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
-
             } else { // 플레이어의 차례가 아닐 때
-
             }
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 카드를 한장 받았을 때
             /**
              * data: {
@@ -167,7 +184,6 @@ export default {
              */
             this.game_data.player_deck.push(data.card);
         });
-
         this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 다른 플레이어가 카드를 한장 냈을 때
             /**
              * data: {
@@ -190,5 +206,32 @@ export default {
 }
 </script>
 <style scoped>
+.Game {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #E1D5D5;
+}
+.logs{
+    padding-left:10px;
+    padding-right: 10px;
+}
+.game_zone{
+    width:70%;
+    height:100%;   
+}
+.game_zone .game_table{
+    
+}
 
+.menu{
+    width:10%;
+    height:100%;
+    
+}
 </style>
+  
