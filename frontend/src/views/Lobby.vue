@@ -26,7 +26,7 @@
                 <label class="UserName">{{ nickname }}</label>
             </div>
             <Friends ref="FriendsComponent"/>
-            <Chatting ref="ChattingComponent"/>
+            <Chatting ref="ChattingComponent" :request-type="chatRequestType" :response-type="chatResponseType" :chatting-delay-time="3"/>
         </div>
         <div class="popup_rules" v-if="isRuleActive">
             <Rules @event-isRules="setIsRuleActive" />
@@ -50,6 +50,8 @@ export default {
         return {
             isRuleActive: false,
             nickname: '',
+            chatRequestType: sock_const.RequestType.SEND_MSG_TO_LOBBY,
+            chatResponseType: sock_const.ResponseType.BROADCAST_LOBBY_MSG,
         }
     },
     methods: {

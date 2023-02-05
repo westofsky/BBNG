@@ -2,7 +2,7 @@
    <div class="Game">
         <div class = "logs">
             <Log ref="LogComponent" />
-            <Chatting ref="ChattingComponent" style="width:280px"/>
+            <Chatting ref="ChattingComponent" style="width: 280px;" :request-type="chatRequestType" :response-type="chatResponseType" :chatting-delay-time="0" :rid="rid"/>
         </div>
         <div class = "game_zone">
             <div class="game_table">
@@ -36,6 +36,8 @@ export default {
         return {
             rid: '',
             ready: false,
+            chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
+            chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
             game_data: {},
         }
     },

@@ -136,7 +136,14 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function (data) {
     socket.broadcast.to(sock_const.ChatroomType.LOBBY).emit(sock_const.ResponseType.BROADCAST_LOBBY_MSG, data);
 
-    console.log("Socket Event(SEND_MSG_TO_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' send message '" + JSON.stringify(data) + "' to lobby");
+    console.log("Socket Event(SEND_MSG_TO_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' send message '" + data.message + "' to lobby");
+  });
+
+  // Socket Listener Event - Room으로 채팅 메세지 전달
+  socket.on(sock_const.RequestType.SEND_MSG_TO_ROOM, function (data) {
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.BROADCAST_ROOM_MSG, data);
+
+    console.log("Socket Event(SEND_MSG_TO_ROOM): Player '" + clientListBySocket[socket.id].nickname + "' send message '" + data.message + "' to room '" + data.rid + "'");
   });
 
   // Socket Listener Event - 사용자 설정 방 생성
