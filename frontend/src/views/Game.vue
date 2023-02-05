@@ -24,8 +24,8 @@
 <script>
 import Log from '../components/Game/Log.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
-import * as sock_const from "../../../../common/constant/socket-constants.js";
-import * as game_const from "../../../../common/constant/game-constants.js";
+import * as sock_const from "../../../common/constant/socket-constants.js";
+import * as game_const from "../../../common/constant/game-constants.js";
 export default {
     name: 'Game',
     components: {
