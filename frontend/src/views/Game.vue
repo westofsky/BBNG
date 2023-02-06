@@ -1,9 +1,11 @@
 <template>
-    <div class="notification" v-if="showNotification" :class="{ 'fadeout': !showNotification }">
-        <div class="notification-content">
-            {{ notificationMessage }}
+    <transition name="notification-fade">
+        <div class="notification" v-if="showNotification">
+            <div class="notification-content">
+                {{ notificationMessage }}
+            </div>
         </div>
-    </div>
+    </transition>
     <div class="Game">
         <div class="logs">
             <Log ref="LogComponent" />
@@ -54,6 +56,7 @@ export default {
             },
             notificationMessage: '',
             showNotification: false,
+            notificationTimeout: 0,
         }
     },
     methods: {
@@ -121,7 +124,8 @@ export default {
         showGameNotification(message) {
             this.notificationMessage = message;
             this.showNotification = true;
-            setTimeout(() => {
+            clearTimeout(this.notificationTimeout);
+            this.notificationTimeout = setTimeout(() => {
                 this.showNotification = false;
             }, 2000);
         }
@@ -282,7 +286,13 @@ export default {
     opacity: 1;
 }
 
-.notification.fadeout {
+.notification-fade-enter-active,
+.notification-fade-leave-active {
+    transition: opacity 1s;
+}
+
+.notification-fade-enter,
+.notification-fade-leave-to {
     opacity: 0;
 }
 </style>
