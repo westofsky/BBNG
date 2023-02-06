@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="Game">
     <transition name="notification-fade">
         <div class="notification" v-if="showNotification">
             <div class="notification-content">
@@ -7,7 +7,7 @@
             </div>
         </div>
     </transition>
-    <div class="Game">
+    <div class="InGame">
         <div class="logs">
             <Log ref="LogComponent" />
             <!-- <Chatting ref="ChattingComponent" style="width: 280px;" :request-type="chatRequestType"
@@ -176,111 +176,115 @@ export default {
         }
     },
     mounted() {
-        this.rid = this.$store.getters["Games/getGame_rid"];
-        this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
-            /**
-             * data: {
-             *  nickname: 'Player1'
-             * }
-             */
-            this.game_data.players.push(data.nickname);
-            this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
-            this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
-            /**
-             * data: {
-             *  nickname: 'Player1'
-             * }
-             */
-            this.game_data.players = this.game_data.players.filter((player) => {
-                return player != data.nickname;
-            });
-            this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
-            this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
-            /**
-             * data: {
-             *  nickname: 'Player1'
-             * }
-             */
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어가 준비해제 했을 때
-            /**
-             * data: {
-             *  nickname: 'Player1'
-             * }
-             */
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
-            this.$refs.LogComponent.addLog("게임이 시작되었습니다");
-            this.showGameNotification("게임이 시작되었습니다");
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
-            /**
-             * data: {
-             *  player_turn: 'Player1',
-             *  round: 1
-             * }
-             */
-            this.$refs.LogComponent.addLog(data.round + " 라운드가 시작되었습니다");
-            this.showGameNotification(data.round + " 라운드가 시작되었습니다");
-            if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
-            } else { // 플레이어가 첫 번째 차례가 아닐 때
-            }
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
-            /**
-             * data: {
-             *  cards: ['C1', 'C2', 'C3', 'C4', 'C5']
-             * } 
-             */
-            this.game_data.player_deck = data.cards;
-            this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
-            /**
-             * data: {
-             *  player_turn: 'Player1'
-             * }
-             */
-            if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
-            } else { // 플레이어의 차례가 아닐 때
-            }
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 카드를 한장 받았을 때
-            /**
-             * data: {
-             *  card: 'C1'
-             * }
-             */
-            this.game_data.player_deck.push(data.card);
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 다른 플레이어가 카드를 한장 냈을 때
-            /**
-             * data: {
-             *  over_price: 1,
-             *  card: {
-             *      draw_card: 'C1',
-             *      x: 0,
-             *      y: 0,
-             *  }
-             * }
-             */
-            this.game_data.push_deck.push({
-                [data.card.draw_card]: {
-                    x: data.card.x,
-                    y: data.card.y
-                }
-            });
-        });
+        // this.rid = this.$store.getters["Games/getGame_rid"];
+        // this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
+        // this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
+        //     /**
+        //      * data: {
+        //      *  nickname: 'Player1'
+        //      * }
+        //      */
+        //     this.game_data.players.push(data.nickname);
+        //     this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
+        //     this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
+        //     /**
+        //      * data: {
+        //      *  nickname: 'Player1'
+        //      * }
+        //      */
+        //     this.game_data.players = this.game_data.players.filter((player) => {
+        //         return player != data.nickname;
+        //     });
+        //     this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
+        //     this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
+        //     /**
+        //      * data: {
+        //      *  nickname: 'Player1'
+        //      * }
+        //      */
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어가 준비해제 했을 때
+        //     /**
+        //      * data: {
+        //      *  nickname: 'Player1'
+        //      * }
+        //      */
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
+        //     this.$refs.LogComponent.addLog("게임이 시작되었습니다");
+        //     this.showGameNotification("게임이 시작되었습니다");
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
+        //     /**
+        //      * data: {
+        //      *  player_turn: 'Player1',
+        //      *  round: 1
+        //      * }
+        //      */
+        //     this.$refs.LogComponent.addLog(data.round + " 라운드가 시작되었습니다");
+        //     this.showGameNotification(data.round + " 라운드가 시작되었습니다");
+        //     if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
+        //     } else { // 플레이어가 첫 번째 차례가 아닐 때
+        //     }
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
+        //     /**
+        //      * data: {
+        //      *  cards: ['C1', 'C2', 'C3', 'C4', 'C5']
+        //      * } 
+        //      */
+        //     this.game_data.player_deck = data.cards;
+        //     this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
+        //     /**
+        //      * data: {
+        //      *  player_turn: 'Player1'
+        //      * }
+        //      */
+        //     if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
+        //     } else { // 플레이어의 차례가 아닐 때
+        //     }
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 카드를 한장 받았을 때
+        //     /**
+        //      * data: {
+        //      *  card: 'C1'
+        //      * }
+        //      */
+        //     this.game_data.player_deck.push(data.card);
+        // });
+        // this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 다른 플레이어가 카드를 한장 냈을 때
+        //     /**
+        //      * data: {
+        //      *  over_price: 1,
+        //      *  card: {
+        //      *      draw_card: 'C1',
+        //      *      x: 0,
+        //      *      y: 0,
+        //      *  }
+        //      * }
+        //      */
+        //     this.game_data.push_deck.push({
+        //         [data.card.draw_card]: {
+        //             x: data.card.x,
+        //             y: data.card.y
+        //         }
+        //     });
+        // });
     }
 }
 </script>
 <style scoped>
-.Game {
+.Game{
+    width:100%;
+    height:100%;
+}
+.InGame {
     width: 100%;
     height: 100%;
     position: relative;
