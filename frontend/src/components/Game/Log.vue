@@ -36,7 +36,7 @@ export default {
             await this.$nextTick();
             var chattingLog = document.querySelector(".ChattingLog");
             var scrollHeight = chattingLog.scrollHeight;
-            // chattingLog.scrollTop = scrollHeight;
+            chattingLog.scrollTop = scrollHeight;
         }
     },
     mounted() {
