@@ -15,11 +15,7 @@ export default {
     name: 'Log',
     data() {
         return {
-            Logs : [
-                {message : 'Player1이(가) 바가지'},
-                {message : 'Player1이(가) 바가지 해제'},
-                {message : 'Player2이(가) 바가지'}
-            ],
+            Logs : [],
         }
     },
     props: {
@@ -29,6 +25,12 @@ export default {
             this.Logs = Logs;
             this.scrollToEnd();
             console.log(this.Logs);
+        },
+        addLog(message) {
+            this.Logs.push({
+                message: message
+            });
+            this.scrollToEnd();
         },
         async scrollToEnd() {
             await this.$nextTick();

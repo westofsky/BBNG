@@ -239,6 +239,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         delete gameRoomList[joinedGameRoom];
       } else { // 방에 다른 플레이어가 남아있을 경우
         console.log("Room Event: Player '" + nickname + "' has been removed from room '" + JSON.stringify(gameRoomList[joinedGameRoom]) + "'");
+        io.to(joinedGameRoom).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
+          nickname: nickname
+        });
         gameRoomList[joinedGameRoom].players = gameRoomList[joinedGameRoom].players.filter(function (player) {
           return player.nickname !== nickname
         });
@@ -262,15 +265,16 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }, 3000)
         socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
             player_turn: 
-            gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname
-        })
+            gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname,
+            round: gameRoomList[data.rid].current_round
+        });
         setTimeout(function() {
           console.log('delay');
-        }, 3000)
+        }, 3000);
         var j = 0;
         gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
         for(var i = 0; i < gameRoomList[data.rid].player_limit; i++){
-            io.to(gameRoomList[data.rid].player[i].socket_id).emit(sock_const.ResponseType.RES.SPREAD_CARD, {
+            io.to(gameRoomList[data.rid].player[i].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
               cards: gameRoomList[data.rid].game_data.deck.slice(j, j+5)
             })
             j += 5;

@@ -1,22 +1,23 @@
 <template>
-   <div class="Game">
-        <div class = "logs">
+    <div class="Game">
+        <div class="logs">
             <Log ref="LogComponent" />
-            <Chatting ref="ChattingComponent" style="width: 280px;" :request-type="chatRequestType" :response-type="chatResponseType" :chatting-delay-time="0" :rid="rid"/>
+            <Chatting ref="ChattingComponent" style="width: 280px;" :request-type="chatRequestType"
+                :response-type="chatResponseType" :chatting-delay-time="0" :rid="rid" />
         </div>
-        <div class = "game_zone">
+        <div class="game_zone">
             <div class="game_table">
-                <!-- 여기 안에 다른 card들 component들어가야함-->    
+                <!-- 여기 안에 다른 card들 component들어가야함-->
             </div>
-            <div class = "nickname_mine">
+            <div class="nickname_mine">
                 <p>player1</p>
             </div>
-            <div class ="card_mine">
-                
+            <div class="card_mine">
+
             </div>
-            
+
         </div>
-        <div class = "menu">
+        <div class="menu">
         </div>
     </div>
 </template>
@@ -29,8 +30,8 @@ import * as game_const from "../../../common/constant/game-constants.js";
 export default {
     name: 'Game',
     components: {
-        Log : Log,
-        Chatting : Chatting,
+        Log: Log,
+        Chatting: Chatting,
     },
     data() {
         return {
@@ -38,7 +39,14 @@ export default {
             ready: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            game_data: {},
+            game_data: {
+                players: [],
+                current_player: '',
+                player_deck: [],
+                other_player_deck: {},
+                push_deck: [],
+                round_result: [],
+            },
         }
     },
     methods: {
@@ -67,7 +75,7 @@ export default {
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.$store.getters["Games/getGame_rid"],
                 nickname: this.$store.getters["Users/getUser_nickname"],
-                card: { [card]: { x: [x], y: [y]} },
+                card: { [card]: { x: [x], y: [y] } },
                 over_price: this.checkOverPrice()
             });
         },
@@ -84,18 +92,18 @@ export default {
             return 0;
         },
         bbong(bbongCards, drawCard) {
-            for(let loop = 0; loop < this.game_data.player_deck.length; loop++){
-                if(bbongCards.hasOwnProperty(this.game_data.player_deck[loop])){
+            for (let loop = 0; loop < this.game_data.player_deck.length; loop++) {
+                if (bbongCards.hasOwnProperty(this.game_data.player_deck[loop])) {
                     this.game_data.player_deck.splice(loop, 1);
                     loop--;
                 }
             }
 
             var drawCardIndex = this.game_data.player_deck.indexOf(drawCard.draw_card);
-            if(drawCardIndex > -1) {
+            if (drawCardIndex > -1) {
                 this.game_data.player_deck.splice(drawCardIndex, 1);
             }
-            
+
             this.$socket.value.emit(sock_const.RequestType.BBONG, {
                 rid: this.$store.getters['Games/getGame_rid'],
                 nickname: this.$store.getters["Users/getUser_nickname"],
@@ -106,16 +114,7 @@ export default {
     },
     mounted() {
         this.rid = this.$store.getters["Games/getGame_rid"];
-        let chattingList = [
-            { nickname: 'Player1', message: '인게임' },
-            { nickname: 'Player2', message: '메세지테스트' },
-        ];
-        let LogList = [
-            { message: '인게임' },
-            { message: '메세지테스트' },
-        ];
-        this.$refs.LogComponent.setLogs(LogList);
-        this.$refs.ChattingComponent.setMessages(chattingList);
+        this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
             /**
              * data: {
@@ -123,6 +122,7 @@ export default {
              * }
              */
             this.game_data.players.push(data.nickname);
+            this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
             /**
@@ -133,6 +133,7 @@ export default {
             this.game_data.players = this.game_data.players.filter((player) => {
                 return player != data.nickname;
             });
+            this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
             /**
@@ -149,13 +150,16 @@ export default {
              */
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
+            this.$refs.LogComponent.addLog("게임이 시작되었습니다");
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
             /**
              * data: {
-             *  player_turn: 'Player1'
+             *  player_turn: 'Player1',
+             *  round: 1
              * }
              */
+            this.$refs.LogComponent.addLog(data.round + " 라운드가 시작되었습니다");
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
             } else { // 플레이어가 첫 번째 차례가 아닐 때
             }
@@ -167,6 +171,7 @@ export default {
              * } 
              */
             this.game_data.player_deck = data.cards;
+            this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
@@ -218,22 +223,22 @@ export default {
     align-items: center;
     background-color: #E1D5D5;
 }
-.logs{
-    padding-left:10px;
+
+.logs {
+    padding-left: 10px;
     padding-right: 10px;
 }
-.game_zone{
-    width:70%;
-    height:100%;   
-}
-.game_zone .game_table{
-    
+
+.game_zone {
+    width: 70%;
+    height: 100%;
 }
 
-.menu{
-    width:10%;
-    height:100%;
-    
+.game_zone .game_table {}
+
+.menu {
+    width: 10%;
+    height: 100%;
+
 }
 </style>
-  
