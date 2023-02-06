@@ -233,6 +233,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     var joinedGameRoom = clientListBySocket[socket.id].rid;
 
     if (joinedGameRoom != '') { // 방에 참여한 상태인 경우
+      socket.leave(joinedGameRoom);
       gameRoomList[joinedGameRoom].current_player_count -= 1;
       if (gameRoomList[joinedGameRoom].current_player_count == 0) { // 방에 다른 플레이어가 없을 경우
         console.log("Room Event: Room '" + JSON.stringify(gameRoomList[joinedGameRoom]) + "' removed due to lack of active players");
