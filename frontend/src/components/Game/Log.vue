@@ -73,5 +73,6 @@ export default {
     flex: 1;
     color : white;
     display: block;
+    margin-bottom: 8px;
 }
 </style>

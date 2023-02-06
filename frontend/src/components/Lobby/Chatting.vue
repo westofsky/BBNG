@@ -2,11 +2,13 @@
     <div class="Chatting RoundBorder">
         <div class="ChattingLog">
             <div class="MessageSet" v-for="messageSet in messages" :key="messageSet">
-                <label class="Nickname" v-if="messageSet.state == 0">{{ messageSet.nickname }}:&nbsp</label>
+                <label class="Nickname">{{ messageSet.nickname }}:&nbsp</label>
+                <label class="Message">{{ messageSet.message }}</label>
+                <!-- <label class="Nickname" v-if="messageSet.state == 0">{{ messageSet.nickname }}:&nbsp</label>
                 <label class="Message" style="text-align : right" v-if="messageSet.state == 1">{{
                     messageSet.message
                 }}</label>
-                <label class="Message" v-else>{{ messageSet.message }}</label>
+                <label class="Message" v-else>{{ messageSet.message }}</label> -->
             </div>
         </div>
         <input class="ChattingInput" type="input" placeholder="메세지를 입력해주세요..." v-model="inputMessage"
@@ -50,8 +52,8 @@ export default {
         },
     },
     methods: {
-        addMessageToList(user, message, state) {
-            this.messages.push({ nickname: user, message: message, state: state });
+        addMessageToList(nickname, message, state) {
+            this.messages.push({ nickname: nickname, message: message, state: state });
             this.scrollToEnd();
         },
         setMessages(messages) {
@@ -62,7 +64,7 @@ export default {
             if (this.inputMessage.length == 0 || this.currentDelayTime != 0) return;
 
             // Implement send message to server logic.
-            this.$socket.value.emit(this.requestType, { rid: this.rid, user: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage });
+            this.$socket.value.emit(this.requestType, { rid: this.rid, nickname: this.$store.getters["Users/getUser_nickname"], message: this.inputMessage });
             this.addMessageToList(this.$store.getters["Users/getUser_nickname"], this.inputMessage, 1);
             this.inputMessage = "";
 
@@ -93,7 +95,7 @@ export default {
     mounted() {
         // Implement receive chatting message from server logic.
         this.$socket.value.on(this.responseType, (data) => {
-            this.addMessageToList(data.user, data.message, 0);
+            this.addMessageToList(data.nickname, data.message, 0);
         });
     },
 }
