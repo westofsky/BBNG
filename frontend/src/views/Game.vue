@@ -1,4 +1,9 @@
 <template>
+    <div class="notification" v-if="showNotification" :class="{ 'fadeout': !showNotification }">
+        <div class="notification-content">
+            {{ notificationMessage }}
+        </div>
+    </div>
     <div class="Game">
         <div class="logs">
             <Log ref="LogComponent" />
@@ -47,6 +52,8 @@ export default {
                 push_deck: [],
                 round_result: [],
             },
+            notificationMessage: '',
+            showNotification: false,
         }
     },
     methods: {
@@ -110,6 +117,13 @@ export default {
                 bbong_cards: bbongCards,
                 draw_card: drawCard
             });
+        },
+        showGameNotification(message) {
+            this.notificationMessage = message;
+            this.showNotification = true;
+            setTimeout(() => {
+                this.showNotification = false;
+            }, 2000);
         }
     },
     mounted() {
@@ -123,6 +137,7 @@ export default {
              */
             this.game_data.players.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
+            this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
             /**
@@ -134,6 +149,7 @@ export default {
                 return player != data.nickname;
             });
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
+            this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
             /**
@@ -151,6 +167,7 @@ export default {
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
+            this.showGameNotification("게임이 시작되었습니다");
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
             /**
@@ -160,6 +177,7 @@ export default {
              * }
              */
             this.$refs.LogComponent.addLog(data.round + " 라운드가 시작되었습니다");
+            this.showGameNotification(data.round + " 라운드가 시작되었습니다");
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
             } else { // 플레이어가 첫 번째 차례가 아닐 때
             }
@@ -240,5 +258,31 @@ export default {
     width: 10%;
     height: 100%;
 
+}
+
+.notification {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    max-width: 30%;
+    padding: 10px;
+    box-sizing: border-box;
+    text-align: center;
+    z-index: 2;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.notification-content {
+    padding: 16px;
+    color: white;
+    text-align: center;
+    opacity: 1;
+}
+
+.notification.fadeout {
+    opacity: 0;
 }
 </style>
