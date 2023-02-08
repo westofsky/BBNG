@@ -115,7 +115,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       onlineList.push(Object.values(clientListBySocket)[i].nickname);
     }
     socket.emit(sock_const.ResponseType.RES_ONLINE_LIST, onlineList);
-    console.log("Socket Event(GET_ONLINE_LIST): Player '" + clientListBySocket[socket.id].nickname  + "' request online friend list");
+    console.log("Socket Event(GET_ONLINE_LIST): Player '" + clientListBySocket[socket.id].nickname + "' request online friend list");
   });
 
   // Socket Listener Event - Lobby에 참여
@@ -259,28 +259,28 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       nickname: data.nickname
     })
     gameRoomList[data.rid].game_data.ready_count += 1;
-    if(gameRoomList[data.rid].player_limit == gameRoomList[data.rid].game_data.ready_count){
-        socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START);
-        setTimeout(function() {
-          console.log('delay');
-        }, 3000)
-        socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
-            player_turn: 
-            gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname,
-            round: gameRoomList[data.rid].current_round
-        });
-        setTimeout(function() {
-          console.log('delay');
-        }, 3000);
-        var j = 0;
-        gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
-        for(var i = 0; i < gameRoomList[data.rid].player_limit; i++){
-            io.to(gameRoomList[data.rid].player[i].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
-              cards: gameRoomList[data.rid].game_data.deck.slice(j, j+5)
-            })
-            j += 5;
-        }
-        gameRoomList[data.rid].game_data.deck =  gameRoomList[data.rid].game_data.deck.splice(0, 5* gameRoomList[data.rid].player_limit);
+    if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].game_data.ready_count) {
+      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START);
+      setTimeout(function () {
+        console.log('delay');
+      }, 3000);
+      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
+        player_turn:
+          gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname,
+        round: gameRoomList[data.rid].current_round
+      });
+      setTimeout(function () {
+        console.log('delay');
+      }, 3000);
+      var j = 0;
+      gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
+      for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+        io.to(gameRoomList[data.rid].players[i].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
+          cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5)
+        })
+        j += 5;
+      }
+      gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
     }
   })
 
@@ -291,14 +291,48 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     })
     gameRoomList[data.rid].game_data.ready_count -= 1;
   })
+
   // 게임방 카드 한장 뽑기
   socket.on(sock_const.RequestType.GET_CARD, (data) => {
     socket.emit(sock_const.ResponseType.RES_GET_CARD, {
-      card : gameRoomList[data.rid].game_data.deck.slice(0, 1)
+      card: gameRoomList[data.rid].game_data.deck.slice(0, 1)
     })
-    gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0,1)
-    if(gameRoomList[data.rid].game_data.deck.length == 0){
+    gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 1)
+    if (gameRoomList[data.rid].game_data.deck.length == 0) {
       gameRoomList[data.rid].game_data.deck = shuffleDeck(gameRoomList[data.rid].game_data.push_deck)
+    }
+  })
+
+  socket.on(sock_const.RequestType.DRAW_CARD, (data) => {
+    var flag = 0;
+    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+      if (gameRoomList[data.rid].game_data.player[i].nickname != data.nickname){
+        if (gameRoomList[data.rid].game_data.player[i].state == 2) {  // 누군가 바가지 상태일 때
+          if (gameRoomList[data.rid].game_data.player[i].over_price == Number(data.card.draw_card.slice(1))) { // 내가 낸 카드가 바가지에 걸렸을 때
+            flag++;
+            for(var k = 0; k < gameRoomList[data.rid].player_limit; k++){
+              var sum = 0;
+              for(var l = 0; l < gameRoomList[data.rid].game_data.player[k].cards.length; l++){
+                sum += Number(gameRoomList[data.rid].game_data.player[k].cards[l].slice(1));
+              }
+              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
+              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
+              player_score[gameRoomList[data.rid].game_data.player[k].nickname] = sum;
+            }
+            socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_END_ROUND, {
+              round: gameRoomList[data.rid].current_round,
+              player_score : gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
+            })
+          }
+        }
+      }
+    }
+    if (flag == 0) {
+      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_DRAW_CARD, {
+        nickname : data.nickname,
+        over_price: data.over_price,
+        card: data.card
+      })
     }
   })
 });
@@ -309,6 +343,7 @@ httpServer.listen(port, () => {
 });
 
 const crypto = require('crypto');
+const { FORMERR } = require('dns');
 
 // Function - 전달받은 RoomName, RoomType과 현재 시간을 기준으로 고유의 RoomId를 만들어줌
 function createRoomId(roomName, roomType) {
