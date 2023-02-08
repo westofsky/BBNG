@@ -337,7 +337,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             }
           }
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
-          socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_END_ROUND, {
+          socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_END, {
             round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
             player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
           })

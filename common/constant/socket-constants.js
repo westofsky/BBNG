@@ -86,6 +86,7 @@ const ResponseType = {
     // Game Event
     RES_GAME_START : 0,
     RES_ROUND_START: 0,
+    RES_ROUND_END: 0,
     RES_SPREAD_CARD: 0,
     RES_CHANGE_TURN: 0,
     RES_BBONG: 0,
