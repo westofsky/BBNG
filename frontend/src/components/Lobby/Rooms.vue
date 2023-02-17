@@ -18,8 +18,7 @@
                     </select>
                 </div>
                 <div class="ShowScore">
-                    <select v-model="filterShowScore" name="FilterShowScore" style="font-size: 14pt"
-                        @change="applyFilter">
+                    <select v-model="filterShowScore" name="FilterShowScore" style="font-size: 14pt" @change="applyFilter">
                         <option value="all">전체</option>
                         <option value="show">표시</option>
                         <option value="not_show">미표시</option>
@@ -33,8 +32,8 @@
             </div>
         </div>
         <div class="RoomList">
-            <div :class="roomInfo.state === 0 ? 'RoomInfo Enable' : 'RoomInfo Disable'"
-                v-for="roomInfo in filteredRoomList" :key="roomInfo.rid" v-on:click="onRoomClicked(roomInfo)">
+            <div :class="roomInfo.state === 0 ? 'RoomInfo Enable' : 'RoomInfo Disable'" v-for="roomInfo in filteredRoomList"
+                :key="roomInfo.rid" v-on:click="onRoomClicked(roomInfo)">
                 <div class="RoomInfo1">
                     <img v-if="roomInfo.password_required" class="Lock" src="../../assets/images/icon_lock.png" />
                     <label class="Name">{{ roomInfo.name }}</label>
@@ -51,9 +50,9 @@
     </div>
     <Teleport to="body">
         <InputPasswordDialog ref="InputPasswordDialogComponent" :show="showInputPasswordDialog"
-            @close="showInputPasswordDialog = false"/>
+            @close="showInputPasswordDialog = false" />
         <CreateRoomDialog ref="CreateRoomDialogComponent" :show="showCreateRoomDialog"
-            @close="showCreateRoomDialog = false"/>
+            @close="showCreateRoomDialog = false" />
         <MessageDialog ref="MessageDialogComponent" :show="showMessageDialog" @close="showMessageDialog = false" />
     </Teleport>
 </template>
@@ -79,7 +78,7 @@ export default {
             filterName: '',
             filteredRoomList: [],
             roomList: [],
-            clicked_room_rid : '',
+            clicked_room_rid: '',
         }
     },
     props: {
@@ -166,8 +165,15 @@ export default {
         this.$socket.value.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
             switch (data) {
                 case sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS:
-                    this.$store.commit("Games/setGame_rid",this.clicked_room_rid);
-                    this.$router.push({name : 'Game'});
+                    this.$store.commit("Games/setGame_rid", this.clicked_room_rid);
+                    this.$router.push({
+                        name: 'Game', params: {
+                            room_data: JSON.stringify({
+                                room_name: data.name,
+                                user_name: this.$store.getters["Users/getUser_nickname"],
+                            })
+                        }
+                    });
                     alert('Join success');
                     break;
                 case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST:
@@ -361,5 +367,4 @@ export default {
     font-size: 14pt;
     user-select: none;
     float: right;
-}
-</style>
+}</style>

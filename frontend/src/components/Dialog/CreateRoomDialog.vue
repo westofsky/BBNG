@@ -11,14 +11,14 @@
                             <label class="OptionTitle">방 이름</label>
                             <div class="VerticalLine" />
                             <div class="OptionArea">
-                                <input class="Name" type="text" ref="Name" v-model="name"/>
+                                <input class="Name" type="text" ref="Name" v-model="name" />
                             </div>
                         </div>
                         <div class="OptionGroup">
                             <label class="OptionTitle">비밀번호</label>
                             <div class="VerticalLine" />
                             <div class="OptionArea">
-                                <input class="Password" type="text" v-model="password"/>
+                                <input class="Password" type="text" v-model="password" />
                             </div>
                         </div>
                         <div class="OptionGroup">
@@ -111,7 +111,7 @@ export default {
         },
         createRoom() {
             this.$emit('close');
-            this.$socket.value.emit(sock_const.RequestType.CREATE_ROOM,{
+            this.$socket.value.emit(sock_const.RequestType.CREATE_ROOM, {
                 rid: '',
                 host: this.$store.getters["Users/getUser_nickname"],
                 name: this.name,
@@ -129,10 +129,17 @@ export default {
             });
         }
     },
-    mounted(){
+    mounted() {
         this.$socket.value.on(sock_const.ResponseType.RES_GET_ROOM_RID, (data) => {
-            this.$store.commit("Games/setGame_rid",data);
-            this.$router.push({name : 'Game'});
+            this.$store.commit("Games/setGame_rid", data);
+            this.$router.push({
+                name: 'Game', params: {
+                    room_data: JSON.stringify({
+                        room_name: this.name,
+                        user_name: this.$store.getters["Users/getUser_nickname"],
+                    }),
+                }
+            });
         });
     }
 }
@@ -345,5 +352,4 @@ export default {
 .CreateRoomDialog-leave-to .CreateRoomDialog-Container {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
-}
-</style>
+}</style>
