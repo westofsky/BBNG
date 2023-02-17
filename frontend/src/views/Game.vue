@@ -46,11 +46,12 @@
                                 'z-index': (index + 1),
                             }" />
                         </div>
+                        <div class="card_mine">
+                            <Card v-for="card in cards" :key="card.src" :image_src="card.src" />
+                        </div>
                     </div>
                 </div>
-                <div class="card_mine">
-                    <Card v-for="card in cards" :key="card.src" :image_src="card.src" />
-                </div>
+                
             </div>
             <div class="menu">
             </div>
@@ -456,7 +457,11 @@ export default {
 }
 
 .card_mine {
+    position: absolute;
     display: flex;
+    bottom : 0;
+    left : 0;
+    right : 0;
     justify-content: center;
     align-items: center;
 }
