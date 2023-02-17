@@ -30,7 +30,7 @@
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="rid" />
             </div>
             <div class="game_zone">
-                <div class="header-center">
+                <div class="table-header">
                     <label class="round">Round {{ game_data.current_round }}</label>
                 </div>
                 <div class="game_table">
@@ -313,14 +313,6 @@ export default {
     flex: 1;
     justify-content: flex-start;
 }
-
-.header-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-}
-
 .header-right {
     display: flex;
     align-items: center;
@@ -331,12 +323,6 @@ export default {
 .roomname {
     font-weight: bold;
     font-size: 32pt;
-}
-
-.round {
-    padding-top: 8px;
-    font-weight: bold;
-    font-size: 24pt;
 }
 
 .username {
@@ -414,6 +400,18 @@ export default {
 .logs {
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.table-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.round {
+    font-weight: bold;
+    font-size: 24pt;
 }
 
 .game_zone {
