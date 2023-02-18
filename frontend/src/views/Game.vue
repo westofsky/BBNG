@@ -47,7 +47,7 @@
                             }" />
                         </div>
                         <div class="card_mine">
-                            <Card v-for="(card,index) in cards" :key="card.src" :image_src="card.src" :card_index = "index+1" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
+                            <Card v-for="(card,index) in game_data.player_deck" :key="index" :image_src="require(`../assets/images/cards/${card}.png`)" :card_index = "index+1" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
                         </div>
                     </div>
                 </div>
@@ -66,6 +66,7 @@ import Other_Card from '../components/Game/Other_Card.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
 import * as sock_const from "../../../common/constant/socket-constants.js";
 import * as game_const from "../../../common/constant/game-constants.js";
+import { is } from '@babel/types';
 export default {
     name: 'Game',
     components: {
@@ -80,16 +81,7 @@ export default {
             ready: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            cards: [
-                { src: require('../assets/images/cards/H1.png') },
-                { src: require('../assets/images/cards/C2.png') },
-                { src: require('../assets/images/cards/H3.png') },
-                { src: require('../assets/images/cards/H4.png') },
-                { src: require('../assets/images/cards/H5.png') },
-                { src: require('../assets/images/cards/H6.png') },
-            
-            ],
-            isDraggable : true,
+            isDraggable : false,
             other_cards: [
                 { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
@@ -258,7 +250,9 @@ export default {
              * }
              */
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
+                this.isDraggable = true;
             } else { // 플레이어의 차례가 아닐 때
+                this.isDraggable = false;
             }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 카드를 한장 받았을 때
