@@ -47,7 +47,7 @@
                             }" />
                         </div>
                         <div class="card_mine">
-                            <Card v-for="card in cards" :key="card.src" :image_src="card.src" />
+                            <Card v-for="(card,index) in cards" :key="card.src" :image_src="card.src" :card_index = "index+1" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
                         </div>
                     </div>
                 </div>
@@ -81,18 +81,21 @@ export default {
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
             cards: [
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/heart_1.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/clover_2.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/heart_3.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/heart_4.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/heart_5.png') },
+                { src: require('../assets/images/cards/H1.png') },
+                { src: require('../assets/images/cards/C2.png') },
+                { src: require('../assets/images/cards/H3.png') },
+                { src: require('../assets/images/cards/H4.png') },
+                { src: require('../assets/images/cards/H5.png') },
+                { src: require('../assets/images/cards/H6.png') },
+            
             ],
+            isDraggable : true,
             other_cards: [
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/back_card.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/back_card.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/back_card.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/back_card.png') },
-                { prevPosX: 0, prevPosY: 0, src: require('../assets/images/cards/back_card.png') },
+                { src: require('../assets/images/cards/back_card.png') },
+                { src: require('../assets/images/cards/back_card.png') },
+                { src: require('../assets/images/cards/back_card.png') },
+                { src: require('../assets/images/cards/back_card.png') },
+                { src: require('../assets/images/cards/back_card.png') },
             ],
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
@@ -110,6 +113,9 @@ export default {
         }
     },
     methods: {
+        set_draggable(data){
+            this.isDraggable = data;
+        },
         changeReadyState() {
             if (this.ready) {
                 this.$socket.value.emit(sock_const.RequestType.NOT_READY, {

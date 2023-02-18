@@ -22,67 +22,67 @@
                     <div class="wrap_content">
                         <p>2장,2장,2장이 같을 경우 : 0점</p>
                         <div class="wrap_cards">
-                            <img src = "../../assets/images/cards/heart_1.png" style="left : 0%; z-index : 1;">
-                            <img src = "../../assets/images/cards/spade_2.png" style="left : 13%; z-index : 2;">
-                            <img src = "../../assets/images/cards/diamond_5.png" style="left : 26%; z-index : 3;">
-                            <img src = "../../assets/images/cards/spade_5.png" style="left : 39%; z-index : 4;">
-                            <img src = "../../assets/images/cards/spade_3.png" style="left : 52%; z-index : 5;">
-                            <img src = "../../assets/images/cards/diamond_3.png" style="left : 65%; z-index : 6;">
+                            <img src = "../../assets/images/cards/H1.png" style="left : 0%; z-index : 1;">
+                            <img src = "../../assets/images/cards/S2.png" style="left : 13%; z-index : 2;">
+                            <img src = "../../assets/images/cards/D5.png" style="left : 26%; z-index : 3;">
+                            <img src = "../../assets/images/cards/S5.png" style="left : 39%; z-index : 4;">
+                            <img src = "../../assets/images/cards/S3.png" style="left : 52%; z-index : 5;">
+                            <img src = "../../assets/images/cards/D3.png" style="left : 65%; z-index : 6;">
                         </div>
                     </div>
                     <div class="wrap_content">
                         <p>3장,3장이 같을 경우 : -60점</p>
                         <div class="wrap_cards">
-                            <img src = "../../assets/images/cards/heart_1.png" style="left : 0%; z-index : 1;">
-                            <img src = "../../assets/images/cards/spade_1.png" style="left : 13%; z-index : 2;">
-                            <img src = "../../assets/images/cards/clover_1.png" style="left : 26%; z-index : 3;">
-                            <img src = "../../assets/images/cards/spade_5.png" style="left : 39%; z-index : 4;">
-                            <img src = "../../assets/images/cards/diamond_5.png" style="left : 52%; z-index : 5;">
-                            <img src = "../../assets/images/cards/heart_5.png" style="left : 65%; z-index : 6;">
+                            <img src = "../../assets/images/cards/H1.png" style="left : 0%; z-index : 1;">
+                            <img src = "../../assets/images/cards/S1.png" style="left : 13%; z-index : 2;">
+                            <img src = "../../assets/images/cards/C1.png" style="left : 26%; z-index : 3;">
+                            <img src = "../../assets/images/cards/S5.png" style="left : 39%; z-index : 4;">
+                            <img src = "../../assets/images/cards/D5.png" style="left : 52%; z-index : 5;">
+                            <img src = "../../assets/images/cards/H5.png" style="left : 65%; z-index : 6;">
                         </div>
                     </div>
                     <div class="wrap_content">
                         <p>2장,4장이 같을 경우 : -100점</p>
                         <div class="wrap_cards">
-                            <img src = "../../assets/images/cards/heart_1.png" style="left : 0%; z-index : 1;">
-                            <img src = "../../assets/images/cards/clover_1.png" style="left : 13%; z-index : 2;">
-                            <img src = "../../assets/images/cards/clover_5.png" style="left : 26%; z-index : 3;">
-                            <img src = "../../assets/images/cards/spade_5.png" style="left : 39%; z-index : 4;">
-                            <img src = "../../assets/images/cards/diamond_5.png" style="left : 52%; z-index : 5;">
-                            <img src = "../../assets/images/cards/heart_5.png" style="left : 65%; z-index : 6;">
+                            <img src = "../../assets/images/cards/H1.png" style="left : 0%; z-index : 1;">
+                            <img src = "../../assets/images/cards/C1.png" style="left : 13%; z-index : 2;">
+                            <img src = "../../assets/images/cards/C5.png" style="left : 26%; z-index : 3;">
+                            <img src = "../../assets/images/cards/S5.png" style="left : 39%; z-index : 4;">
+                            <img src = "../../assets/images/cards/D5.png" style="left : 52%; z-index : 5;">
+                            <img src = "../../assets/images/cards/H5.png" style="left : 65%; z-index : 6;">
                         </div>
                     </div>
                     <div class="wrap_content">
                         <p>6장 합이 10 이하인 경우 : -100점</p>
                         <div class="wrap_cards">
-                            <img src = "../../assets/images/cards/heart_1.png" style="left : 0%; z-index : 1;">
-                            <img src = "../../assets/images/cards/clover_1.png" style="left : 13%; z-index : 2;">
-                            <img src = "../../assets/images/cards/diamond_1.png" style="left : 26%; z-index : 3;">
-                            <img src = "../../assets/images/cards/spade_1.png" style="left : 39%; z-index : 4;">
-                            <img src = "../../assets/images/cards/clover_2.png" style="left : 52%; z-index : 5;">
-                            <img src = "../../assets/images/cards/diamond_3.png" style="left : 65%; z-index : 6;">
+                            <img src = "../../assets/images/cards/H1.png" style="left : 0%; z-index : 1;">
+                            <img src = "../../assets/images/cards/C1.png" style="left : 13%; z-index : 2;">
+                            <img src = "../../assets/images/cards/D1.png" style="left : 26%; z-index : 3;">
+                            <img src = "../../assets/images/cards/S1.png" style="left : 39%; z-index : 4;">
+                            <img src = "../../assets/images/cards/C2.png" style="left : 52%; z-index : 5;">
+                            <img src = "../../assets/images/cards/D3.png" style="left : 65%; z-index : 6;">
                         </div>
                     </div>
                     <div class="wrap_content">
                         <p>6장 합이 60 이상인 경우 : - 100점</p>
                         <div class="wrap_cards">
-                            <img src = "../../assets/images/cards/heart_12.png" style="left : 0%; z-index : 1;">
-                            <img src = "../../assets/images/cards/diamond_12.png" style="left : 13%; z-index : 2;">
-                            <img src = "../../assets/images/cards/spade_10.png" style="left : 26%; z-index : 3;">
-                            <img src = "../../assets/images/cards/clover_9.png" style="left : 39%; z-index : 4;">
-                            <img src = "../../assets/images/cards/spade_12.png" style="left : 52%; z-index : 5;">
-                            <img src = "../../assets/images/cards/clover_12.png" style="left : 65%; z-index : 6;">
+                            <img src = "../../assets/images/cards/H12.png" style="left : 0%; z-index : 1;">
+                            <img src = "../../assets/images/cards/D12.png" style="left : 13%; z-index : 2;">
+                            <img src = "../../assets/images/cards/S10.png" style="left : 26%; z-index : 3;">
+                            <img src = "../../assets/images/cards/C9.png" style="left : 39%; z-index : 4;">
+                            <img src = "../../assets/images/cards/S12.png" style="left : 52%; z-index : 5;">
+                            <img src = "../../assets/images/cards/C12.png" style="left : 65%; z-index : 6;">
                         </div>
                     </div>
                     <div class="wrap_content">
                         <p>26장이 연속인 숫자일 경우 : -숫자합</p>
                         <div class="wrap_cards">
-                            <img src = "../../assets/images/cards/heart_4.png" style="left : 0%; z-index : 1;">
-                            <img src = "../../assets/images/cards/diamond_5.png" style="left : 13%; z-index : 2;">
-                            <img src = "../../assets/images/cards/heart_6.png" style="left : 26%; z-index : 3;">
-                            <img src = "../../assets/images/cards/spade_7.png" style="left : 39%; z-index : 4;">
-                            <img src = "../../assets/images/cards/clover_8.png" style="left : 52%; z-index : 5;">
-                            <img src = "../../assets/images/cards/diamond_9.png" style="left : 65%; z-index : 6;">
+                            <img src = "../../assets/images/cards/H4.png" style="left : 0%; z-index : 1;">
+                            <img src = "../../assets/images/cards/D5.png" style="left : 13%; z-index : 2;">
+                            <img src = "../../assets/images/cards/H6.png" style="left : 26%; z-index : 3;">
+                            <img src = "../../assets/images/cards/S7.png" style="left : 39%; z-index : 4;">
+                            <img src = "../../assets/images/cards/C8.png" style="left : 52%; z-index : 5;">
+                            <img src = "../../assets/images/cards/D9.png" style="left : 65%; z-index : 6;">
                         </div>
                     </div>
                 </div>
@@ -100,18 +100,18 @@
                         <div class = "section1">
                             <div class="wrap_divs">
                                 <div class="wrap_cards">
-                                    <img src = "../../assets/images/cards/heart_12.png" style="left : 0%; z-index : 1;">
-                                    <img src = "../../assets/images/cards/diamond_12.png" style="left : 13%; z-index : 2;">
-                                    <img src = "../../assets/images/cards/heart_10.png" style="left : 26%; z-index : 3;">
-                                    <img src = "../../assets/images/cards/spade_6.png" style="left : 39%; z-index : 4;">
-                                    <img src = "../../assets/images/cards/clover_6.png" style="left : 52%; z-index : 5;">
+                                    <img src = "../../assets/images/cards/H12.png" style="left : 0%; z-index : 1;">
+                                    <img src = "../../assets/images/cards/D12.png" style="left : 13%; z-index : 2;">
+                                    <img src = "../../assets/images/cards/H10.png" style="left : 26%; z-index : 3;">
+                                    <img src = "../../assets/images/cards/S6.png" style="left : 39%; z-index : 4;">
+                                    <img src = "../../assets/images/cards/C6.png" style="left : 52%; z-index : 5;">
                                 </div>
                             </div>
                             <p>이런 경우 Q뽕이며, Q 2장을 내고 원하는 카드 한 장을 더 버릴 수 있습니다.(10을 버린 경우)</p>
                             <div class="wrap_divs">
                                 <div class="wrap_cards">
-                                    <img src = "../../assets/images/cards/spade_6.png" style="left : 0%; z-index : 4;">
-                                    <img src = "../../assets/images/cards/clover_6.png" style="left : 13%; z-index : 5;">
+                                    <img src = "../../assets/images/cards/S6.png" style="left : 0%; z-index : 4;">
+                                    <img src = "../../assets/images/cards/C6.png" style="left : 13%; z-index : 5;">
                                 </div>
                             </div>
                         </div>
@@ -119,8 +119,8 @@
                             <p>남은 2장의 카드가 같을 경우 바가지이며, 다른 사람이 해당 카드를 내면 뽕을 할 수 있습니다. 해당 카드를 낸 플레이어는 바가지(+30점)을 받게 되고, 뽕을 한 플레이어는 0점을 얻게 됩니다. </p>
                             <div class="wrap_divs">
                                 <div class="wrap_cards">
-                                    <img src = "../../assets/images/cards/spade_6.png" style="left : 0%; z-index : 4;">
-                                    <img src = "../../assets/images/cards/clover_6.png" style="left : 13%; z-index : 5;">
+                                    <img src = "../../assets/images/cards/S6.png" style="left : 0%; z-index : 4;">
+                                    <img src = "../../assets/images/cards/C6.png" style="left : 13%; z-index : 5;">
                                 </div>
                             </div>
                         </div>

@@ -12,6 +12,8 @@
 export default {
   props: {
     image_src: Array,
+    card_index : Number,
+    isDraggable : Boolean,
   },
   data() {
     return {
@@ -30,35 +32,50 @@ export default {
   },
   methods: {
     handleMouseEnter() {
-      if (!this.isDragging) {
-        // 해당 카드 강조 효과 및 가장 앞으로 가져오기
-        this.highlight = true;
-        this.zIndex = 10;
+      if(this.isDraggable){
+          if (!this.isDragging) {
+          // 해당 카드 강조 효과 및 가장 앞으로 가져오기
+            this.highlight = true;
+            this.zIndex = 10;
+        }
       }
+      
     },
     handleMouseLeave() {
-      if (!this.isDragging) {
-        this.highlight = false;
-        this.zIndex = 1;
+      if(this.isDraggable){
+        if (!this.isDragging) {
+          this.highlight = false;
+          this.zIndex = 1;
+        }
       }
     },
-    handleMouseDown(event) {
-      this.initialX = event.clientX - this.x;
-      this.initialY = event.clientY - this.y;
-      this.isDragging = true;
+    handleMouseDown(event) { // 카드를 집었을때의 event
+      if(this.isDraggable){
+        this.initialX = event.clientX - this.x;
+        this.initialY = event.clientY - this.y;
+        this.isDragging = true;
+      }
     },
-    handleMouseUp() {
+    handleMouseUp() { // 카드를 놓았을때의 event
       this.isDragging = false;
+      if(this.y>=-500 && this.y<=-50){
+        this.highlight = false;
+        this.$emit("set-draggable", false);
+      }
     },
     handleMouseMove(event) {
-      if (this.isDragging) {
-        this.currentX = event.clientX - this.initialX;
-        this.currentY = event.clientY - this.initialY;
-        this.x = this.currentX;
-        this.y = this.currentY;
-        console.log(this.x);
-        console.log(this.y);
+      if(this.isDraggable){
+        if (this.isDragging) {
+          this.currentX = event.clientX - this.initialX;
+          this.currentY = event.clientY - this.initialY;
+          this.x = this.currentX;
+          this.y = this.currentY;
+          console.log(this.card_index);
+          console.log(this.x);
+          console.log(this.y);
+        }
       }
+      
     }
   },
   mounted() {
