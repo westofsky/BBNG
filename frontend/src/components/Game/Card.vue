@@ -9,11 +9,13 @@
 </template>
 
 <script>
+
 export default {
   props: {
     image_src: Array,
     card_index : Number,
     isDraggable : Boolean,
+    card_length : Number,
   },
   data() {
     return {
@@ -57,22 +59,30 @@ export default {
       }
     },
     handleMouseUp() { // 카드를 놓았을때의 event
-      this.isDragging = false;
-      if(this.y>=-500 && this.y<=-50){
+      console.log(this.card_length);
+      this.isDragging = false; 
+      if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=(this.card_length-this.card_index)*100){
         this.highlight = false;
         this.$emit("set-draggable", false);
+      }
+      else{
+        this.x = 0;
+        this.y = 0;
       }
     },
     handleMouseMove(event) {
       if(this.isDraggable){
         if (this.isDragging) {
+          console.log("----initial----");
+          console.log(this.initialX,this.initialY);
+          console.log("----event----");
+          console.log(event.clientX,event.clientY);
+          
           this.currentX = event.clientX - this.initialX;
           this.currentY = event.clientY - this.initialY;
           this.x = this.currentX;
           this.y = this.currentY;
-          console.log(this.card_index);
-          console.log(this.x);
-          console.log(this.y);
+          // console.log(this.y);
         }
       }
       

@@ -47,7 +47,7 @@
                             }" />
                         </div>
                         <div class="card_mine">
-                            <Card v-for="(card,index) in game_data.player_deck" :key="index" :image_src="require(`../assets/images/cards/${card}.png`)" :card_index = "index+1" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
+                            <Card v-for="(card,index) in game_data.player_deck" :key="index" :image_src="require(`../assets/images/cards/${card}.png`)" :card_index = "index+1" :card_length = "game_data.player_deck.length" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
                         </div>
                     </div>
                 </div>
@@ -81,9 +81,8 @@ export default {
             ready: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            isDraggable : false,
+            isDraggable : true,  //test용 실 사용시 false
             other_cards: [
-                { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
@@ -93,7 +92,7 @@ export default {
             game_data: {
                 players: [],
                 current_player: '',
-                player_deck: [],
+                player_deck: ['H1','H2','H3'], // test용 실 사용시 []
                 other_player_deck: {},
                 push_deck: [],
                 round_result: [],
@@ -108,6 +107,7 @@ export default {
         set_draggable(data){
             this.isDraggable = data;
         },
+        
         changeReadyState() {
             if (this.ready) {
                 this.$socket.value.emit(sock_const.RequestType.NOT_READY, {
