@@ -61,7 +61,7 @@ export default {
     handleMouseUp() { // 카드를 놓았을때의 event
       console.log(this.card_length);
       this.isDragging = false; 
-      if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=(this.card_length-this.card_index)*100){
+      if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=460+(this.card_length/3-1)*140 - (this.card_index)*100){
         this.highlight = false;
         this.$emit("set-draggable", false);
       }
@@ -73,16 +73,12 @@ export default {
     handleMouseMove(event) {
       if(this.isDraggable){
         if (this.isDragging) {
-          console.log("----initial----");
-          console.log(this.initialX,this.initialY);
-          console.log("----event----");
-          console.log(event.clientX,event.clientY);
           
           this.currentX = event.clientX - this.initialX;
           this.currentY = event.clientY - this.initialY;
           this.x = this.currentX;
           this.y = this.currentY;
-          // console.log(this.y);
+          console.log(this.x);
         }
       }
       
@@ -96,16 +92,14 @@ export default {
 
 <style>
 .square {
-  width: 100px;
-  height: 140px;
+  width: 6.5vw;
+  height: 9.1vw;
   position: relative;
   background-size: cover;
   box-sizing: border-box;
 }
 
 .border-highlight {
-  width: 120px;
-  height: 168px;
   border: 4px solid yellow;
   box-shadow: 0 0 10px black;
   background-color: yellow;

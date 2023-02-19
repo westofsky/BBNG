@@ -41,7 +41,18 @@
                                 'z-index': (index + 1),
                             }" />
                         </div>
+
                         <div class="other_card2">
+                            <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
+                                'z-index': (index + 1),
+                            }" />
+                        </div>
+                        <div class="other_card3">
+                            <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
+                                'z-index': (index + 1),
+                            }" />
+                        </div>
+                        <div class="other_card4">
                             <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
                                 'z-index': (index + 1),
                             }" />
@@ -75,14 +86,17 @@ export default {
         Card: Card,
         Other_Card: Other_Card,
     },
+
     data() {
         return {
             rid: '',
             ready: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            isDraggable : true,  //test용 실 사용시 false
+            isDraggable : true,  //test용 실 사용시 fals
             other_cards: [
+                { src: require('../assets/images/cards/back_card.png') },
+                { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
@@ -92,8 +106,8 @@ export default {
             game_data: {
                 players: [],
                 current_player: '',
-                player_deck: ['H1','H2','H3'], // test용 실 사용시 []
-                other_player_deck: {},
+                player_deck: ['H1','H2','H3','H5','H6','H8'], // test용 실 사용시 []
+                other_player_deck : [{'nickname' : ['H1','H2','H3']}, {'nickname' : ['S1','S4','S3']}],
                 push_deck: [],
                 round_result: [],
                 current_round: 0,
@@ -107,7 +121,7 @@ export default {
         set_draggable(data){
             this.isDraggable = data;
         },
-        
+
         changeReadyState() {
             if (this.ready) {
                 this.$socket.value.emit(sock_const.RequestType.NOT_READY, {
@@ -430,8 +444,8 @@ export default {
 }
 
 .game_zone .game_table .table {
-    width: 40rem;
-    height: 40rem;
+    width: 40vw;
+    height: 40vw;
     border-radius: 20rem;
     background-color: #333;
 }
@@ -442,8 +456,8 @@ export default {
     justify-content: center;
     align-items: center;
     top: 10%;
-    left: 10%;
-    transform: rotate(-225deg);
+    left: 0;
+    transform: rotate(135deg);
 }
 
 .game_zone .game_table .table .other_card2 {
@@ -452,14 +466,32 @@ export default {
     justify-content: center;
     align-items: center;
     top: 10%;
-    right: 10%;
-    transform: rotate(-135deg);
+    right: 0;
+    transform: rotate(225deg);
+}
+.game_zone .game_table .table .other_card3 {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 70%;
+    right: 0;
+    transform: rotate(315deg);
+}
+.game_zone .game_table .table .other_card4{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 70%;
+    left: 0;
+    transform: rotate(45deg);
 }
 
 .card_mine {
     position: absolute;
     display: flex;
-    bottom : 0;
+    bottom : -10%;
     left : 0;
     right : 0;
     justify-content: center;
