@@ -422,6 +422,7 @@ export default {
 }
 
 .ready-button {
+    pointer-events: auto;
     position: absolute;
     bottom: 8px;
     right: 8px;
