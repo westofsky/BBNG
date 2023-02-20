@@ -264,6 +264,18 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       setTimeout(function () {
         console.log('delay');
       }, 3000);
+      for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+        gameRoomList[data.rid].game_data.player.push(
+          {
+            [gameRoomList[data.rid].players[i].nickname]: {
+              turn_count: 0,
+              cards: [],
+              state: 0,
+              over_price: 0,
+            }
+          }
+        )
+      }
       socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
         player_turn:
           gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname,
@@ -275,13 +287,17 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       var j = 0;
       gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
       for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+          gameRoomList[data.rid].game_data.player[i].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
         io.to(gameRoomList[data.rid].players[i].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
-          cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5)
+          cards: gameRoomList[data.rid].game_data.player[i].cards
         })
         j += 5;
       }
       gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
     }
+    io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+      players: gameRoomList[data.rid].game_data.player
+    });
     console.log("Room Event: Player '" + data.nickname + "' ready");
   })
 
@@ -323,7 +339,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
                 sum += Number(gameRoomList[data.rid].game_data.player[k].cards[l].slice(1));
               }
               gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = sum + 30; 
+                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = sum + 30;
             }
             else if (k == i) {  // 바가지 먹인 사람
               gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
