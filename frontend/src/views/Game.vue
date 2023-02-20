@@ -96,15 +96,6 @@ export default {
                 current_player: '',
                 player_deck: [], // test용 실 사용시 []
                 other_player_deck : [
-                    {
-                        'test1' : ['H1','H2']
-                    },
-                    {
-                        'test1' : ['H1','H2','H3','H3','H3']
-                    },
-                    {
-                        'test1' : ['H1','H2','H3','H3','H3']
-                    }
                 ],
                 push_deck: [],
                 round_result: [],
@@ -277,6 +268,7 @@ export default {
             this.game_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
+        
         this.$socket.value.on(sock_const.ResponseType.RES_GET_CARDS, (data) => { // 카드가 갱신될 때마다 다른 플레이어 카드포함 받음
             /**
             data: {
