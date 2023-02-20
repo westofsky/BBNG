@@ -287,17 +287,19 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       var j = 0;
       gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
       for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
-          gameRoomList[data.rid].game_data.player[i].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
-        io.to(gameRoomList[data.rid].players[i].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
-          cards: gameRoomList[data.rid].game_data.player[i].cards
-        })
+          let nick = [gameRoomList[data.rid].players[i].nickname];
+          gameRoomList[data.rid].game_data.player[i][nick].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
+            io.to(gameRoomList[data.rid].players[i].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
+                cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5)
+            })
         j += 5;
       }
+      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+        players: gameRoomList[data.rid].game_data.player
+      });
       gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
     }
-    io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
-      players: gameRoomList[data.rid].game_data.player
-    });
+   
     console.log("Room Event: Player '" + data.nickname + "' ready");
   })
 
@@ -323,7 +325,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   socket.on(sock_const.RequestType.DRAW_CARD, (data) => {
     var flag = 0;
-    for (var i = 0; i < gameRoomList[data.rid].palyer_limit; i++) {
+    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
       if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
         var j = i;
       }

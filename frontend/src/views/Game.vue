@@ -145,7 +145,6 @@ export default {
             });
         },
         drawCard(card, x, y) {
-            this.game_data.player_deck
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.$store.getters["Games/getGame_rid"],
                 nickname: this.$store.getters["Users/getUser_nickname"],
@@ -265,6 +264,10 @@ export default {
              *  cards: ['C1', 'C2', 'C3', 'C4', 'C5']
              * } 
              */
+            console.log(data);
+            // for(var i =0;i<data.cards.length;i++){
+            //     this.game_data.player_deck.push(data.cards[i]);
+            // }
             this.game_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
@@ -273,18 +276,34 @@ export default {
             /**
             data: {
                 players : [
-                    'nickname': {
-                        turn_count: 0,
-                        cards: [
-                            'C1', 'C2'
-                        ],
-                        state: 0/1(뽕)/2(바가지),
-                        over_price: 2,
+                    {
+                        'nickname': {
+                            turn_count: 0,
+                            cards: [
+                                'C1', 'C2'
+                            ],
+                            state: 0/1(뽕)/2(바가지),
+                            over_price: 2,
+                        }
                     }
                 ]
             }
             **/
-           console.log(data);
+            let my_index;
+            for(var i =0;i<data.players.length;i++){
+                if(Object.keys(data.players[i])[0] == this.$store.getters["Users/getUser_nickname"]){
+                    my_index = i;
+                }
+            }
+            let new_arr = data.players;
+            let arr1 = new_arr.slice(my_index+1);
+            let arr2 = new_arr.slice(0,my_index);
+            new_arr = arr1.concat(arr2);
+            for(var i =0;i<new_arr.length;i++){
+                let new_arr_item = {[Object.keys(new_arr[i])[0]] :  new_arr[i][Object.keys(new_arr[i])[0]].cards};
+                this.game_data.other_player_deck.push(new_arr_item);
+                console.log(new_arr_item);
+            }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
