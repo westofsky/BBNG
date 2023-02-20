@@ -260,7 +260,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     })
     gameRoomList[data.rid].game_data.ready_count += 1;
     if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].game_data.ready_count) {
-      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START);
+      io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START);
       setTimeout(function () {
         console.log('delay');
       }, 3000);
@@ -276,10 +276,10 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
           }
         )
       }
-      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
+      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
         player_turn:
           gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname,
-        round: gameRoomList[data.rid].current_round
+        round: gameRoomList[data.rid].game_data.current_round
       });
       setTimeout(function () {
         console.log('delay');

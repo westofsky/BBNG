@@ -79,6 +79,7 @@ export default {
             filteredRoomList: [],
             roomList: [],
             clicked_room_rid: '',
+            selectedRoomName: '',
         }
     },
     props: {
@@ -136,6 +137,7 @@ export default {
             this.$socket.value.emit(sock_const.RequestType.ROOM_LIST, '');
         },
         onRoomClicked(roomInfo) {
+            this.selectedRoomName = roomInfo.name;
             this.clicked_room_rid = roomInfo.rid;
             if (roomInfo.state == game_const.GameState.WAITING) {
                 if (roomInfo.password_required) {
@@ -160,6 +162,7 @@ export default {
     mounted() {
         this.$socket.value.on(sock_const.ResponseType.RES_ROOM_LIST, (data) => {
             this.roomList = data;
+            console.log(JSON.stringify(this.roomList));
             this.applyFilter();
         });
         this.$socket.value.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
@@ -169,7 +172,7 @@ export default {
                     this.$router.push({
                         name: 'Game', params: {
                             room_data: JSON.stringify({
-                                room_name: data.name,
+                                room_name: this.selectedRoomName,
                                 user_name: this.$store.getters["Users/getUser_nickname"],
                             })
                         }
