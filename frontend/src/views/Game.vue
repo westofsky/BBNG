@@ -90,6 +90,7 @@ export default {
             isDraggable : true,  //test용 실 사용시 false
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
+                players: [],
                 ready_count: 0,
                 current_round: 0,
                 current_player: '',
