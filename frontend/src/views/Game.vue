@@ -208,7 +208,7 @@ export default {
              *  nickname: 'Player1'
              * }
              */
-            this.game_data.players.push(data.nickname);
+            this.game_data.player.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
         });
