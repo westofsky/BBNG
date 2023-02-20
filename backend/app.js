@@ -390,7 +390,7 @@ function createDeck() {
 
 // Function - 전달받은 덱의 카드를 무작위로 섞음
 function shuffleDeck(deck) {
-  for (let loop1 = array.length - 1; loop1 > 0; loop1--) {
+  for (let loop1 = deck.length - 1; loop1 > 0; loop1--) {
     let loop2 = Math.floor(Math.random() * (loop1 + 1));
     [deck[loop1], deck[loop2]] = [deck[loop2], deck[loop1]];
   }
