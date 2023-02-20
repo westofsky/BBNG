@@ -8,21 +8,20 @@
             </div>
         </transition>
         <div class="InGame">
-            <div class="header-area">
-                <div class="header-left">
-                    <label class="roomname">{{ room_data.room_name }}</label>
-                </div>
-                <div class="header-right">
-                    <label class="username">{{ room_data.user_name }}</label>
-                    <button class="menu-button">
-                        <div class="hamburger-icon">
-                            <div class="line"></div>
-                            <div class="line"></div>
-                            <div class="line"></div>
-                        </div>
-                        <span class="menu-text">메뉴</span>
-                    </button>
-                </div>
+            <div class="ui-area">
+                <label class="roomname">{{ room_data.room_name }}</label>
+                <label class="username">{{ room_data.user_name }}</label>
+                <button class="menu-button">
+                    <div class="hamburger-icon">
+                        <div class="line"></div>
+                        <div class="line"></div>
+                        <div class="line"></div>
+                    </div>
+                    <span class="menu-text">메뉴</span>
+                </button>
+                <button class="ready-button" :class="{ ready: isReady }" @click="changeReadyState">
+                    {{ readyButtonText }}
+                </button>
             </div>
             <div class="logs">
                 <Log ref="LogComponent" />
@@ -37,14 +36,14 @@
                     <!-- 여기 안에 다른 card들 component들어가야함-->
                     <div class="table">
                         <div v-for="(o_card, index) in game_data.other_player_deck" :key="index"
-                        :class="[{other_card : true},{isLeft : getLeft(index)}, {isRight : getRight(index)}]"
-                        :style = "{
-                            transform: `rotate(${180-(game_data.other_player_deck.length-1)*45+(index)*90}deg)`,
-                            top : (index==0 || index==game_data.other_player_deck.length-1) ? 10+(game_data.other_player_deck.length-2)*30+'%': '0%',
-                        }">
-                            <Other_Card v-for="index in 3" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
-                                'z-index': (index + 1),
-                            }" />
+                            :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]" :style="{
+                                transform: `rotate(${180 - (game_data.other_player_deck.length - 1) * 45 + (index) * 90}deg)`,
+                                top: (index == 0 || index == game_data.other_player_deck.length - 1) ? 10 + (game_data.other_player_deck.length - 2) * 30 + '%' : '0%',
+                            }">
+                            <Other_Card v-for="index in 3" :key="index"
+                                :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
+                                    'z-index': (index + 1),
+                                }" />
                         </div>
 
                         <!-- <div class="other_card2">
@@ -63,11 +62,14 @@
                             }" />
                         </div> -->
                         <div class="card_mine">
-                            <Card v-for="(card,index) in game_data.player_deck" :key="index" :image_src="require(`../assets/images/cards/${card}.png`)" :card_index = "index+1" :card_length = "game_data.player_deck.length" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
+                            <Card v-for="(card, index) in game_data.player_deck" :key="index"
+                                :image_src="require(`../assets/images/cards/${card}.png`)" :card_index="index + 1"
+                                :card_length="game_data.player_deck.length" :is-draggable="isDraggable"
+                                @set-draggable="set_draggable" />
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <div class="menu">
             </div>
@@ -91,14 +93,13 @@ export default {
         Card: Card,
         Other_Card: Other_Card,
     },
-
     data() {
         return {
             rid: '',
-            ready: false,
+            isReady: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            isDraggable : true,  //test용 실 사용시 fals
+            isDraggable: true,  //test용 실 사용시 fals
             other_cards: [
                 { src: require('../assets/images/cards/back_card.png') },
                 { src: require('../assets/images/cards/back_card.png') },
@@ -109,41 +110,43 @@ export default {
             ],
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
-                players: [],
+                ready_count: 0,
+                current_round: 0,
                 current_player: '',
-                player_deck: ['H1','H2','H3','H5','H6','H8'], // test용 실 사용시 []
-                other_player_deck : [
-                    {'nickname' : ['H1','H2','H3','H4','H5']},
-                    {'nickname' : ['S1','S4','S3','S5',]}],
+                players: [],
+                player_deck: ['H1', 'H2', 'H3', 'H5', 'H6', 'H8'], // test용 실 사용시 []
+                other_player_deck: [
+                    { 'nickname': ['H1', 'H2', 'H3', 'H4', 'H5'] },
+                    { 'nickname': ['S1', 'S4', 'S3', 'S5',] }],
                 push_deck: [],
                 round_result: [],
-                current_round: 0,
             },
             notificationMessage: '',
             showNotification: false,
             notificationTimeout: 0,
         }
     },
+
     methods: {
-        set_draggable(data){
+        set_draggable(data) {
             this.isDraggable = data;
         },
-        getLeft(index){
-            if(parseInt(this.game_data.other_player_deck.length / 2)>index)
+        getLeft(index) {
+            if (parseInt(this.game_data.other_player_deck.length / 2) > index)
                 return true;
-            else if(this.game_data.other_player_deck.length==3)
+            else if (this.game_data.other_player_deck.length == 3)
                 return true;
             else
                 return false;
         },
-        getRight(index){
-            if(parseInt(this.game_data.other_player_deck.length / 2)<=index)
+        getRight(index) {
+            if (parseInt(this.game_data.other_player_deck.length / 2) <= index)
                 return true;
             else
                 return false;
         },
         changeReadyState() {
-            if (this.ready) {
+            if (this.isReady) {
                 this.$socket.value.emit(sock_const.RequestType.NOT_READY, {
                     rid: this.$store.getters["Games/getGame_rid"],
                     nickname: this.$store.getters["Users/getUser_nickname"]
@@ -154,7 +157,7 @@ export default {
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
             }
-            this.ready = !this.ready;
+            this.isReady = !this.isReady;
         },
         getCard() {
             this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
@@ -210,6 +213,11 @@ export default {
             this.notificationTimeout = setTimeout(() => {
                 this.showNotification = false;
             }, 2000);
+        }
+    },
+    computed: {
+        readyButtonText() {
+            return this.isReady? '준비완료':'준비';
         }
     },
     mounted() {
@@ -334,33 +342,24 @@ export default {
     background-color: #E1D5D5;
 }
 
-.header-area {
-    position: fixed;
-    left: 8px;
-    right: 8px;
-    top: 8px;
-    display: flex;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    justify-content: flex-start;
-}
-.header-right {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    justify-content: flex-end;
+.ui-area {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
 .roomname {
+    position: absolute;
+    left: 8px;
+    top: 8px;
     font-weight: bold;
     font-size: 32pt;
 }
 
 .username {
+    position: absolute;
+    right: 128px;
+    top: 8px;
     font-weight: bold;
     font-size: 16pt;
     margin-right: 32px;
@@ -368,10 +367,12 @@ export default {
 }
 
 .menu-button {
+    position: absolute;
+    right: 8px;
+    top: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
     padding: 8px;
     border: none;
     background-color: #444;
@@ -432,6 +433,32 @@ export default {
     background-color: #fff;
 }
 
+.ready-button {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: orange;
+  }
+  
+  .ready-button.ready {
+    background-color: green;
+  }
+  
+  .ready-button:hover {
+    background-color: darkorange;
+  }
+
 .logs {
     padding-left: 10px;
     padding-right: 10px;
@@ -486,6 +513,7 @@ export default {
     right: 0;
     transform: rotate(225deg);
 }
+
 .game_zone .game_table .table .other_card3 {
     position: absolute;
     display: flex;
@@ -495,7 +523,8 @@ export default {
     right: 0;
     transform: rotate(315deg);
 }
-.game_zone .game_table .table .other_card4{
+
+.game_zone .game_table .table .other_card4 {
     position: absolute;
     display: flex;
     justify-content: center;
@@ -508,9 +537,9 @@ export default {
 .card_mine {
     position: absolute;
     display: flex;
-    bottom : -10%;
-    left : 0;
-    right : 0;
+    bottom: -10%;
+    left: 0;
+    right: 0;
     justify-content: center;
     align-items: center;
 }
@@ -548,11 +577,11 @@ export default {
 .notification-fade-leave-to {
     opacity: 0;
 }
-.isLeft{
-    left : 0;
-}
-.isRight{
-    right:0;
+
+.isLeft {
+    left: 0;
 }
 
-</style>
+.isRight {
+    right: 0;
+}</style>
