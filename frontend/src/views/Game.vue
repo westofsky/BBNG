@@ -45,7 +45,10 @@
                             transform: `rotate(${180-(game_data.other_player_deck.length-1)*45+(index)*90}deg)`,
                             top : (index==0 || index==game_data.other_player_deck.length-1) ? 10+(game_data.other_player_deck.length-2)*30+'%': '0%',
                         }">
-                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
+                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" 
+                            :style="{
+                                width : (14-Object.values(o_card)[0].length) * 0.5 + 'vw',
+                                height : (14-Object.values(o_card)[0].length) * 0.7 + 'vw',
                                 'z-index': (index + 1),
                             }" />
                         </div>
@@ -94,8 +97,21 @@ export default {
                 ready_count: 0,
                 current_round: 0,
                 current_player: '',
-                player_deck: [], // test용 실 사용시 []
+                player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
                 other_player_deck : [
+                    {
+                        'asdf' : ['H2','H5','S1'],
+                    },
+                    {
+                        'asdf' : ['H2','H5','S1','C5','H9','H10'],
+                    },
+                    {
+                        'asdf' : ['H2','H5','S1','C5','H9'],
+                    },
+                    {
+                        'asdf' : ['H2','H5','S1','C5','H9','H10'],
+                    },
+                    
                 ],
                 push_deck: [],
                 round_result: [],
@@ -494,7 +510,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 1;
+    height:6%;
 }
 
 .round {
@@ -512,15 +528,17 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 100px;
-    position: relative
+    position: relative;
+    height:94%;
 }
 
 .game_zone .game_table .table {
-    width: 40vw;
-    height: 40vw;
-    border-radius: 20rem;
-    background-color: #333;
+    width: 60%; /* 요소의 기본 크기 설정 */
+    height: 0;
+    padding-bottom: 60%; /* height를 0으로 하고 padding을 %로 지정하여 원 모양으로 만듦 */
+    border-radius: 50%; /* 모서리를 둥글게 만듦 */
+    background-color: #333; /* 배경색 지정 */
+    position:relative;
 }
 
 .game_zone .game_table .table .other_card {
@@ -563,7 +581,7 @@ export default {
 .card_mine {
     position: absolute;
     display: flex;
-    bottom: -10%;
+    bottom: 0;
     left: 0;
     right: 0;
     justify-content: center;
@@ -605,11 +623,11 @@ export default {
 }
 
 .isLeft {
-    left: 0;
+    left: -40%;
 }
 
 .isRight{
-    right : 0;
+    right : -40%;
 }
 .card_deck{
     display:flex;
@@ -621,5 +639,4 @@ export default {
 .card_deck img{
     cursor: pointer;
 }
-
 </style>

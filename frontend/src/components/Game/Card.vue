@@ -1,5 +1,5 @@
 <template>
-  <div class="square" :class="{'border-highlight':highlight}" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown"
+  <div class="square" :class="[{'border-highlight':highlight},{'small' : toSmall}]" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown"
     @mouseup="handleMouseUp" :style="{
       zIndex: zIndex,
       left: x + 'px',
@@ -30,6 +30,7 @@ export default {
       initialY: 0,
       highlight: false,
       zIndex: 1,
+      toSmall : false,
     };
   },
   methods: {
@@ -64,6 +65,7 @@ export default {
       if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=460+(this.card_length/3-1)*140 - (this.card_index)*100){
         this.highlight = false;
         this.$emit("set-draggable", false);
+        this.toSmall = true;
       }
       else{
         this.x = 0;
@@ -92,8 +94,8 @@ export default {
 
 <style>
 .square {
-  width: 6.5vw;
-  height: 9.1vw;
+  width: 6vw;
+  height: 8.4vw;
   position: relative;
   background-size: cover;
   box-sizing: border-box;
@@ -104,5 +106,9 @@ export default {
   box-shadow: 0 0 10px black;
   background-color: yellow;
   border-radius: 8px 8px 8px 8px;
+}
+.small {
+  width: 4vw;
+  height: 5.6vw;
 }
 </style>
