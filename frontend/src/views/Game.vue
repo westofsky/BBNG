@@ -36,13 +36,18 @@
                 <div class="game_table">
                     <!-- 여기 안에 다른 card들 component들어가야함-->
                     <div class="table">
-                        <div class="other_card">
-                            <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
+                        <div v-for="(o_card, index) in game_data.other_player_deck" :key="index"
+                        :class="[{other_card : true},{isLeft : getLeft(index)}, {isRight : getRight(index)}]"
+                        :style = "{
+                            transform: `rotate(${180-(game_data.other_player_deck.length-1)*45+(index)*90}deg)`,
+                            top : (index==0 || index==game_data.other_player_deck.length-1) ? 10+(game_data.other_player_deck.length-2)*30+'%': '0%',
+                        }">
+                            <Other_Card v-for="index in 3" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
                                 'z-index': (index + 1),
                             }" />
                         </div>
 
-                        <div class="other_card2">
+                        <!-- <div class="other_card2">
                             <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
                                 'z-index': (index + 1),
                             }" />
@@ -56,7 +61,7 @@
                             <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
                                 'z-index': (index + 1),
                             }" />
-                        </div>
+                        </div> -->
                         <div class="card_mine">
                             <Card v-for="(card,index) in game_data.player_deck" :key="index" :image_src="require(`../assets/images/cards/${card}.png`)" :card_index = "index+1" :card_length = "game_data.player_deck.length" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
                         </div>
@@ -107,7 +112,9 @@ export default {
                 players: [],
                 current_player: '',
                 player_deck: ['H1','H2','H3','H5','H6','H8'], // test용 실 사용시 []
-                other_player_deck : [{'nickname' : ['H1','H2','H3']}, {'nickname' : ['S1','S4','S3']}],
+                other_player_deck : [
+                    {'nickname' : ['H1','H2','H3','H4','H5']},
+                    {'nickname' : ['S1','S4','S3','S5',]}],
                 push_deck: [],
                 round_result: [],
                 current_round: 0,
@@ -121,7 +128,20 @@ export default {
         set_draggable(data){
             this.isDraggable = data;
         },
-
+        getLeft(index){
+            if(parseInt(this.game_data.other_player_deck.length / 2)>index)
+                return true;
+            else if(this.game_data.other_player_deck.length==3)
+                return true;
+            else
+                return false;
+        },
+        getRight(index){
+            if(parseInt(this.game_data.other_player_deck.length / 2)<=index)
+                return true;
+            else
+                return false;
+        },
         changeReadyState() {
             if (this.ready) {
                 this.$socket.value.emit(sock_const.RequestType.NOT_READY, {
@@ -455,9 +475,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    top: 10%;
-    left: 0;
-    transform: rotate(135deg);
 }
 
 .game_zone .game_table .table .other_card2 {
@@ -531,4 +548,11 @@ export default {
 .notification-fade-leave-to {
     opacity: 0;
 }
+.isLeft{
+    left : 0;
+}
+.isRight{
+    right:0;
+}
+
 </style>
