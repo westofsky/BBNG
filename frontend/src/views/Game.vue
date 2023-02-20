@@ -42,26 +42,10 @@
                             transform: `rotate(${180-(game_data.other_player_deck.length-1)*45+(index)*90}deg)`,
                             top : (index==0 || index==game_data.other_player_deck.length-1) ? 10+(game_data.other_player_deck.length-2)*30+'%': '0%',
                         }">
-                            <Other_Card v-for="index in 3" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
+                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
                                 'z-index': (index + 1),
                             }" />
                         </div>
-
-                        <!-- <div class="other_card2">
-                            <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
-                                'z-index': (index + 1),
-                            }" />
-                        </div>
-                        <div class="other_card3">
-                            <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
-                                'z-index': (index + 1),
-                            }" />
-                        </div>
-                        <div class="other_card4">
-                            <Other_Card v-for="(card, index) in other_cards" :key="card.src" :image_src="card.src" :style="{
-                                'z-index': (index + 1),
-                            }" />
-                        </div> -->
                         <div class="card_mine">
                             <Card v-for="(card,index) in game_data.player_deck" :key="index" :image_src="require(`../assets/images/cards/${card}.png`)" :card_index = "index+1" :card_length = "game_data.player_deck.length" :is-draggable = "isDraggable" @set-draggable = "set_draggable"/>
                         </div>
@@ -98,23 +82,14 @@ export default {
             ready: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            isDraggable : true,  //test용 실 사용시 fals
-            other_cards: [
-                { src: require('../assets/images/cards/back_card.png') },
-                { src: require('../assets/images/cards/back_card.png') },
-                { src: require('../assets/images/cards/back_card.png') },
-                { src: require('../assets/images/cards/back_card.png') },
-                { src: require('../assets/images/cards/back_card.png') },
-                { src: require('../assets/images/cards/back_card.png') },
-            ],
+            isDraggable : true,  //test용 실 사용시 false
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
                 players: [],
                 current_player: '',
-                player_deck: ['H1','H2','H3','H5','H6','H8'], // test용 실 사용시 []
+                player_deck: [], // test용 실 사용시 []
                 other_player_deck : [
-                    {'nickname' : ['H1','H2','H3','H4','H5']},
-                    {'nickname' : ['S1','S4','S3','S5',]}],
+                ],
                 push_deck: [],
                 round_result: [],
                 current_round: 0,
@@ -131,7 +106,7 @@ export default {
         getLeft(index){
             if(parseInt(this.game_data.other_player_deck.length / 2)>index)
                 return true;
-            else if(this.game_data.other_player_deck.length==3)
+            else if(this.game_data.other_player_deck.length==3 && index == 1)
                 return true;
             else
                 return false;
@@ -264,6 +239,7 @@ export default {
              */
             this.$refs.LogComponent.addLog(data.round + " 라운드가 시작되었습니다");
             this.showGameNotification(data.round + " 라운드가 시작되었습니다");
+            this.game_data.current_round = data.round
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
             } else { // 플레이어가 첫 번째 차례가 아닐 때
             }
@@ -296,6 +272,7 @@ export default {
              * }
              */
             this.game_data.player_deck.push(data.card);
+            // this.game_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
         });
         this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 다른 플레이어가 카드를 한장 냈을 때
             /**
@@ -314,6 +291,7 @@ export default {
                     y: data.card.y
                 }
             });
+            //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
         });
     }
 }

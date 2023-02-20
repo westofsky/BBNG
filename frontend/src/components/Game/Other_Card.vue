@@ -26,8 +26,8 @@
   
   <style>
   .other_cards {
-    width: 4.25vw;
-    height: 5.95vw;
+    width: 95.5px;
+    height: 137px;
     position: relative;
     background-size: cover;
   }
