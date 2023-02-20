@@ -268,6 +268,24 @@ export default {
             this.game_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
+        
+        this.$socket.value.on(sock_const.ResponseType.RES_GET_CARDS, (data) => { // 카드가 갱신될 때마다 다른 플레이어 카드포함 받음
+            /**
+            data: {
+                players : [
+                    'nickname': {
+                        turn_count: 0,
+                        cards: [
+                            'C1', 'C2'
+                        ],
+                        state: 0/1(뽕)/2(바가지),
+                        over_price: 2,
+                    }
+                ]
+            }
+            **/
+           console.log(data);
+        });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
              * data: {
