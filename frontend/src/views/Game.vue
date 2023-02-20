@@ -28,6 +28,10 @@
                 <Log ref="LogComponent" />
                 <Chatting ref="ChattingComponent" style="width: 280px;" :request-type="chatRequestType"
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="rid" />
+                <div class = "card_deck">
+                    <p>카드 뽑기</p>
+                    <img src = "../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click = "getCard()">
+                </div>
             </div>
             <div class="game_zone">
                 <div class="table-header">
@@ -241,7 +245,10 @@ export default {
             this.showGameNotification(data.round + " 라운드가 시작되었습니다");
             this.game_data.current_round = data.round
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
-            } else { // 플레이어가 첫 번째 차례가 아닐 때
+            
+            } 
+            else { // 플레이어가 첫 번째 차례가 아닐 때
+                
             }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
@@ -531,6 +538,17 @@ export default {
 }
 .isRight{
     right:0;
+}
+
+.card_deck{
+    display:flex;
+    justify-content : center;
+    align-items : center;
+    flex-direction: column;
+}
+
+.card_deck img{
+    cursor: pointer;
 }
 
 </style>
