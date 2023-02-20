@@ -218,7 +218,7 @@ export default {
              *  nickname: 'Player1'
              * }
              */
-            this.game_data.players = this.game_data.players.filter((player) => {
+            this.game_data.players = this.game_data.player.filter((player) => {
                 return player != data.nickname;
             });
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
