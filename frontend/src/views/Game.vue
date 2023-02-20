@@ -331,6 +331,8 @@ export default {
     position: absolute;
     width: 100%;
     height: 100%;
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .roomname {
@@ -352,6 +354,7 @@ export default {
 }
 
 .menu-button {
+    pointer-events: auto;
     position: absolute;
     right: 8px;
     top: 8px;
