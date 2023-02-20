@@ -250,11 +250,12 @@ export default {
              */
             this.$refs.LogComponent.addLog(data.round + " 라운드가 시작되었습니다");
             this.showGameNotification(data.round + " 라운드가 시작되었습니다");
-            this.game_data.current_round = data.round
+            this.game_data.current_round = data.round + 1;
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
-            
+                this.isDraggable = true;
             } 
             else { // 플레이어가 첫 번째 차례가 아닐 때
+                this.isDraggable = false;
                 
             }
         });
