@@ -90,7 +90,7 @@ export default {
             isDraggable : true,  //test용 실 사용시 false
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
-                players: [],
+                player: [],
                 ready_count: 0,
                 current_round: 0,
                 current_player: '',
@@ -249,15 +249,14 @@ export default {
              *  round: 1
              * }
              */
-            this.$refs.LogComponent.addLog(data.round + " 라운드가 시작되었습니다");
-            this.showGameNotification(data.round + " 라운드가 시작되었습니다");
             this.game_data.current_round = data.round + 1;
+            this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 시작되었습니다");
+            this.showGameNotification(this.game_data.current_round + " 라운드가 시작되었습니다");
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
                 this.isDraggable = true;
             } 
             else { // 플레이어가 첫 번째 차례가 아닐 때
                 this.isDraggable = false;
-                
             }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
