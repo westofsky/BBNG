@@ -267,13 +267,12 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
         gameRoomList[data.rid].game_data.player.push(
           {
-            [gameRoomList[data.rid].players[i].nickname]: {
+              nickname: [gameRoomList[data.rid].players[i].nickname],
               turn_count: 0,
               cards: [],
               state: 0,
               over_price: 0,
             }
-          }
         )
       }
       io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, {
@@ -287,8 +286,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       var j = 0;
       gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
       for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
-          let nick = [gameRoomList[data.rid].players[i].nickname];
-          gameRoomList[data.rid].game_data.player[i][nick].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
+          gameRoomList[data.rid].game_data.player[i].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
             io.to(gameRoomList[data.rid].players[i].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
                 cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5)
             })
@@ -314,10 +312,19 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // 게임방 카드 한장 뽑기
   socket.on(sock_const.RequestType.GET_CARD, (data) => {
+    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+      if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
+        var j = i;
+      }
+    }
     socket.emit(sock_const.ResponseType.RES_GET_CARD, {
       card: gameRoomList[data.rid].game_data.deck.slice(0, 1)
     })
+    gameRoomList[data.rid].game_data.player[j].cards.push(gameRoomList[data.rid].game_data.deck.slice(0, 1));
     gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 1)
+    io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+      players: gameRoomList[data.rid].game_data.player
+    });
     if (gameRoomList[data.rid].game_data.deck.length == 0) {
       gameRoomList[data.rid].game_data.deck = shuffleDeck(gameRoomList[data.rid].game_data.push_deck)
     }
@@ -372,6 +379,10 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         over_price: data.over_price,
         card: data.card
       })
+      gameRoomList[data.rid].game_data.player[j].cards = gameRoomList[data.rid].game_data.player[j].cards.filter(item => item !== data.card.draw_card);
+      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+        players: gameRoomList[data.rid].game_data.player
+      });
     }
   })
 });
