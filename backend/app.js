@@ -282,6 +282,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
       gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
     }
+    console.log("Room Event: Player '" + data.nickname + "' ready");
   })
 
   // 게임방 NOT READY
@@ -290,6 +291,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       nickname: data.nickname
     })
     gameRoomList[data.rid].game_data.ready_count -= 1;
+    console.log("Room Event: Player '" + data.nickname + "' not ready");
   })
 
   // 게임방 카드 한장 뽑기
