@@ -40,15 +40,17 @@
                     <!-- 여기 안에 다른 card들 component들어가야함-->
                     <div class="table">
                         <div v-for="(o_card, index) in game_data.other_player_deck" :key="index"
-                            :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]"
+                        :class="[{other_card : true},{isLeft : getLeft(index)}, {isRight : getRight(index)}]"
+                        :style = "{
+                            transform: `rotate(${180-(game_data.other_player_deck.length-1)*45+(index)*90}deg)`,
+                            top : (index==0 || index==game_data.other_player_deck.length-1) ? 10+(game_data.other_player_deck.length-2)*30+'%': '0%',
+                        }">
+                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" 
                             :style="{
-                                transform: `rotate(${180 - (game_data.other_player_deck.length - 1) * 45 + (index) * 90}deg)`,
-                                top: (index == 0 || index == game_data.other_player_deck.length - 1) ? 10 + (game_data.other_player_deck.length - 2) * 30 + '%' : '0%',
-                            }">
-                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index"
-                                :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
-                                    'z-index': (index + 1),
-                                }" />
+                                width : (14-Object.values(o_card)[0].length) * 0.5 + 'vw',
+                                height : (14-Object.values(o_card)[0].length) * 0.7 + 'vw',
+                                'z-index': (index + 1),
+                            }" />
                         </div>
                         <div class="card_mine">
                             <Card v-for="(card, index) in game_data.player_deck" :key="index"
@@ -100,8 +102,21 @@ export default {
                 ready_count: 0,
                 current_round: 0,
                 current_player: '',
-                player_deck: [], // test용 실 사용시 []
-                other_player_deck: [
+                player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
+                other_player_deck : [
+                    {
+                        'asdf' : ['H2','H5','S1'],
+                    },
+                    {
+                        'asdf' : ['H2','H5','S1','C5','H9','H10'],
+                    },
+                    {
+                        'asdf' : ['H2','H5','S1','C5','H9'],
+                    },
+                    {
+                        'asdf' : ['H2','H5','S1','C5','H9','H10'],
+                    },
+                    
                 ],
                 push_deck: [],
                 round_result: [],
@@ -152,7 +167,6 @@ export default {
             });
         },
         drawCard(card, x, y) {
-            this.game_data.player_deck
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.$store.getters["Games/getGame_rid"],
                 nickname: this.$store.getters["Users/getUser_nickname"],
@@ -289,6 +303,10 @@ export default {
              *  cards: ['C1', 'C2', 'C3', 'C4', 'C5']
              * } 
              */
+            console.log(data);
+            // for(var i =0;i<data.cards.length;i++){
+            //     this.game_data.player_deck.push(data.cards[i]);
+            // }
             this.game_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
@@ -297,18 +315,34 @@ export default {
             /**
             data: {
                 players : [
-                    'nickname': {
-                        turn_count: 0,
-                        cards: [
-                            'C1', 'C2'
-                        ],
-                        state: 0/1(뽕)/2(바가지),
-                        over_price: 2,
+                    {
+                        'nickname': {
+                            turn_count: 0,
+                            cards: [
+                                'C1', 'C2'
+                            ],
+                            state: 0/1(뽕)/2(바가지),
+                            over_price: 2,
+                        }
                     }
                 ]
             }
             **/
-            console.log(data);
+            let my_index;
+            for(var i =0;i<data.players.length;i++){
+                if(Object.keys(data.players[i])[0] == this.$store.getters["Users/getUser_nickname"]){
+                    my_index = i;
+                }
+            }
+            let new_arr = data.players;
+            let arr1 = new_arr.slice(my_index+1);
+            let arr2 = new_arr.slice(0,my_index);
+            new_arr = arr1.concat(arr2);
+            for(var i =0;i<new_arr.length;i++){
+                let new_arr_item = {[Object.keys(new_arr[i])[0]] :  new_arr[i][Object.keys(new_arr[i])[0]].cards};
+                this.game_data.other_player_deck.push(new_arr_item);
+                console.log(new_arr_item);
+            }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
@@ -500,7 +534,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 1;
+    height:6%;
 }
 
 .round {
@@ -518,15 +552,17 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 100px;
-    position: relative
+    position: relative;
+    height:94%;
 }
 
 .game_zone .game_table .table {
-    width: 40vw;
-    height: 40vw;
-    border-radius: 20rem;
-    background-color: #333;
+    width: 60%; /* 요소의 기본 크기 설정 */
+    height: 0;
+    padding-bottom: 60%; /* height를 0으로 하고 padding을 %로 지정하여 원 모양으로 만듦 */
+    border-radius: 50%; /* 모서리를 둥글게 만듦 */
+    background-color: #333; /* 배경색 지정 */
+    position:relative;
 }
 
 .game_zone .game_table .table .other_card {
@@ -569,7 +605,7 @@ export default {
 .card_mine {
     position: absolute;
     display: flex;
-    bottom: -10%;
+    bottom: 0;
     left: 0;
     right: 0;
     justify-content: center;
@@ -611,11 +647,11 @@ export default {
 }
 
 .isLeft {
-    left: 0;
+    left: -40%;
 }
 
-.isRight {
-    right: 0;
+.isRight{
+    right : -40%;
 }
 
 .card_deck {
