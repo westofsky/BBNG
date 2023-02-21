@@ -184,30 +184,44 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
           clientListBySocket[socket.id].rid = data.rid;
           clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.rid;
 
-          socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS);
+          socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, {
+            result: sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS,
+            players: gameRoomList[data.rid].players.map(player => player.nickname),
+          });
           console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' joins room '" + data.rid + "'");
           socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_JOIN, {
-            nickname: data.nickname
+            nickname: data.nickname,
+            players: gameRoomList[data.rid].players.map(player => player.nickname),
           });
         } else { // 참여하려는 방의 비밀번호가 일치하지 않을 경우
-          socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_WRONG_PASSWORD);
+          socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, {
+            result: sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_WRONG_PASSWORD
+          });
           console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' failed to join room '" + data.rid + "' => Incorrect password");
         }
       } else { // 방에 빈 자리가 없을 경우
-        socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_ROOM_FULL);
+        socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, {
+          result: sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_ROOM_FULL
+        });
         console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' failed to join room '" + data.rid + "' => Room already full");
       }
     } else {
       // rid 값의 방이 존재하지 않을 경우
-      socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST);
+      socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, {
+        result: sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST
+      });
       console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' failed to join room '" + data.rid + "' => Room does not exist");
     }
   });
 
   // Socket Listener Event - 사용자 설정 방 떠나기
   socket.on(sock_const.RequestType.LEAVE_ROOM, (data) => {
+    gameRoomList[data.rid].players = gameRoomList[data.rid].players.filter(function (player) {
+      return player.nickname !== nickname
+    });
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
-      nickname: data.nickname
+      nickname: data.nickname,
+      players: gameRoomList[data.rid].players.map(player => player.nickname)
     });
   });
 
@@ -240,11 +254,15 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         delete gameRoomList[joinedGameRoom];
       } else { // 방에 다른 플레이어가 남아있을 경우
         console.log("Room Event: Player '" + nickname + "' has been removed from room '" + JSON.stringify(gameRoomList[joinedGameRoom]) + "'");
-        io.to(joinedGameRoom).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
-          nickname: nickname
-        });
+        // 게임이 진행 중일 경우와 진행 중이지 않을 경우에 따라 플레이어 목록에서 플레이어를 제거할지 제거하지 않을 지에 대한 로직 추가 필요
+        //
+
         gameRoomList[joinedGameRoom].players = gameRoomList[joinedGameRoom].players.filter(function (player) {
           return player.nickname !== nickname
+        });
+        io.to(joinedGameRoom).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
+          nickname: nickname,
+          players: gameRoomList[joinedGameRoom].players.map(player => player.nickname),
         });
       }
     }
@@ -381,6 +399,7 @@ httpServer.listen(port, () => {
 
 const crypto = require('crypto');
 const { FORMERR } = require('dns');
+const { join } = require('path');
 
 // Function - 전달받은 RoomName, RoomType과 현재 시간을 기준으로 고유의 RoomId를 만들어줌
 function createRoomId(roomName, roomType) {

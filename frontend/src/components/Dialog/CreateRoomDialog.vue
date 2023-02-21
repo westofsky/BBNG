@@ -137,6 +137,7 @@ export default {
                     room_data: JSON.stringify({
                         room_name: this.name,
                         user_name: this.$store.getters["Users/getUser_nickname"],
+                        players: [this.$store.getters["Users/getUser_nickname"]],
                     }),
                 }
             });

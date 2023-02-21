@@ -1,5 +1,5 @@
 <template>
-    <div class="Game">
+    <div class="Game" @keydown.prevent="handleKeyDown" tabindex="0">
         <transition name="notification-fade">
             <div class="notification" v-if="showNotification">
                 <div class="notification-content">
@@ -11,7 +11,7 @@
             <div class="ui-area">
                 <label class="roomname">{{ room_data.room_name }}</label>
                 <label class="username">{{ room_data.user_name }}</label>
-                <button class="menu-button">
+                <button class="menu-button" tabindex="-1">
                     <div class="hamburger-icon">
                         <div class="line"></div>
                         <div class="line"></div>
@@ -19,7 +19,7 @@
                     </div>
                     <span class="menu-text">메뉴</span>
                 </button>
-                <button class="ready-button" :class="{ ready: isReady }" @click="changeReadyState">
+                <button class="ready-button" :class="{ ready: isReady }" @click="changeReadyState" tabindex="-1">
                     {{ readyButtonText }}
                 </button>
             </div>
@@ -27,9 +27,9 @@
                 <Log ref="LogComponent" />
                 <Chatting ref="ChattingComponent" style="width: 280px;" :request-type="chatRequestType"
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="rid" />
-                <div class = "card_deck">
+                <div class="card_deck">
                     <p>카드 뽑기</p>
-                    <img src = "../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click = "getCard()">
+                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()">
                 </div>
             </div>
             <div class="game_zone">
@@ -40,14 +40,15 @@
                     <!-- 여기 안에 다른 card들 component들어가야함-->
                     <div class="table">
                         <div v-for="(o_card, index) in game_data.other_player_deck" :key="index"
-                        :class="[{other_card : true},{isLeft : getLeft(index)}, {isRight : getRight(index)}]"
-                        :style = "{
-                            transform: `rotate(${180-(game_data.other_player_deck.length-1)*45+(index)*90}deg)`,
-                            top : (index==0 || index==game_data.other_player_deck.length-1) ? 10+(game_data.other_player_deck.length-2)*30+'%': '0%',
-                        }">
-                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index" :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
-                                'z-index': (index + 1),
-                            }" />
+                            :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]"
+                            :style="{
+                                transform: `rotate(${180 - (game_data.other_player_deck.length - 1) * 45 + (index) * 90}deg)`,
+                                top: (index == 0 || index == game_data.other_player_deck.length - 1) ? 10 + (game_data.other_player_deck.length - 2) * 30 + '%' : '0%',
+                            }">
+                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index"
+                                :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
+                                    'z-index': (index + 1),
+                                }" />
                         </div>
                         <div class="card_mine">
                             <Card v-for="(card, index) in game_data.player_deck" :key="index"
@@ -62,6 +63,7 @@
             <div class="menu">
             </div>
         </div>
+        <ScoreBoardDialog ref="ScoreBoardDialogComponent" v-if="isScoreBoardDialogVisible" />
     </div>
 </template>
 
@@ -70,9 +72,11 @@ import Log from '../components/Game/Log.vue';
 import Card from '../components/Game/Card.vue';
 import Other_Card from '../components/Game/Other_Card.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
+import ScoreBoardDialog from '../components/Dialog/ScoreBoardDialog.vue';
 import * as sock_const from "../../../common/constant/socket-constants.js";
 import * as game_const from "../../../common/constant/game-constants.js";
 import { is } from '@babel/types';
+
 export default {
     name: 'Game',
     components: {
@@ -80,14 +84,16 @@ export default {
         Chatting: Chatting,
         Card: Card,
         Other_Card: Other_Card,
+        ScoreBoardDialog: ScoreBoardDialog,
     },
     data() {
         return {
+            isScoreBoardDialogVisible: false,
             rid: '',
             isReady: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            isDraggable : true,  //test용 실 사용시 false
+            isDraggable: true,  //test용 실 사용시 false
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
                 player: [],
@@ -95,7 +101,7 @@ export default {
                 current_round: 0,
                 current_player: '',
                 player_deck: [], // test용 실 사용시 []
-                other_player_deck : [
+                other_player_deck: [
                 ],
                 push_deck: [],
                 round_result: [],
@@ -103,6 +109,7 @@ export default {
             notificationMessage: '',
             showNotification: false,
             notificationTimeout: 0,
+            players: [],
         }
     },
 
@@ -113,7 +120,7 @@ export default {
         getLeft(index) {
             if (parseInt(this.game_data.other_player_deck.length / 2) > index)
                 return true;
-            else if(this.game_data.other_player_deck.length==3 && index == 1)
+            else if (this.game_data.other_player_deck.length == 3 && index == 1)
                 return true;
             else
                 return false;
@@ -192,14 +199,29 @@ export default {
             this.notificationTimeout = setTimeout(() => {
                 this.showNotification = false;
             }, 2000);
+        },
+        handleKeyDown(event) {
+            console.log('event occur');
+            if (event.key === 'Tab') {
+                console.log('tab pressed');
+                event.preventDefault();
+
+                this.isScoreBoardDialogVisible = !this.isScoreBoardDialogVisible;
+                if (this.isScoreBoardDialogVisible) {
+                    this.$nextTick(() => {
+                        this.$refs.ScoreBoardDialogComponent.updateRoundResults(this.players, this.game_data.round_result);
+                    });
+                }
+            }
         }
     },
     computed: {
         readyButtonText() {
-            return this.isReady? '준비완료':'준비';
+            return this.isReady ? '준비완료' : '준비';
         }
     },
     mounted() {
+        this.players = this.room_data.players;
         this.rid = this.$store.getters["Games/getGame_rid"];
         this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
@@ -211,6 +233,7 @@ export default {
             this.game_data.player.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
+            this.players = data.players;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
             /**
@@ -223,6 +246,7 @@ export default {
             });
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
+            this.players = data.players;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
             /**
@@ -254,7 +278,7 @@ export default {
             this.showGameNotification(this.game_data.current_round + " 라운드가 시작되었습니다");
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
                 this.isDraggable = true;
-            } 
+            }
             else { // 플레이어가 첫 번째 차례가 아닐 때
                 this.isDraggable = false;
             }
@@ -268,7 +292,7 @@ export default {
             this.game_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
-        
+
         this.$socket.value.on(sock_const.ResponseType.RES_GET_CARDS, (data) => { // 카드가 갱신될 때마다 다른 플레이어 카드포함 받음
             /**
             data: {
@@ -284,7 +308,7 @@ export default {
                 ]
             }
             **/
-           console.log(data);
+            console.log(data);
         });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
@@ -333,6 +357,7 @@ export default {
 .Game {
     width: 100%;
     height: 100%;
+    position: relative;
 }
 
 .InGame {
@@ -456,15 +481,15 @@ export default {
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     background-color: orange;
-  }
-  
-  .ready-button.ready {
+}
+
+.ready-button.ready {
     background-color: green;
-  }
-  
-  .ready-button:hover {
+}
+
+.ready-button:hover {
     background-color: darkorange;
-  }
+}
 
 .logs {
     padding-left: 10px;
@@ -589,18 +614,18 @@ export default {
     left: 0;
 }
 
-.isRight{
-    right : 0;
+.isRight {
+    right: 0;
 }
-.card_deck{
-    display:flex;
-    justify-content : center;
-    align-items : center;
+
+.card_deck {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
 }
 
-.card_deck img{
+.card_deck img {
     cursor: pointer;
 }
-
 </style>
