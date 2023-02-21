@@ -171,14 +171,9 @@ export default {
                     this.$store.commit("Games/setGame_rid", this.clicked_room_rid);
                     this.$router.push({
                         name: 'Game', params: {
-                            room_data: JSON.stringify({
-                                room_name: this.selectedRoomName,
-                                user_name: this.$store.getters["Users/getUser_nickname"],
-                                players: data.players,
-                            })
+                            room_data: JSON.stringify(data.room_data)
                         }
                     });
-                    alert('Join success');
                     break;
                 case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST:
                     this.showMessageDialog = true;

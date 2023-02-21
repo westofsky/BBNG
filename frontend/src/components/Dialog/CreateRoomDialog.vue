@@ -131,14 +131,10 @@ export default {
     },
     mounted() {
         this.$socket.value.on(sock_const.ResponseType.RES_GET_ROOM_RID, (data) => {
-            this.$store.commit("Games/setGame_rid", data);
+            this.$store.commit("Games/setGame_rid", data.rid);
             this.$router.push({
                 name: 'Game', params: {
-                    room_data: JSON.stringify({
-                        room_name: this.name,
-                        user_name: this.$store.getters["Users/getUser_nickname"],
-                        players: [this.$store.getters["Users/getUser_nickname"]],
-                    }),
+                    room_data: JSON.stringify(data.room_data),
                 }
             });
         });
