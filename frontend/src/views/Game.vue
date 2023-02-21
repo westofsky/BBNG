@@ -1,5 +1,5 @@
 <template>
-    <div class="Game" @keydown.prevent="handleKeyDown" tabindex="0">
+    <div class="Game" @keydown="toggleScoreBoardDialog" tabIndex="0">
         <transition name="notification-fade">
             <div class="notification" v-if="showNotification">
                 <div class="notification-content">
@@ -11,7 +11,7 @@
             <div class="ui-area">
                 <label class="roomname">{{ room_data.room_name }}</label>
                 <label class="username">{{ room_data.user_name }}</label>
-                <button class="menu-button" tabindex="-1">
+                <button class="menu-button">
                     <div class="hamburger-icon">
                         <div class="line"></div>
                         <div class="line"></div>
@@ -19,14 +19,14 @@
                     </div>
                     <span class="menu-text">메뉴</span>
                 </button>
-                <button class="ready-button" :class="{ ready: isReady }" @click="changeReadyState" tabindex="-1">
+                <button class="ready-button" :class="{ ready: isReady }" @click="changeReadyState">
                     {{ readyButtonText }}
                 </button>
             </div>
             <div class="logs">
                 <Log ref="LogComponent" />
                 <Chatting ref="ChattingComponent" style="width: 280px;" :request-type="chatRequestType"
-                    :response-type="chatResponseType" :chatting-delay-time="0" :rid="rid" />
+                    :response-type="chatResponseType" :chatting-delay-time="0" :rid="this.room_data.rid" />
                 <div class="card_deck">
                     <p>카드 뽑기</p>
                     <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()">
@@ -91,7 +91,6 @@ export default {
     data() {
         return {
             isScoreBoardDialogVisible: false,
-            rid: '',
             isReady: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
@@ -124,7 +123,6 @@ export default {
             notificationMessage: '',
             showNotification: false,
             notificationTimeout: 0,
-            players: [],
         }
     },
 
@@ -149,12 +147,12 @@ export default {
         changeReadyState() {
             if (this.isReady) {
                 this.$socket.value.emit(sock_const.RequestType.NOT_READY, {
-                    rid: this.$store.getters["Games/getGame_rid"],
+                    rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
             } else {
                 this.$socket.value.emit(sock_const.RequestType.READY, {
-                    rid: this.$store.getters["Games/getGame_rid"],
+                    rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
             }
@@ -162,13 +160,13 @@ export default {
         },
         getCard() {
             this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
-                rid: this.$store.getters["Games/getGame_rid"],
+                rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"]
             });
         },
         drawCard(card, x, y) {
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
-                rid: this.$store.getters["Games/getGame_rid"],
+                rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"],
                 card: { [card]: { x: [x], y: [y] } },
                 over_price: this.checkOverPrice()
@@ -200,7 +198,7 @@ export default {
             }
 
             this.$socket.value.emit(sock_const.RequestType.BBONG, {
-                rid: this.$store.getters['Games/getGame_rid'],
+                rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"],
                 bbong_cards: bbongCards,
                 draw_card: drawCard
@@ -214,16 +212,12 @@ export default {
                 this.showNotification = false;
             }, 2000);
         },
-        handleKeyDown(event) {
-            console.log('event occur');
-            if (event.key === 'Tab') {
-                console.log('tab pressed');
-                event.preventDefault();
-
+        toggleScoreBoardDialog(event) {
+            if (event.keyCode === 192) {
                 this.isScoreBoardDialogVisible = !this.isScoreBoardDialogVisible;
                 if (this.isScoreBoardDialogVisible) {
                     this.$nextTick(() => {
-                        this.$refs.ScoreBoardDialogComponent.updateRoundResults(this.players, this.game_data.round_result);
+                        this.$refs.ScoreBoardDialogComponent.updateRoundResults(this.room_data.players, this.game_data.round_result);
                     });
                 }
             }
@@ -235,8 +229,6 @@ export default {
         }
     },
     mounted() {
-        this.players = this.room_data.players;
-        this.rid = this.$store.getters["Games/getGame_rid"];
         this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
             /**
@@ -247,7 +239,7 @@ export default {
             this.game_data.player.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
-            this.players = data.players;
+            this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
             /**
@@ -260,7 +252,7 @@ export default {
             });
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
-            this.players = data.players;
+            this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
             /**

@@ -164,7 +164,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     socket.join(gameRoom.rid);
     clientListBySocket[socket.id].rid = gameRoom.rid;
     clientListByNickname[clientListBySocket[socket.id].nickname].rid = gameRoom.rid;
-    socket.emit(sock_const.ResponseType.RES_GET_ROOM_RID, gameRoom.rid);
+    socket.emit(sock_const.ResponseType.RES_GET_ROOM_RID, {
+      room_data: filterRoomData(gameRoom.rid),
+    });
     console.log("Socket Event(CREATE_ROOM): Created room list\n########################\n" + JSON.stringify(gameRoomList) + '\n########################');
   });
 
@@ -186,12 +188,12 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
           socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, {
             result: sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS,
-            players: gameRoomList[data.rid].players.map(player => player.nickname),
+            room_data: filterRoomData(data.rid),
           });
           console.log("Socket Event(JOIN_ROOM): Player '" + data.nickname + "' joins room '" + data.rid + "'");
           socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_JOIN, {
             nickname: data.nickname,
-            players: gameRoomList[data.rid].players.map(player => player.nickname),
+            room_data: filterRoomData(data.rid),
           });
         } else { // 참여하려는 방의 비밀번호가 일치하지 않을 경우
           socket.emit(sock_const.ResponseType.RES_JOIN_ROOM, {
@@ -221,7 +223,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     });
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
       nickname: data.nickname,
-      players: gameRoomList[data.rid].players.map(player => player.nickname)
+      room_data: filterRoomData(data.rid),
     });
   });
 
@@ -262,7 +264,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         });
         io.to(joinedGameRoom).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
           nickname: nickname,
-          players: gameRoomList[joinedGameRoom].players.map(player => player.nickname),
+          room_data: filterRoomData(joinedGameRoom),
         });
       }
     }
@@ -275,7 +277,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   socket.on(sock_const.RequestType.READY, (data) => {
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_READY, {
       nickname: data.nickname
-    })
+    });
     gameRoomList[data.rid].game_data.ready_count += 1;
     if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].game_data.ready_count) {
       io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START);
@@ -632,4 +634,10 @@ function shuffleDeck(deck) {
     [deck[loop1], deck[loop2]] = [deck[loop2], deck[loop1]];
   }
   return deck;
+}
+
+function filterRoomData(rid) {
+  const { password, game_data, ...filteredData } = gameRoomList[rid];
+  filteredData.players = gameRoomList[rid].players.map(player => player.nickname);
+  return filteredData;
 }
