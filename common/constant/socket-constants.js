@@ -40,6 +40,7 @@ const RequestType = {
     GET_CARD: 0,
     DRAW_CARD: 0,
     BBONG: 0,
+    STOP: 0,
 
     // Chatting Event
     SEND_MSG_TO_LOBBY: 0,
