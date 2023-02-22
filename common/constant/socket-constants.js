@@ -40,7 +40,9 @@ const RequestType = {
     GET_CARD: 0,
     DRAW_CARD: 0,
     BBONG: 0,
+    NATURE_BBONG: 0,
     STOP: 0,
+    OVER_PRICE: 0,
 
     // Chatting Event
     SEND_MSG_TO_LOBBY: 0,
@@ -93,6 +95,9 @@ const ResponseType = {
     RES_GET_CARD : 0,
     RES_CHANGE_TURN: 0,
     RES_BBONG: 0,
+    RES_NATURE_BBONG: 0,
+    RES_STOP: 0,
+    RES_OVER_PRICE: 0,
 
     // Chatting Event
     BROADCAST_LOBBY_MSG: 0,

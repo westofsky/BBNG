@@ -19,7 +19,7 @@
                     </div>
                     <span class="menu-text">메뉴</span>
                 </button>
-                <button class="ready-button" :class="{ ready: isReady }" @click="changeReadyState">
+                <button class="ready-button" v-if="!inGame" :class="{ ready: isReady }" @click="changeReadyState">
                     {{ readyButtonText }}
                 </button>
             </div>
@@ -90,6 +90,7 @@ export default {
     },
     data() {
         return {
+            inGame : false,
             isScoreBoardDialogVisible: false,
             isReady: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
@@ -101,20 +102,9 @@ export default {
                 ready_count: 0,
                 current_round: 0,
                 current_player: '',
-                player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
+                //player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
+                player_deck  :[],
                 other_player_deck : [
-                    {
-                        'asdf' : ['H2','H5','S1'],
-                    },
-                    {
-                        'asdf' : ['H2','H5','S1','C5','H9','H10'],
-                    },
-                    {
-                        'asdf' : ['H2','H5','S1','C5','H9'],
-                    },
-                    {
-                        'asdf' : ['H2','H5','S1','C5','H9','H10'],
-                    },
                     
                 ],
                 push_deck: [],
@@ -271,6 +261,7 @@ export default {
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
             this.showGameNotification("게임이 시작되었습니다");
+            this.inGame = true;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
             /**
@@ -284,6 +275,7 @@ export default {
             this.showGameNotification(this.game_data.current_round + " 라운드가 시작되었습니다");
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
                 this.isDraggable = true;
+                this.showGameNotification("당신의 차례입니다.");
             }
             else { // 플레이어가 첫 번째 차례가 아닐 때
                 this.isDraggable = false;
@@ -308,21 +300,20 @@ export default {
             data: {
                 players : [
                     {
-                        'nickname': {
-                            turn_count: 0,
-                            cards: [
-                                'C1', 'C2'
-                            ],
-                            state: 0/1(뽕)/2(바가지),
-                            over_price: 2,
-                        }
+                        nickname : 'test',
+                        turn_count: 0,
+                        cards: [
+                            'C1', 'C2'
+                        ],
+                        state: 0/1(뽕)/2(바가지),
+                        over_price: 2,
                     }
                 ]
             }
             **/
             let my_index;
             for(var i =0;i<data.players.length;i++){
-                if(Object.keys(data.players[i])[0] == this.$store.getters["Users/getUser_nickname"]){
+                if(data.players[i].nickname == this.$store.getters["Users/getUser_nickname"]){
                     my_index = i;
                 }
             }
@@ -331,10 +322,11 @@ export default {
             let arr2 = new_arr.slice(0,my_index);
             new_arr = arr1.concat(arr2);
             for(var i =0;i<new_arr.length;i++){
-                let new_arr_item = {[Object.keys(new_arr[i])[0]] :  new_arr[i][Object.keys(new_arr[i])[0]].cards};
+                let new_arr_item = {}
+                new_arr_item[new_arr[i].nickname] = new_arr[i].cards;
                 this.game_data.other_player_deck.push(new_arr_item);
-                console.log(new_arr_item);
             }
+            console.log(this.game_data.other_player_deck);
         });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
@@ -344,6 +336,7 @@ export default {
              */
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
                 this.isDraggable = true;
+                this.showGameNotification("당신의 차례입니다.");
             } else { // 플레이어의 차례가 아닐 때
                 this.isDraggable = false;
             }
@@ -356,6 +349,51 @@ export default {
              */
             this.game_data.player_deck.push(data.card);
             // this.game_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
+            if (this.game_data.player_deck.length > 2) {
+                var hand_card = [];
+                var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
+                for (var i = 1; i < 13; i++) {
+                    hand_card[i] = 0;
+                }
+                for (var i = 0; i < 6; i++) {
+                    hand_card[Number(this.game_data.player_deck[i].slice(1))]++;
+                    sum += Number(this.game_data.player_deck[i].slice(1));
+                }
+                for (var i = 1; i < 13; i++) {
+                    if (straight < 6) {
+                    if (hand_card[i] == 1) {
+                        if (straight == 0) {
+                        start = i;
+                        }
+                        straight++;
+                    }
+                    else {
+                        straight = 0;
+                    }
+                    }
+                    if (hand_card[i] == 2) {
+                    two++;
+                    }
+                    else if (hand_card[i] == 3) {
+                    three++;
+                    }
+                    else if (hand_card[i] == 4) {
+                    four++;
+                    }
+                }
+                if ((four == 1 && two == 1) || sum <= 10) {  // 4 2 메이드, low 메이드
+                    
+                }
+                else if (three == 2 || sum >= 60) { // 3 3 메이드, high 메이드
+                    
+                }
+                else if (straight == 6) { // 스트레이트
+                    
+                }
+                else if (two == 3) { // 2 2 2 메이드
+                    
+                }
+            }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 다른 플레이어가 카드를 한장 냈을 때
             /**
