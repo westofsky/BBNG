@@ -282,7 +282,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     });
     if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].ready_count) { // 모든 플레이어가 Ready 했을 경우.
       gameRoomList[data.rid].state = game_const.GameState.PLAYING;
-      io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START); // 모든 플레이어에게 게임이 시작되었다고 알림.
+      io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START, {room_data: filterRoomData(data.rid)}); // 모든 플레이어에게 게임이 시작되었다고 알림.
 
       setTimeout(function () { // 3초 뒤에 모든 플레이어에게 라운드가 시작되었다고 알림.
         console.log('delay');

@@ -309,10 +309,11 @@ export default {
              */
             this.room_data = data.room_data;
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, (data) => { // 게임이 시작되었을 때
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
             this.showGameNotification("게임이 시작되었습니다");
             this.game_data.current_round = 1;
+            this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
             /**
