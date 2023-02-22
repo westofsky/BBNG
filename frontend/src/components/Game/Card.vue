@@ -4,7 +4,7 @@
       zIndex: zIndex,
       left: x + 'px',
       top: y + 'px',
-      'background-image': `url(${image_src})`,
+      'background-image': `url(${getImageSrc()})`,
     }"></div>
 </template>
 
@@ -12,7 +12,7 @@
 
 export default {
   props: {
-    image_src: Array,
+    name: String,
     card_index : Number,
     isDraggable : Boolean,
     card_length : Number,
@@ -34,6 +34,9 @@ export default {
     };
   },
   methods: {
+    getImageSrc(){
+        return require(`../../assets/images/cards/${this.name}.png`);
+    },
     handleMouseEnter() {
       if(this.isDraggable){
           if (!this.isDragging) {
@@ -60,12 +63,13 @@ export default {
       }
     },
     handleMouseUp() { // 카드를 놓았을때의 event
-      console.log(this.card_length);
       this.isDragging = false; 
+      console.log(460+(this.card_length/3-1)*140 - (this.card_index)*100);
       if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=460+(this.card_length/3-1)*140 - (this.card_index)*100){
         this.highlight = false;
-        this.$emit("set-draggable", false);
-        this.toSmall = true;
+        this.$emit("set-draggable", {pos : false, name : this.name, top : this.y, index : this.card_index, left : this.x});
+        this.x = 0;
+        this.y = 0;
       }
       else{
         this.x = 0;
@@ -106,9 +110,5 @@ export default {
   box-shadow: 0 0 10px black;
   background-color: yellow;
   border-radius: 8px 8px 8px 8px;
-}
-.small {
-  width: 4vw;
-  height: 5.6vw;
 }
 </style>

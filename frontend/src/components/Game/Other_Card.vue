@@ -10,7 +10,7 @@
   <script>
   export default {
     props : {
-        image_src : Array,
+        image_src : String,
     },
     data() {
       return {

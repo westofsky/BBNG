@@ -53,12 +53,20 @@
                             }" />
                         </div>
                         <div class="card_mine">
+                            <Dropped_Card v-for="(cards, index) in game_data.push_deck" :key="index"
+                                :name="cards.name"
+                                :style="{
+                                'z-index': (index + 1),
+                                'top' : (cards.top) + 'px',
+                                'left' : (cards.left) + 'px',
+                            }" />
                             <Card v-for="(card, index) in game_data.player_deck" :key="index"
-                                :image_src="require(`../assets/images/cards/${card}.png`)" :card_index="index + 1"
+                                :name="card" :card_index="index + 1"
                                 :card_length="game_data.player_deck.length" :is-draggable="isDraggable"
                                 @set-draggable="set_draggable" />
                         </div>
                     </div>
+                    
                 </div>
 
             </div>
@@ -72,6 +80,7 @@
 import Log from '../components/Game/Log.vue';
 import Card from '../components/Game/Card.vue';
 import Other_Card from '../components/Game/Other_Card.vue';
+import Dropped_Card from '../components/Game/Dropped_Card.vue';
 import Chatting from '../components/Lobby/Chatting.vue';
 import * as sock_const from "../../../common/constant/socket-constants.js";
 import * as game_const from "../../../common/constant/game-constants.js";
@@ -83,6 +92,7 @@ export default {
         Chatting: Chatting,
         Card: Card,
         Other_Card: Other_Card,
+        Dropped_Card : Dropped_Card,
     },
     data() {
         return {
@@ -97,7 +107,7 @@ export default {
                 ready_count: 0,
                 current_round: 0,
                 current_player: '',
-                player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
+                player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
                 other_player_deck : [
                     {
                         'asdf' : ['H2','H5','S1'],
@@ -114,17 +124,25 @@ export default {
                     
                 ],
                 push_deck: [],
-                round_result: [],
+                round_result: [
+                ],
             },
             notificationMessage: '',
             showNotification: false,
             notificationTimeout: 0,
+            containerWidth : null,
         }
     },
 
     methods: {
         set_draggable(data) {
-            this.isDraggable = data;
+            this.isDraggable = data.pos;
+            this.game_data.push_deck.push({
+                name : data.name,
+                top : data.top,
+                left : data.left,
+            });
+            this.game_data.player_deck.splice(data.index-1,1);
         },
         getLeft(index) {
             if (parseInt(this.game_data.other_player_deck.length / 2) > index)
@@ -212,9 +230,14 @@ export default {
     computed: {
         readyButtonText() {
             return this.isReady? '준비완료':'준비';
-        }
+        },
+        computedWidth() {
+            return `${this.containerWidth * 0.6}px`;
+        },
     },
     mounted() {
+        const container = this.$el;
+        this.containerWidth = container.clientWidth;
         this.rid = this.$store.getters["Games/getGame_rid"];
         this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
@@ -280,7 +303,6 @@ export default {
              *  cards: ['C1', 'C2', 'C3', 'C4', 'C5']
              * } 
              */
-            console.log(data);
             // for(var i =0;i<data.cards.length;i++){
             //     this.game_data.player_deck.push(data.cards[i]);
             // }
@@ -311,6 +333,7 @@ export default {
                     my_index = i;
                 }
             }
+            
             let new_arr = data.players;
             let arr1 = new_arr.slice(my_index+1);
             let arr2 = new_arr.slice(0,my_index);
@@ -318,7 +341,6 @@ export default {
             for(var i =0;i<new_arr.length;i++){
                 let new_arr_item = {[Object.keys(new_arr[i])[0]] :  new_arr[i][Object.keys(new_arr[i])[0]].cards};
                 this.game_data.other_player_deck.push(new_arr_item);
-                console.log(new_arr_item);
             }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
