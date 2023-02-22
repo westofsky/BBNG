@@ -352,142 +352,65 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // 게임방 카드 한장 버리기
   socket.on(sock_const.RequestType.DRAW_CARD, (data) => {
-    var flag = 0;
     for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
       if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
         var j = i;
         break;
       }
     }
-    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
-      if (j != i && gameRoomList[data.rid].game_data.player[i].state == 2) {  // 누군가 바가지 상태일 때
-        if (gameRoomList[data.rid].game_data.player[i].over_price == Number(data.card.draw_card.slice(1))) { // 내가 낸 카드가 바가지에 걸렸을 때
-          flag++;
-          for (var k = 0; k < gameRoomList[data.rid].player_limit; k++) {
-            if (k == j) {   // 바가지 먹은 사람
-              var sum = 0;
-              for (var l = 0; l < gameRoomList[data.rid].game_data.player[k].cards.length; l++) {
-                sum += Number(gameRoomList[data.rid].game_data.player[k].cards[l].slice(1));
-              }
-              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = sum + 30;
-            }
-            else if (k == i) {  // 바가지 먹인 사람
-              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = 0;
-            }
-            else {    // 그 외
-              var sum = 0;
-              for (var l = 0; l < gameRoomList[data.rid].game_data.player[k].cards.length; l++) {
-                sum += Number(gameRoomList[data.rid].game_data.player[k].cards[l].slice(1));
-              }
-              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = sum;
-            }
-          }
-          gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
-          socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_END, {
-            round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
-            player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
-          })
-          gameRoomList[data.rid].game_data.current_round++;
-          break;
-        }
+    gameRoomList[data.rid].game_data.player[j].cards = gameRoomList[data.rid].game_data.player[j].cards.filter(item => item !== data.card.draw_card);
+    gameRoomList[data.rid].game_data.push_deck.push(data.card.draw_card);
+    if (data.over_price == 0 && gameRoomList[data.rid].game_data.player[j].state == 1) {
+      if (Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) == Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))) { // 바가지로 변경
+        gameRoomList[data.rid].game_data.player[j].state = 2;
+        gameRoomList[data.rid].game_data.player[j].over_price = Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1));
       }
     }
-    if (flag == 0) {  //라운드가 끝나지 않았을 때
-      gameRoomList[data.rid].game_data.player[j].cards = gameRoomList[data.rid].game_data.player[j].cards.filter(item => item !== data.card.draw_card);
-      gameRoomList[data.rid].game_data.push_deck.push(data.card.draw_card);
-      if (data.over_price == 0 && gameRoomList[data.rid].game_data.player[j].state == 1) {
-        if (Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) == Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))) { // 바가지로 변경
-          gameRoomList[data.rid].game_data.player[j].state = 2;
-          gameRoomList[data.rid].game_data.player[j].over_price = Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1));
-        }
+    else if (data.over_price != 0) {
+      if (Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) != Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))) { // 바가지 해제
+        gameRoomList[data.rid].game_data.player[j].state = 1;
+        gameRoomList[data.rid].game_data.player[j].over_price = 0;
       }
-      else if (data.over_price != 0) {
-        if (Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) != Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))) { // 바가지 해제
-          gameRoomList[data.rid].game_data.player[j].state = 1;
-          gameRoomList[data.rid].game_data.player[j].over_price = 0;
-        }
-      }
-      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_DRAW_CARD, {
-        nickname: data.nickname,
-        over_price: Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1)),
-        card: data.card
-      })
-      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
-        players: gameRoomList[data.rid].game_data.player
-      });
     }
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_DRAW_CARD, {
+      nickname: data.nickname,
+      over_price: gameRoomList[data.rid].game_data.player[j].over_price,
+      card: data.card
+    })
+    io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+      players: gameRoomList[data.rid].game_data.player
+    });
   })
 
   // 게임방 뽕 처리
   socket.on(sock_const.RequestType.BBONG, (data) => {
-    var flag = 0;
     for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
       if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
         var j = i;
         break;
       }
     }
-    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
-      if (j != i && gameRoomList[data.rid].game_data.player[i].state == 2) {  // 누군가 바가지 상태일 때
-        if (gameRoomList[data.rid].game_data.player[i].over_price == Number(data.draw_card.slice(1))) { // 내가 낸 카드가 바가지에 걸렸을 때
-          flag++;
-          for (var k = 0; k < gameRoomList[data.rid].player_limit; k++) {
-            if (k == j) {   // 바가지 먹은 사람
-              var sum = 0;
-              for (var l = 0; l < gameRoomList[data.rid].game_data.player[k].cards.length; l++) {
-                sum += Number(gameRoomList[data.rid].game_data.player[k].cards[l].slice(1));
-              }
-              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = sum + 30;
-            }
-            else if (k == i) {  // 바가지 먹인 사람
-              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = 0;
-            }
-            else {    // 그 외
-              var sum = 0;
-              for (var l = 0; l < gameRoomList[data.rid].game_data.player[k].cards.length; l++) {
-                sum += Number(gameRoomList[data.rid].game_data.player[k].cards[l].slice(1));
-              }
-              gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-                player_score[gameRoomList[data.rid].game_data.player[k].nickname] = sum;
-            }
-          }
-          gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
-          socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_END, {
-            round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
-            player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
-          })
-          gameRoomList[data.rid].game_data.current_round++;
-          break;
-        }
-      }
+    gameRoomList[data.rid].game_data.player[j].cards = gameRoomList[data.rid].game_data.player[j].cards.filter(item => item !== data.bbong_cards[0] && item !== data.bbong_cards[1] && item !== data.draw_card);
+    gameRoomList[data.rid].game_data.push_deck.push(data.bbong_cards[0], data.bbong_cards[1], data.draw_card);
+    if (Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) == Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))) { // 바가지 일 때
+      gameRoomList[data.rid].game_data.player[j].state = 2;
+      gameRoomList[data.rid].game_data.player[j].over_price = Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1));
     }
-    if (flag == 0) {  // 라운드가 끝나지 않았을 때
-      gameRoomList[data.rid].game_data.player[j].cards = gameRoomList[data.rid].game_data.player[j].cards.filter(item => item !== data.bbong_cards[0] && item !== data.bbong_cards[1] && item !== data.draw_card);
-      gameRoomList[data.rid].game_data.push_deck.push(data.bbong_cards[0], data.bbong_cards[1], data.draw_card);
-      if (Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) == Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))) { // 바가지 일 때
-        gameRoomList[data.rid].game_data.player[j].state = 2;
-        gameRoomList[data.rid].game_data.player[j].over_price = Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1));
-      }
-      else {
-        gameRoomList[data.rid].game_data.player[j].state = 1;
-      }
-      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_BBONG, {
-        player: data.nickname,
-        cards: data.bbong_cards,
-        draw_card: data.draw_card,
-        over_price: Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1))
-      })
-      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
-        players: gameRoomList[data.rid].game_data.player
-      });
+    else {
+      gameRoomList[data.rid].game_data.player[j].state = 1;
     }
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_BBONG, {
+      player: data.nickname,
+      cards: data.bbong_cards,
+      draw_card: data.draw_card,
+      over_price: gameRoomList[data.rid].game_data.player[j].over_price
+    })
+    io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+      players: gameRoomList[data.rid].game_data.player
+    });
   });
 
+  // 스탑(뽕 상태 스탑, 메이드) 처리 로직
   socket.on(sock_const.RequestType.STOP, (data) => {
     for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
       if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
@@ -596,13 +519,49 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
           }
         }
       }
-      gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
-      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_STOP, {
-        round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
-        player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
-      })
-      gameRoomList[data.rid].game_data.current_round++;
     }
+    gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_STOP, {
+      round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
+      player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
+    })
+    gameRoomList[data.rid].game_data.current_round++;
+  });
+
+  // 바가지 처리 로직
+  socket.on(sock_const.RequestType.OVER_PRICE, (data) => {
+    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+      if (gameRoomList[data.rid].game_data.player[i].nickname == data.my_nickname) {
+        var j = i;
+      }
+      else if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
+        var k = i;
+      }
+    }
+    var sum = 0;
+    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+      for (var l = 0; l < gameRoomList[data.rid].game_data.player[i].cards.length; l++) {
+        sum += Number(gameRoomList[data.rid].game_data.player[k].cards[l].slice(1));
+      }
+      if (i == j) { // 바가지 먹은 사람
+        gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
+          player_score[gameRoomList[data.rid].game_data.player[j].nickname] = sum + 30;
+      }
+      else if (i == k) {  // 바가지 먹인 사람
+        gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
+          player_score[gameRoomList[data.rid].game_data.player[k].nickname] = 0;
+      }
+      else { // 그 외
+        gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
+          player_score[gameRoomList[data.rid].game_data.player[i].nickname] = sum;
+      }
+    }
+    gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_OVER_PRICE, {
+      round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
+      player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
+    })
+    gameRoomList[data.rid].game_data.current_round++;
   });
 });
 
