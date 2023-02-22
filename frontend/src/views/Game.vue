@@ -236,6 +236,16 @@ export default {
             this.notificationTimeout = setTimeout(() => {
                 this.showNotification = false;
             }, 2000);
+        },
+        toggleScoreBoardDialog(event) {
+            if (event.keyCode === 192) {
+                this.isScoreBoardDialogVisible = !this.isScoreBoardDialogVisible;
+                if (this.isScoreBoardDialogVisible) {
+                    this.$nextTick(() => {
+                        this.$refs.ScoreBoardDialogComponent.updateRoundResults(this.room_data.players, this.game_data.round_result);
+                    });
+                }
+            }
         }
     },
     computed: {
@@ -250,18 +260,7 @@ export default {
         const container = this.$el;
         this.containerWidth = container.clientWidth;
         this.rid = this.$store.getters["Games/getGame_rid"];
-        toggleScoreBoardDialog(event) {
-            if (event.keyCode === 192) {
-                this.isScoreBoardDialogVisible = !this.isScoreBoardDialogVisible;
-                if (this.isScoreBoardDialogVisible) {
-                    this.$nextTick(() => {
-                        this.$refs.ScoreBoardDialogComponent.updateRoundResults(this.room_data.players, this.game_data.round_result);
-                    });
-                }
-            }
-        }
-    },
-    mounted() {
+        
         this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
             /**
