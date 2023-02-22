@@ -7,6 +7,7 @@
                 </div>
             </div>
         </transition>
+
         <div class="InGame">
             <div class="ui-area">
                 <label class="roomname">{{ room_data.name }}</label>
@@ -110,9 +111,14 @@ export default {
                 player: [],
                 current_round: -1,
                 current_player: '',
+<<<<<<< HEAD
                 player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
                 //player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
                 player_deck  :[],
+=======
+                player_deck: ['H2','H5','S1','C5','H9','H3','H10'], // test용 실 사용시 []
+                // player_deck  :[],
+>>>>>>> 92dee2f (카드 테스트)
                 other_player_deck : [
                     
                 ],
@@ -143,6 +149,7 @@ export default {
     },
     methods: {
         set_draggable(data) {
+<<<<<<< HEAD
             this.isDraggable = data.pos;
             this.game_data.push_deck.push({
                 name : data.name,
@@ -150,7 +157,12 @@ export default {
                 left : data.left,
             });
             this.game_data.player_deck.splice(data.index-1,1);
+=======
+            // this.isDraggable = data;
+            this.isDraggable = true;
+>>>>>>> 92dee2f (카드 테스트)
         },
+
         getLeft(index) {
             if (parseInt(this.game_data.other_player_deck.length / 2) > index)
                 return true;
@@ -395,6 +407,7 @@ export default {
                 ]
             }
             **/
+            this.game_data.other_player_deck = [];
             let my_index;
             for(var i =0;i<data.players.length;i++){
                 if(data.players[i].nickname == this.$store.getters["Users/getUser_nickname"]){

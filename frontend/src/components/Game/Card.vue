@@ -62,14 +62,20 @@ export default {
         this.isDragging = true;
       }
     },
+    
     handleMouseUp() { // 카드를 놓았을때의 event
       this.isDragging = false; 
       console.log(460+(this.card_length/3-1)*140 - (this.card_index)*100);
       if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=460+(this.card_length/3-1)*140 - (this.card_index)*100){
         this.highlight = false;
+<<<<<<< HEAD
         this.$emit("set-draggable", {pos : false, name : this.name, top : this.y, index : this.card_index, left : this.x});
         this.x = 0;
         this.y = 0;
+=======
+        this.$emit("set-draggable", false);
+        // this.toSmall = true;
+>>>>>>> 92dee2f (카드 테스트)
       }
       else{
         this.x = 0;
