@@ -337,28 +337,25 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         var j = i;
       }
     }
+    socket.emit(sock_const.ResponseType.RES_GET_CARD, {
+      card: gameRoomList[data.rid].game_data.deck.slice(0, 1)
+    })
     gameRoomList[data.rid].game_data.player[j].cards.push(gameRoomList[data.rid].game_data.deck.slice(0, 1));
     gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 1)
-    
-    if (flag == 0) {
-      socket.emit(sock_const.ResponseType.RES_GET_CARD, {
-        card: gameRoomList[data.rid].game_data.deck.slice(0, 1)
-      })
-      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
-        players: gameRoomList[data.rid].game_data.player
-      });
-      if (gameRoomList[data.rid].game_data.deck.length == 0) {
-        gameRoomList[data.rid].game_data.deck = shuffleDeck(gameRoomList[data.rid].game_data.push_deck)
-      }
+    io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+      players: gameRoomList[data.rid].game_data.player
+    });
+    if (gameRoomList[data.rid].game_data.deck.length == 0) {
+      gameRoomList[data.rid].game_data.deck = shuffleDeck(gameRoomList[data.rid].game_data.push_deck)
     }
-    else {
-      gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
-      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_END, {
-        round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
-        player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
-      })
-      gameRoomList[data.rid].game_data.current_round++;
-    }
+    /** 
+    gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_END, {
+      round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
+      player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
+    })
+    gameRoomList[data.rid].game_data.current_round++;
+    **/
   })
 
   // 게임방 카드 한장 버리기
