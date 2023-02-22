@@ -120,6 +120,7 @@ export default {
                 current_player_count: 1,
                 show_score: this.showScore,
                 round_count: this.roundCount,
+                ready_count: 0,
                 state: game_const.GameState.WAITING,
                 players: [{
                     socket_id: this.$socket.value.id,

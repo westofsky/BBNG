@@ -98,7 +98,6 @@ export default {
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
                 player: [],
-                ready_count: 0,
                 current_round: -1,
                 current_player: '',
                 //player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
@@ -120,7 +119,7 @@ export default {
         },
         currentRoundText() {
             if(this.game_data.current_round === -1) {
-                return `모든 플레이어가 준비하면 게임이 시작됩니다: ${this.game_data.ready_count} / ${this.room_data.player_limit}`;
+                return `모든 플레이어가 준비하면 게임이 시작됩니다: ${this.room_data.ready_count} / ${this.room_data.player_limit}`;
             } else {
                 return `Round ${this.game_data.current_round}`;
             }
@@ -153,13 +152,13 @@ export default {
                     rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
-                this.game_data.ready_count -= 1;
+                this.room_data.ready_count -= 1;
             } else {
                 this.$socket.value.emit(sock_const.RequestType.READY, {
                     rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
-                this.game_data.ready_count += 1;
+                this.room_data.ready_count += 1;
             }
             this.isReady = !this.isReady;
         },
@@ -278,19 +277,37 @@ export default {
             /**
              * data: {
              *  nickname: 'Player1',
-             *  ready_count: 0,
+             *  room_data: {
+             *    rid: '',
+             *    host: 'Player1',
+             *    name: 'Room Name',
+             *    player_limit: 3,
+             *    current_player_count: 1,
+             *    show_score: true,
+             *    round_count: 10,
+             *    state: game_const.GameState.WAITING
+             *  }
              * }
              */
-            this.game_data.ready_count = data.ready_count;
+            this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어가 준비해제 했을 때
             /**
              * data: {
              *  nickname: 'Player1',
-             *  ready_count: 0,
+             *  room_data: {
+             *    rid: '',
+             *    host: 'Player1',
+             *    name: 'Room Name',
+             *    player_limit: 3,
+             *    current_player_count: 1,
+             *    show_score: true,
+             *    round_count: 10,
+             *    state: game_const.GameState.WAITING
+             *  }
              * }
              */
-            this.game_data.ready_count = data.ready_count;
+            this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");

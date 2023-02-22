@@ -275,12 +275,12 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   // 게임방 관련 socket 처리
   // Socket Listener Event(Game) - 플레이어 준비 요청
   socket.on(sock_const.RequestType.READY, (data) => {
-    gameRoomList[data.rid].game_data.ready_count += 1;
+    gameRoomList[data.rid].ready_count += 1;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_READY, { // 다른 플레이어에게 해당 플레이어가 Ready 했다고 알림.
       nickname: data.nickname,
-      ready_count: gameRoomList[data.rid].game_data.ready_count
+      room_data: filterRoomData(data.rid)
     });
-    if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].game_data.ready_count) { // 모든 플레이어가 Ready 했을 경우.
+    if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].ready_count) { // 모든 플레이어가 Ready 했을 경우.
       gameRoomList[data.rid].state = game_const.GameState.PLAYING;
       io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START); // 모든 플레이어에게 게임이 시작되었다고 알림.
 
@@ -331,10 +331,10 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // Socket Listener Event(Game) - 플레이어 준비해제 요청
   socket.on(sock_const.RequestType.NOT_READY, (data) => {
-    gameRoomList[data.rid].game_data.ready_count -= 1;
+    gameRoomList[data.rid].ready_count -= 1;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_NOT_READY, {
       nickname: data.nickname,
-      ready_count: gameRoomList[data.rid].game_data.ready_count,
+      room_data: filterRoomData(data.rid)
     })
     console.log("Room Event: Player '" + data.nickname + "' not ready");
   })
