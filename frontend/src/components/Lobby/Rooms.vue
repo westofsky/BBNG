@@ -166,18 +166,14 @@ export default {
             this.applyFilter();
         });
         this.$socket.value.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
-            switch (data) {
+            switch (data.result) {
                 case sock_const.ResponseResult.RES_JOIN_ROOM_SUCCESS:
                     this.$store.commit("Games/setGame_rid", this.clicked_room_rid);
                     this.$router.push({
                         name: 'Game', params: {
-                            room_data: JSON.stringify({
-                                room_name: this.selectedRoomName,
-                                user_name: this.$store.getters["Users/getUser_nickname"],
-                            })
+                            room_data: JSON.stringify(data.room_data)
                         }
                     });
-                    alert('Join success');
                     break;
                 case sock_const.ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST:
                     this.showMessageDialog = true;

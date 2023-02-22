@@ -120,6 +120,7 @@ export default {
                 current_player_count: 1,
                 show_score: this.showScore,
                 round_count: this.roundCount,
+                ready_count: 0,
                 state: game_const.GameState.WAITING,
                 players: [{
                     socket_id: this.$socket.value.id,
@@ -131,13 +132,10 @@ export default {
     },
     mounted() {
         this.$socket.value.on(sock_const.ResponseType.RES_GET_ROOM_RID, (data) => {
-            this.$store.commit("Games/setGame_rid", data);
+            this.$store.commit("Games/setGame_rid", data.rid);
             this.$router.push({
                 name: 'Game', params: {
-                    room_data: JSON.stringify({
-                        room_name: this.name,
-                        user_name: this.$store.getters["Users/getUser_nickname"],
-                    }),
+                    room_data: JSON.stringify(data.room_data),
                 }
             });
         });
