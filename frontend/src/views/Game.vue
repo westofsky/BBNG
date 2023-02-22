@@ -9,8 +9,8 @@
         </transition>
         <div class="InGame">
             <div class="ui-area">
-                <label class="roomname">{{ room_data.room_name }}</label>
-                <label class="username">{{ room_data.user_name }}</label>
+                <label class="roomname">{{ room_data.name }}</label>
+                <label class="username">{{ this.$store.getters["Users/getUser_nickname"] }}</label>
                 <button class="menu-button">
                     <div class="hamburger-icon">
                         <div class="line"></div>
@@ -19,7 +19,7 @@
                     </div>
                     <span class="menu-text">메뉴</span>
                 </button>
-                <button class="ready-button" v-if="!inGame" :class="{ ready: isReady }" @click="changeReadyState">
+                <button class="ready-button" v-if="room_data.state === WAITING" :class="{ ready: isReady }" @click="changeReadyState">
                     {{ readyButtonText }}
                 </button>
             </div>
@@ -34,7 +34,7 @@
             </div>
             <div class="game_zone">
                 <div class="table-header">
-                    <label class="round">Round {{ game_data.current_round }}</label>
+                    <label class="round">{{currentRoundText}}</label>
                 </div>
                 <div class="game_table">
                     <!-- 여기 안에 다른 card들 component들어가야함-->
@@ -90,7 +90,6 @@ export default {
     },
     data() {
         return {
-            inGame : false,
             isScoreBoardDialogVisible: false,
             isReady: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
@@ -100,7 +99,7 @@ export default {
             game_data: {
                 player: [],
                 ready_count: 0,
-                current_round: 0,
+                current_round: -1,
                 current_player: '',
                 //player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
                 player_deck  :[],
@@ -115,7 +114,21 @@ export default {
             notificationTimeout: 0,
         }
     },
-
+    computed: {
+        readyButtonText() {
+            return this.isReady ? '준비완료' : '준비';
+        },
+        currentRoundText() {
+            if(this.game_data.current_round === -1) {
+                return `모든 플레이어가 준비하면 게임이 시작됩니다: ${this.game_data.ready_count} / ${this.room_data.player_limit}`;
+            } else {
+                return `Round ${this.game_data.current_round}`;
+            }
+        },
+        WAITING() {
+            return game_const.GameState.WAITING;
+        }
+    },
     methods: {
         set_draggable(data) {
             this.isDraggable = data;
@@ -140,11 +153,13 @@ export default {
                     rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
+                this.game_data.ready_count -= 1;
             } else {
                 this.$socket.value.emit(sock_const.RequestType.READY, {
                     rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
+                this.game_data.ready_count += 1;
             }
             this.isReady = !this.isReady;
         },
@@ -213,17 +228,22 @@ export default {
             }
         }
     },
-    computed: {
-        readyButtonText() {
-            return this.isReady ? '준비완료' : '준비';
-        }
-    },
     mounted() {
         this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
             /**
              * data: {
-             *  nickname: 'Player1'
+             *  nickname: 'Player1',
+             *  room_data: {
+             *    rid: '',
+             *    host: 'Player1',
+             *    name: 'Room Name',
+             *    player_limit: 3,
+             *    current_player_count: 1,
+             *    show_score: true,
+             *    round_count: 10,
+             *    state: game_const.GameState.WAITING
+             *  }
              * }
              */
             this.game_data.player.push(data.nickname);
@@ -234,7 +254,17 @@ export default {
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
             /**
              * data: {
-             *  nickname: 'Player1'
+             *  nickname: 'Player1',
+             *  room_data: {
+             *    rid: '',
+             *    host: 'Player1',
+             *    name: 'Room Name',
+             *    player_limit: 3,
+             *    current_player_count: 1,
+             *    show_score: true,
+             *    round_count: 10,
+             *    state: game_const.GameState.WAITING
+             *  }
              * }
              */
             this.game_data.players = this.game_data.player.filter((player) => {
@@ -247,21 +277,25 @@ export default {
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
             /**
              * data: {
-             *  nickname: 'Player1'
+             *  nickname: 'Player1',
+             *  ready_count: 0,
              * }
              */
+            this.game_data.ready_count = data.ready_count;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어가 준비해제 했을 때
             /**
              * data: {
-             *  nickname: 'Player1'
+             *  nickname: 'Player1',
+             *  ready_count: 0,
              * }
              */
+            this.game_data.ready_count = data.ready_count;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, () => { // 게임이 시작되었을 때
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
             this.showGameNotification("게임이 시작되었습니다");
-            this.inGame = true;
+            this.game_data.current_round = 1;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
             /**
