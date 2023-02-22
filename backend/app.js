@@ -400,7 +400,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     else {
       gameRoomList[data.rid].game_data.player[j].state = 1;
     }
-    gameRoomList[data.rid].game_data.player[j].turn_count++;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_BBONG, {
       nickname: data.nickname,
       cards: data.bbong_cards,
