@@ -378,6 +378,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       over_price: gameRoomList[data.rid].game_data.player[j].over_price,
       card: data.card
     })
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
+      nickname: gameRoomList[data.rid].game_data.player[(j+1)%5].nickname
+    })
     io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
       players: gameRoomList[data.rid].game_data.player
     });
@@ -405,6 +408,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       cards: data.bbong_cards,
       draw_card: data.draw_card,
       over_price: gameRoomList[data.rid].game_data.player[j].over_price
+    })
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
+      nickname: gameRoomList[data.rid].game_data.player[(j+1)%5].nickname
     })
     io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
       players: gameRoomList[data.rid].game_data.player
@@ -434,6 +440,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       cards: data.nature_cards,
       draw_card: data.draw_card,
       over_price: gameRoomList[data.rid].game_data.player[j].over_price
+    })
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
+      nickname: gameRoomList[data.rid].game_data.player[(j+1)%5].nickname
     })
     io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
       players: gameRoomList[data.rid].game_data.player
