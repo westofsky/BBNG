@@ -111,14 +111,8 @@ export default {
                 player: [],
                 current_round: -1,
                 current_player: '',
-<<<<<<< HEAD
-                player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
                 //player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
                 player_deck  :[],
-=======
-                player_deck: ['H2','H5','S1','C5','H9','H3','H10'], // test용 실 사용시 []
-                // player_deck  :[],
->>>>>>> 92dee2f (카드 테스트)
                 other_player_deck : [
                     
                 ],
@@ -149,7 +143,6 @@ export default {
     },
     methods: {
         set_draggable(data) {
-<<<<<<< HEAD
             this.isDraggable = data.pos;
             this.game_data.push_deck.push({
                 name : data.name,
@@ -157,10 +150,7 @@ export default {
                 left : data.left,
             });
             this.game_data.player_deck.splice(data.index-1,1);
-=======
-            // this.isDraggable = data;
-            this.isDraggable = true;
->>>>>>> 92dee2f (카드 테스트)
+            this.isDraggable = data;
         },
 
         getLeft(index) {
@@ -260,7 +250,6 @@ export default {
         const container = this.$el;
         this.containerWidth = container.clientWidth;
         this.rid = this.$store.getters["Games/getGame_rid"];
-        },
         toggleScoreBoardDialog(event) {
             if (event.keyCode === 192) {
                 this.isScoreBoardDialogVisible = !this.isScoreBoardDialogVisible;
