@@ -400,8 +400,36 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       gameRoomList[data.rid].game_data.player[j].state = 1;
     }
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_BBONG, {
-      player: data.nickname,
+      nickname: data.nickname,
       cards: data.bbong_cards,
+      draw_card: data.draw_card,
+      over_price: gameRoomList[data.rid].game_data.player[j].over_price
+    })
+    io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
+      players: gameRoomList[data.rid].game_data.player
+    });
+  });
+
+  // 자연 처리 로직
+  socket.on(sock_const.RequestType.NATURE_BBONG, (data) => {
+    for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
+      if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
+        var j = i;
+        break;
+      }
+    }
+    gameRoomList[data.rid].game_data.player[j].cards = gameRoomList[data.rid].game_data.player[j].cards.filter(item => item !== data.nature_cards[0] && item !== data.nature_cards[1] && item !== data.nature_cards[2] && item !== data.draw_card);
+    gameRoomList[data.rid].game_data.push_deck.push(data.nature_cards[0], data.nature_cards[1], data.nature_cards[2], data.draw_card);
+    if (Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) == Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))) { // 바가지 일 때
+      gameRoomList[data.rid].game_data.player[j].state = 2;
+      gameRoomList[data.rid].game_data.player[j].over_price = Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1));
+    }
+    else {
+      gameRoomList[data.rid].game_data.player[j].state = 1;
+    }
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_NATURE_BBONG, {
+      nickname: data.nickname,
+      cards: data.nature_cards,
       draw_card: data.draw_card,
       over_price: gameRoomList[data.rid].game_data.player[j].over_price
     })
