@@ -570,9 +570,15 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     }
     gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_STOP, {
+      nickname: player_score[gameRoomList[data.rid].game_data.player[j].nickname],
       round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
       player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
     })
+
+    setTimeout(function () { // 최종 라운드 종료 후 2초 뒤에 게임종료.
+      console.log('delay');
+    }, 2000);
+
     gameRoomList[data.rid].game_data.current_round++;
     if(gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count){
       io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GAME_END);
@@ -609,9 +615,15 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     }
     gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_OVER_PRICE, {
+      nickname: player_score[gameRoomList[data.rid].game_data.player[j].nickname],
       round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
       player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
     })
+
+    setTimeout(function () { // 최종 라운드 종료 후 2초 뒤에 게임종료.
+      console.log('delay');
+    }, 2000);
+
     gameRoomList[data.rid].game_data.current_round++;
     if(gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count){
       io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GAME_END);
