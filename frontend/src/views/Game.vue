@@ -139,7 +139,10 @@ export default {
         },
         WAITING() {
             return game_const.GameState.WAITING;
-        }
+        },
+        computedWidth() {
+            return `${this.containerWidth * 0.6}px`;
+        },
     },
     methods: {
         set_draggable(data) {
@@ -247,14 +250,6 @@ export default {
                 }
             }
         }
-    },
-    computed: {
-        readyButtonText() {
-            return this.isReady? '준비완료':'준비';
-        },
-        computedWidth() {
-            return `${this.containerWidth * 0.6}px`;
-        },
     },
     mounted() {
         const container = this.$el;
