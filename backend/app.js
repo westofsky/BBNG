@@ -574,6 +574,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
     })
     gameRoomList[data.rid].game_data.current_round++;
+    if(gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count){
+      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GAME_END);
+    }
   });
 
   // 바가지 처리 로직
@@ -610,6 +613,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
     })
     gameRoomList[data.rid].game_data.current_round++;
+    if(gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count){
+      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GAME_END);
+    }
   });
 });
 

@@ -98,6 +98,7 @@ const ResponseType = {
     RES_NATURE_BBONG: 0,
     RES_STOP: 0,
     RES_OVER_PRICE: 0,
+    RES_GAME_END: 0,
 
     // Chatting Event
     BROADCAST_LOBBY_MSG: 0,
