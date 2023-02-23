@@ -478,7 +478,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             card_sum += Number(gameRoomList[data.rid].game_data.player[i].cards[k].slice(1));
           }
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum;
+            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum - threecard_except(gameRoomList[data.rid].game_data.player[i].cards) * 3;
         }
       }
     }
@@ -493,7 +493,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             card_sum += Number(gameRoomList[data.rid].game_data.player[i].cards[k].slice(1));
           }
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum;
+            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum - threecard_except(gameRoomList[data.rid].game_data.player[i].cards) * 3;
         }
       }
     }
@@ -508,7 +508,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
         else {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum;
+            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum - threecard_except(gameRoomList[data.rid].game_data.player[i].cards) * 3;
         }
       }
     }
@@ -523,7 +523,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             card_sum += Number(gameRoomList[data.rid].game_data.player[i].cards[k].slice(1));
           }
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum;
+            player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum - threecard_except(gameRoomList[data.rid].game_data.player[i].cards) * 3;
         }
       }
     }
@@ -548,7 +548,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
               card_sum += Number(gameRoomList[data.rid].game_data.player[i].cards[k].slice(1));
             }
             gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-              player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum;
+              player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum - threecard_except(gameRoomList[data.rid].game_data.player[i].cards) * 3;
           }
         }
       }
@@ -563,7 +563,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
           }
           else {
             gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-              player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum;
+              player_score[gameRoomList[data.rid].game_data.player[i].nickname] = card_sum - threecard_except(gameRoomList[data.rid].game_data.player[i].cards) * 3;
           }
         }
       }
@@ -593,7 +593,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
       if (i == j) { // 바가지 먹은 사람
         gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-          player_score[gameRoomList[data.rid].game_data.player[j].nickname] = sum + 30;
+          player_score[gameRoomList[data.rid].game_data.player[j].nickname] = sum + 30 - threecard_except(gameRoomList[data.rid].game_data.player[j].cards) * 3;
       }
       else if (i == k) {  // 바가지 먹인 사람
         gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
@@ -601,7 +601,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
       else { // 그 외
         gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-          player_score[gameRoomList[data.rid].game_data.player[i].nickname] = sum;
+          player_score[gameRoomList[data.rid].game_data.player[i].nickname] = sum - threecard_except(gameRoomList[data.rid].game_data.player[i].cards) * 3;
       }
     }
     gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
@@ -657,4 +657,23 @@ function filterRoomData(rid) {
   const { password, game_data, ...filteredData } = gameRoomList[rid];
   filteredData.players = gameRoomList[rid].players.map(player => player.nickname);
   return filteredData;
+}
+
+// Function - 동일한 숫자 3개 카드값 빼기
+function threecard_except(cards) {
+  var number = 0, flag = 0;
+  var hand_card = [];
+  for (var i = 1; i < 13; i++){
+    hand_card[i] = 0;
+  }
+  for (var i = 0; i < 6; i++){
+    hand_card[Number(cards[i].slice(1))]++;
+  }
+  for (var i = 1; i < 13; i++){
+    if(hand_card[i] >= 3){
+      number = i;
+      break;
+    }
+  }
+  return number;
 }
