@@ -570,7 +570,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     }
     gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_STOP, {
-      nickname: player_score[gameRoomList[data.rid].game_data.player[j].nickname],
+      nickname: gameRoomList[data.rid].game_data.player[j].nickname,
       round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
       player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
     })
@@ -615,7 +615,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     }
     gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_OVER_PRICE, {
-      nickname: player_score[gameRoomList[data.rid].game_data.player[j].nickname],
+      nickname: gameRoomList[data.rid].game_data.player[j].nickname,
       round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
       player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score
     })
