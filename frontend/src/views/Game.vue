@@ -251,6 +251,14 @@ export default {
             }
         }
     },
+    computed: {
+        readyButtonText() {
+            return this.isReady? '준비완료':'준비';
+        },
+        computedWidth() {
+            return `${this.containerWidth * 0.6}px`;
+        },
+    },
     mounted() {
         const container = this.$el;
         this.containerWidth = container.clientWidth;
@@ -460,7 +468,7 @@ export default {
                     }
                     else if (hand_card[i] == 4) {
                     four++;
-                    }
+                    }   
                 }
                 if ((four == 1 && two == 1) || sum <= 10) {  // 4 2 메이드, low 메이드
                     
