@@ -111,8 +111,8 @@ export default {
                 player: [],
                 current_round: -1,
                 current_player: '',
-                //player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
-                player_deck  :[],
+                player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
+                // player_deck  :[],
                 other_player_deck : [
                     
                 ],
@@ -153,7 +153,6 @@ export default {
                 left : data.left,
             });
             this.game_data.player_deck.splice(data.index-1,1);
-            this.isDraggable = data;
         },
 
         getLeft(index) {
