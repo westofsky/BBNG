@@ -1,6 +1,7 @@
 <template>
   <div class="square" :class="[{'border-highlight':highlight},{'small' : toSmall}]" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown"
-    @mouseup="handleMouseUp" :style="{
+    @mouseup="handleMouseUp" ref = "cardDiv"
+    :style="{
       zIndex: zIndex,
       left: x + 'px',
       top: y + 'px',
@@ -67,10 +68,11 @@ export default {
       this.isDragging = false; 
       if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=460+(this.card_length/3-1)*140 - (this.card_index)*100){
         this.highlight = false;
+        const width = this.$refs.cardDiv.offsetWidth;
+        // console.log(`너비 : ${width}px`);
         this.$emit("set-draggable", {pos : false, name : this.name, top : this.y, index : this.card_index, left : this.x});
         this.x = 0;
         this.y = 0;
-        this.$emit("set-draggable", false);
         // this.toSmall = true;
       }
       else{
@@ -81,7 +83,6 @@ export default {
     handleMouseMove(event) {
       if(this.isDraggable){
         if (this.isDragging) {
-          
           this.currentX = event.clientX - this.initialX;
           this.currentY = event.clientY - this.initialY;
           this.x = this.currentX;

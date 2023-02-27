@@ -31,7 +31,7 @@
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="this.room_data.rid" />
                 <div class="card_deck">
                     <p>카드 뽑기</p>
-                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()">
+                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()" :class="{ 'clickable': isDraggable }">
                 </div>
             </div>
             <div class="game_zone">
@@ -53,16 +53,21 @@
                                     'z-index': (index + 1),
                                 }" />
                         </div>
-                        <div class="card_mine">
-                            <Dropped_Card v-for="(cards, index) in game_data.push_deck" :key="index" :name="cards.name"
+                        <div class = "dropped_cards">
+                            <Dropped_Card v-for="(cards, index) in game_data.push_deck" :key="index"
+                                :name="cards.name"
                                 :style="{
-                                    'z-index': (index + 1),
-                                    'top': (cards.top) + 'px',
-                                    'left': (cards.left) + 'px',
-                                }" />
-                            <Card v-for="(card, index) in game_data.player_deck" :key="index" :name="card"
-                                :card_index="index + 1" :card_length="game_data.player_deck.length"
-                                :is-draggable="isDraggable" @set-draggable="set_draggable" />
+                                'position':'absolute',
+                                'z-index': (index + 1),
+                                'top' : (cards.top) + 'px',
+                                'left' : (cards.left) + 'px',
+                            }" />
+                        </div>
+                        <div class="card_mine">
+                            <Card v-for="(card, index) in game_data.player_deck" :key="index"
+                                :name="card" :card_index="index + 1"
+                                :card_length="game_data.player_deck.length" :is-draggable="isDraggable"
+                                @set-draggable="set_draggable" />
                         </div>
                     </div>
 
@@ -103,16 +108,16 @@ export default {
             isReady: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            isDraggable: true,  //test용 실 사용시 false
+            isDraggable: false,  //test용 실 사용시 false
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
                 player: [],
                 current_round: -1,
                 current_player: '',
-                //player_deck: ['H2','H5','S1','C5','H9'], // test용 실 사용시 []
-                player_deck: [],
-                other_player_deck: [
-
+                // player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
+                player_deck  :[],
+                other_player_deck : [
+                    
                 ],
                 push_deck: [],
                 round_result: [
@@ -150,8 +155,8 @@ export default {
                 top: data.top,
                 left: data.left,
             });
-            this.game_data.player_deck.splice(data.index - 1, 1);
-            this.isDraggable = data;
+            this.game_data.player_deck.splice(data.index-1,1);
+            this.drawCard(data.name,data.top,data.left);
         },
 
         getLeft(index) {
@@ -185,23 +190,27 @@ export default {
             this.isReady = !this.isReady;
         },
         getCard() {
-            this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
-                rid: this.room_data.rid,
-                nickname: this.$store.getters["Users/getUser_nickname"]
-            });
+            if(this.isDraggable){
+                this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
+                    rid: this.room_data.rid,
+                    nickname: this.$store.getters["Users/getUser_nickname"]
+                });
+            }
         },
         drawCard(card, x, y) {
+            console.log(card,x,y);
+            console.log("---------DRAW_CARD 전송-----------");
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"],
-                card: { [card]: { x: [x], y: [y] } },
+                card: { draw_card : card, x: x, y: y },
                 over_price: this.checkOverPrice()
             });
         },
         checkOverPrice() { // 플레이어의 카드 덱의 바가지 여부 확인
             let cardNumbers = {};
             for (let card of this.game_data.player_deck) {
-                let cardNumber = card.substring(1);
+                let cardNumber = String(card).substring(1);
                 if (cardNumbers[cardNumber]) {
                     return cardNumber;
                 } else {
@@ -388,6 +397,7 @@ export default {
                 ]
             }
             **/
+            console.log("----------RES_GET_CARDS실행-----------");
             this.game_data.other_player_deck = [];
             let my_index;
             for (var i = 0; i < data.players.length; i++) {
@@ -410,10 +420,12 @@ export default {
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
              * data: {
-             *  player_turn: 'Player1'
+             *  nickname: 'Player1'
              * }
              */
-            if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
+            console.log("---------RES_CHANGE_TURN실행-----------");
+            console.log(data);
+            if (data.nickname[0] == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
                 this.isDraggable = true;
                 this.showGameNotification("당신의 차례입니다.");
             } else { // 플레이어의 차례가 아닐 때
@@ -426,6 +438,8 @@ export default {
              *  card: 'C1'
              * }
              */
+            console.log("---------RES_GET_CARD실행-----------");
+            console.log(data);
             this.game_data.player_deck.push(data.card);
             // this.game_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
             if (this.game_data.player_deck.length > 2) {
@@ -457,6 +471,8 @@ export default {
                         three++;
                     }
                     else if (hand_card[i] == 4) {
+                    four++;
+                    }   
                         four++;
                     }
                 }
@@ -485,11 +501,12 @@ export default {
              *  }
              * }
              */
+            console.log("---------RES_DRAW_CARD실행----------");
+            console.log(data);
             this.game_data.push_deck.push({
-                [data.card.draw_card]: {
-                    x: data.card.x,
-                    y: data.card.y
-                }
+                name : data.card.draw_card,
+                top : data.card.x,
+                left : data.card.y,
             });
             //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
         });
@@ -741,6 +758,15 @@ export default {
     align-items: center;
 }
 
+.dropped_cards{
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+}
 .card_mine .nickname {}
 
 .notification {
@@ -790,7 +816,7 @@ export default {
     flex-direction: column;
 }
 
-.card_deck img {
+.card_deck .clickable {
     cursor: pointer;
 }
 </style>
