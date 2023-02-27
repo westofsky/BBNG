@@ -30,7 +30,7 @@
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="this.room_data.rid" />
                 <div class="card_deck">
                     <p>카드 뽑기</p>
-                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()">
+                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()" :class="{ 'clickable': isDraggable }">
                 </div>
             </div>
             <div class="game_zone">
@@ -53,14 +53,17 @@
                                 'z-index': (index + 1),
                             }" />
                         </div>
-                        <div class="card_mine">
+                        <div class = "dropped_cards">
                             <Dropped_Card v-for="(cards, index) in game_data.push_deck" :key="index"
                                 :name="cards.name"
                                 :style="{
+                                'position':'absolute',
                                 'z-index': (index + 1),
                                 'top' : (cards.top) + 'px',
                                 'left' : (cards.left) + 'px',
                             }" />
+                        </div>
+                        <div class="card_mine">
                             <Card v-for="(card, index) in game_data.player_deck" :key="index"
                                 :name="card" :card_index="index + 1"
                                 :card_length="game_data.player_deck.length" :is-draggable="isDraggable"
@@ -105,7 +108,7 @@ export default {
             isReady: false,
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
-            isDraggable: true,  //test용 실 사용시 false
+            isDraggable: false,  //test용 실 사용시 false
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
                 player: [],
@@ -187,10 +190,12 @@ export default {
             this.isReady = !this.isReady;
         },
         getCard() {
-            this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
-                rid: this.room_data.rid,
-                nickname: this.$store.getters["Users/getUser_nickname"]
-            });
+            if(this.isDraggable){
+                this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
+                    rid: this.room_data.rid,
+                    nickname: this.$store.getters["Users/getUser_nickname"]
+                });
+            }
         },
         drawCard(card, x, y) {
             console.log(card,x,y);
@@ -731,6 +736,15 @@ export default {
     align-items: center;
 }
 
+.dropped_cards{
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    justify-content: center;
+    align-items: center;
+}
 .card_mine .nickname {}
 
 .notification {
@@ -780,7 +794,7 @@ export default {
     flex-direction: column;
 }
 
-.card_deck img {
+.card_deck .clickable {
     cursor: pointer;
 }
 </style>

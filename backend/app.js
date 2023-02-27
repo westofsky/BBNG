@@ -323,7 +323,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, { // 각각의 플레이어에게 배분된 카드정보 전달.
         players: gameRoomList[data.rid].game_data.player
       });
-      gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
+      gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
     }
 
     console.log("Room Event: Player '" + data.nickname + "' ready");
@@ -350,7 +350,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       card: gameRoomList[data.rid].game_data.deck.slice(0, 1)
     })
     gameRoomList[data.rid].game_data.player[j].cards.push(gameRoomList[data.rid].game_data.deck.slice(0, 1));
-    gameRoomList[data.rid].game_data.deck = gameRoomList[data.rid].game_data.deck.splice(0, 1)
+    gameRoomList[data.rid].game_data.deck.splice(0, 1);
     io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
       players: gameRoomList[data.rid].game_data.player
     });
@@ -390,7 +390,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       card: data.card
     })
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
-      nickname: gameRoomList[data.rid].game_data.player[(j+1)%5].nickname
+      nickname: gameRoomList[data.rid].game_data.player[(j+1)%gameRoomList[data.rid].player_limit].nickname
     })
     io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
       players: gameRoomList[data.rid].game_data.player
@@ -421,7 +421,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       over_price: gameRoomList[data.rid].game_data.player[j].over_price
     })
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
-      nickname: gameRoomList[data.rid].game_data.player[(j+1)%5].nickname
+      nickname: gameRoomList[data.rid].game_data.player[(j+1)%gameRoomList[data.rid].player_limit].nickname
     })
     io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GET_CARDS, {
       players: gameRoomList[data.rid].game_data.player
