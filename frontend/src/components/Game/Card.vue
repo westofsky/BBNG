@@ -69,8 +69,8 @@ export default {
       if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=460+(this.card_length/3-1)*140 - (this.card_index)*100){
         this.highlight = false;
         const width = this.$refs.cardDiv.offsetWidth;
-        console.log(`너비 : ${width}px`);
-        // this.$emit("set-draggable", {pos : false, name : this.name, top : this.y, index : this.card_index, left : this.x});
+        // console.log(`너비 : ${width}px`);
+        this.$emit("set-draggable", {pos : false, name : this.name, top : this.y, index : this.card_index, left : this.x});
         this.x = 0;
         this.y = 0;
         // this.toSmall = true;

@@ -93,6 +93,7 @@ const ResponseType = {
     RES_SPREAD_CARD: 0,
     RES_GET_CARDS : 0,
     RES_GET_CARD : 0,
+    RES_DRAW_CARD : 0,
     RES_CHANGE_TURN: 0,
     RES_BBONG: 0,
     RES_NATURE_BBONG: 0,

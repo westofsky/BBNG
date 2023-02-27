@@ -361,6 +361,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // 게임방 카드 한장 버리기
   socket.on(sock_const.RequestType.DRAW_CARD, (data) => {
+    console.log("---------DRAW_CARD에 요청 들어옴-----------");
     for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
       if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
         var j = i;
@@ -382,6 +383,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     gameRoomList[data.rid].game_data.player[j].turn_count++;
+    console.log("---------RES_DRAW_CARD실행-----------");
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_DRAW_CARD, {
       nickname: data.nickname,
       over_price: gameRoomList[data.rid].game_data.player[j].over_price,
