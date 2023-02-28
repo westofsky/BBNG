@@ -39,8 +39,7 @@
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="this.room_data.rid" />
                 <div class="card_deck">
                     <p>카드 뽑기</p>
-                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()"
-                        :class="{ 'clickable': isDraggable }">
+                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()" :class="{ 'clickable': isClickable }">
                 </div>
             </div>
             <div class="game_zone">
@@ -117,6 +116,7 @@ export default {
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
             isDraggable: false,  //test용 실 사용시 false
+            isClickable : false,
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
                 player: [],
@@ -170,8 +170,9 @@ export default {
                 top: data.top,
                 left: data.left,
             });
-            this.game_data.player_deck.splice(data.index - 1, 1);
-            this.drawCard(data.name, data.top, data.left);
+            this.game_data.player_deck.splice(data.index-1,1);
+            this.drawCard(data.name,data.top,data.left);
+            this.isClickable = false;
         },
 
         getLeft(index) {
@@ -205,11 +206,12 @@ export default {
             this.isReady = !this.isReady;
         },
         getCard() {
-            if (this.isDraggable) {
+            if(this.isClickable){
                 this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
                     rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
+                this.isDraggable = true;
             }
         },
         drawCard(card, x, y) {
@@ -470,11 +472,11 @@ export default {
             this.isBtnNatureActive = this.isNatureAvailable();
             this.isBtnStopActive = false;
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
-                this.isDraggable = true;
+                this.isClickable = true;
                 this.showGameNotification("당신의 차례입니다.");
             }
             else { // 플레이어가 첫 번째 차례가 아닐 때
-                this.isDraggable = false;
+                this.isClickable = false;
             }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
@@ -535,12 +537,12 @@ export default {
             console.log("---------RES_CHANGE_TURN실행-----------");
             console.log(data);
             if (data.nickname[0] == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
-                this.isDraggable = true;
+                this.isClickable = true;
                 this.isBtnNatureActive = this.isNatureAvailable();
                 this.isBtnStopActive = this.isSum4OrLessAvailable();
                 this.showGameNotification("당신의 차례입니다.");
             } else { // 플레이어의 차례가 아닐 때
-                this.isDraggable = false;
+                this.isClickable = false;
                 this.isBtnStopActive = this.isOverPriceAvailable();
             }
             this.isBtnBbongActive = this.isBbongAvailable();
