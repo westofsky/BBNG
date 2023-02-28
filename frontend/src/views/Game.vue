@@ -471,8 +471,6 @@ export default {
                         three++;
                     }
                     else if (hand_card[i] == 4) {
-                    four++;
-                    }   
                         four++;
                     }
                 }
