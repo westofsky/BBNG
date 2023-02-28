@@ -514,7 +514,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
     }
-    else if (data.type == 3) {  // 2 2 2
+    else if (data.type == 3) {  // 2 2 2, 뽕 상태에서 같은 카드 3장일 때 스탑
       for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
         if (j == i) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
