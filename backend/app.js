@@ -534,7 +534,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       var mycard_sum = Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1))
       for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
         if (gameRoomList[data.rid].game_data.player[i].state != 0 && j != i) {
-          if (mycard_sum >= Number(gameRoomList[data.rid].game_data.player[j].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.player[j].cards[1].slice(1)))
+          if (mycard_sum >= Number(gameRoomList[data.rid].game_data.player[i].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.player[i].cards[1].slice(1)))
             flag++
           break;
         }
