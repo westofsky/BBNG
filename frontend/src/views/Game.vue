@@ -240,12 +240,12 @@ export default {
             return 0;
         },
         isBbongAvailable(last_card) {
-            const last_number = parseInt(last_card.substring(1)); // 입력된 카드에서 숫자 추출
+            const last_number = parseInt(String(last_card).substring(1)); // 입력된 카드에서 숫자 추출
             const number_count = {}; // 각 숫자별 카드 개수를 저장할 객체 생성
 
             // 플레이어 덱에서 카드 숫자별 개수 계산
-            for (const card of game_data.player_deck) {
-                const number = parseInt(card.substring(1));
+            for (const card of this.game_data.player_deck) {
+                const number = parseInt(String(card).substring(1));
                 if (!number_count[number]) {
                     number_count[number] = 1;
                 } else {
@@ -264,7 +264,7 @@ export default {
         },
         isNatureAvailable() {
             if (this.game_data.player_deck.length % 3 == 0) {
-                return (this.game_data.player_deck.map(card => parseInt(card.substring(1))).some(num => NUMBER_UNARY_OPERATORS.filter(n => n === num).length >= 3));
+                return (this.game_data.player_deck.map(card => parseInt(String(card).substring(1))).some(num => num.filter(n => n === num).length >= 3));
             }
             return false;
         },
@@ -806,7 +806,7 @@ export default {
     background-color: orange;
 }
 
-.additional-button.disabled {
+.additional-button:disabled {
     background-color: gray;
     pointer-events: none;
 }
