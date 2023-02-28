@@ -24,6 +24,14 @@
                     @click="changeReadyState">
                     {{ readyButtonText }}
                 </button>
+                <div class="additional-buttons" v-else>
+                    <button class="additional-button" :disabled="!isBtnBbongActive"
+                        @click="onBtnBbongClicked">뽕</button>
+                    <button class="additional-button" :disabled="!isBtnNatureActive"
+                        @click="onBtnNatureClicked">자연</button>
+                    <button class="additional-button" :disabled="!isBtnStopActive"
+                        @click="onBtnStopClicked">스톱</button>
+                </div>
             </div>
             <div class="logs">
                 <Log ref="LogComponent" />
@@ -31,7 +39,8 @@
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="this.room_data.rid" />
                 <div class="card_deck">
                     <p>카드 뽑기</p>
-                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()" :class="{ 'clickable': isDraggable }">
+                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()"
+                        :class="{ 'clickable': isDraggable }">
                 </div>
             </div>
             <div class="game_zone">
@@ -42,7 +51,8 @@
                     <!-- 여기 안에 다른 card들 component들어가야함-->
                     <div class="table">
                         <div v-for="(o_card, index) in game_data.other_player_deck" :key="index"
-                            :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]" :style="{
+                            :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]"
+                            :style="{
                                 transform: `rotate(${180 - (game_data.other_player_deck.length - 1) * 45 + (index) * 90}deg)`,
                                 top: (index == 0 || index == game_data.other_player_deck.length - 1) ? 10 + (game_data.other_player_deck.length - 2) * 30 + '%' : '0%',
                             }">
@@ -53,21 +63,19 @@
                                     'z-index': (index + 1),
                                 }" />
                         </div>
-                        <div class = "dropped_cards">
-                            <Dropped_Card v-for="(cards, index) in game_data.push_deck" :key="index"
-                                :name="cards.name"
+                        <div class="dropped_cards">
+                            <Dropped_Card v-for="(cards, index) in game_data.push_deck" :key="index" :name="cards.name"
                                 :style="{
-                                'position':'absolute',
-                                'z-index': (index + 1),
-                                'top' : (cards.top) + 'px',
-                                'left' : (cards.left) + 'px',
-                            }" />
+                                    'position': 'absolute',
+                                    'z-index': (index + 1),
+                                    'top': (cards.top) + 'px',
+                                    'left': (cards.left) + 'px',
+                                }" />
                         </div>
                         <div class="card_mine">
-                            <Card v-for="(card, index) in game_data.player_deck" :key="index"
-                                :name="card" :card_index="index + 1"
-                                :card_length="game_data.player_deck.length" :is-draggable="isDraggable"
-                                @set-draggable="set_draggable" />
+                            <Card v-for="(card, index) in game_data.player_deck" :key="index" :name="card"
+                                :card_index="index + 1" :card_length="game_data.player_deck.length"
+                                :is-draggable="isDraggable" @set-draggable="set_draggable" />
                         </div>
                     </div>
 
@@ -115,18 +123,22 @@ export default {
                 current_round: -1,
                 current_player: '',
                 // player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
-                player_deck  :[],
-                other_player_deck : [
-                    
+                player_deck: [],
+                other_player_deck: [
+
                 ],
                 push_deck: [],
                 round_result: [
                 ],
+                last_card: '',
             },
             notificationMessage: '',
             showNotification: false,
             notificationTimeout: 0,
             containerWidth: null,
+            isBtnBbongActive: false,
+            isBtnNatureActive: false,
+            isBtnStopActive: false,
         }
     },
     computed: {
@@ -143,6 +155,9 @@ export default {
         WAITING() {
             return game_const.GameState.WAITING;
         },
+        PLAYING() {
+            return game_const.GameState.PLAYING;
+        },
         computedWidth() {
             return `${this.containerWidth * 0.6}px`;
         },
@@ -155,8 +170,8 @@ export default {
                 top: data.top,
                 left: data.left,
             });
-            this.game_data.player_deck.splice(data.index-1,1);
-            this.drawCard(data.name,data.top,data.left);
+            this.game_data.player_deck.splice(data.index - 1, 1);
+            this.drawCard(data.name, data.top, data.left);
         },
 
         getLeft(index) {
@@ -190,7 +205,7 @@ export default {
             this.isReady = !this.isReady;
         },
         getCard() {
-            if(this.isDraggable){
+            if (this.isDraggable) {
                 this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
                     rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
@@ -198,12 +213,15 @@ export default {
             }
         },
         drawCard(card, x, y) {
-            console.log(card,x,y);
+            this.isBtnBbongActive = false;
+            this.isBtnNatureActive = false;
+            this.isBtnStopActive = false;
+            console.log(card, x, y);
             console.log("---------DRAW_CARD 전송-----------");
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"],
-                card: { draw_card : card, x: x, y: y },
+                card: { draw_card: card, x: x, y: y },
                 over_price: this.checkOverPrice()
             });
         },
@@ -219,25 +237,113 @@ export default {
             }
             return 0;
         },
-        bbong(bbongCards, drawCard) {
-            for (let loop = 0; loop < this.game_data.player_deck.length; loop++) {
-                if (bbongCards.hasOwnProperty(this.game_data.player_deck[loop])) {
-                    this.game_data.player_deck.splice(loop, 1);
-                    loop--;
+        isBbongAvailable(last_card) {
+            const last_number = parseInt(last_card.substring(1)); // 입력된 카드에서 숫자 추출
+            const number_count = {}; // 각 숫자별 카드 개수를 저장할 객체 생성
+
+            // 플레이어 덱에서 카드 숫자별 개수 계산
+            for (const card of game_data.player_deck) {
+                const number = parseInt(card.substring(1));
+                if (!number_count[number]) {
+                    number_count[number] = 1;
+                } else {
+                    number_count[number]++;
                 }
             }
 
-            var drawCardIndex = this.game_data.player_deck.indexOf(drawCard.draw_card);
-            if (drawCardIndex > -1) {
-                this.game_data.player_deck.splice(drawCardIndex, 1);
+            // 특정 숫자가 3개 이상 있는지 확인
+            for (const [number, count] of Object.entries(number_count)) {
+                if (number === last_number.toString() && count >= 3) {
+                    return true;
+                }
             }
 
-            this.$socket.value.emit(sock_const.RequestType.BBONG, {
-                rid: this.room_data.rid,
-                nickname: this.$store.getters["Users/getUser_nickname"],
-                bbong_cards: bbongCards,
-                draw_card: drawCard
-            });
+            return false;
+        },
+        isNatureAvailable() {
+            if (this.game_data.player_deck.length % 3 == 0) {
+                return (this.game_data.player_deck.map(card => parseInt(card.substring(1))).some(num => NUMBER_UNARY_OPERATORS.filter(n => n === num).length >= 3));
+            }
+            return false;
+        },
+        isMaidAvailable() { // 플레이어 카드가 메이드 가능 상태인 경우 true, 아닐 경우 false
+            if (this.game_data.player_deck.length == 6) {
+                var hand_card = [];
+                var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
+                for (var i = 1; i < 13; i++) {
+                    hand_card[i] = 0;
+                }
+                for (var i = 0; i < 6; i++) {
+                    hand_card[Number(this.game_data.player_deck[i].slice(1))]++;
+                    sum += Number(this.game_data.player_deck[i].slice(1));
+                }
+                for (var i = 1; i < 13; i++) {
+                    if (straight < 6) {
+                        if (hand_card[i] == 1) {
+                            if (straight == 0) {
+                                start = i;
+                            }
+                            straight++;
+                        }
+                        else {
+                            straight = 0;
+                        }
+                    }
+                    if (hand_card[i] == 2) {
+                        two++;
+                    }
+                    else if (hand_card[i] == 3) {
+                        three++;
+                    }
+                    else if (hand_card[i] == 4) {
+                        four++;
+                    }
+                }
+                return ((four == 1 && two == 1) || sum <= 10) || (three == 2 || sum >= 60) || (straight == 6) || (two == 3);
+            }
+            return false;
+        },
+        isOverPriceAvailable() { // 플레이어가 바가지 상태에서 누군가가 마지막으로 낸 카드가 바가지와 동일한 숫자일 경우 true, 아닐 경우 false
+            return (this.game_data.player.find(player => player.nickname === this.$store.getters["Users/getUser_nickname"]).state == 2 && (
+                this.game_data.player_deck[0].match(/\d+/) == this.game_data.last_card.match(/\d+/)));
+        },
+        isSum4OrLessAvailable() { // 플레이어 카드가 2장이면서 4이하일 경우 true, 아닐 경우 false
+            return (this.game_data.player_deck.length == 2 && ((parseInt(this.game_data.player_deck[0].match(/\d+/)[0]) + parseInt(this.game_data.player_deck[0].match(/\d+/)[1])) <= 4));
+        },
+        onBtnBbongClicked(bbongCards, drawCard) {
+            this.isBtnBbongActive = false;
+            this.isBtnNatureActive = false;
+            this.isBtnStopActive = false;
+            // for (let loop = 0; loop < this.game_data.player_deck.length; loop++) {
+            //     if (bbongCards.hasOwnProperty(this.game_data.player_deck[loop])) {
+            //         this.game_data.player_deck.splice(loop, 1);
+            //         loop--;
+            //     }
+            // }
+
+            // var drawCardIndex = this.game_data.player_deck.indexOf(drawCard.draw_card);
+            // if (drawCardIndex > -1) {
+            //     this.game_data.player_deck.splice(drawCardIndex, 1);
+            // }
+
+            // this.$socket.value.emit(sock_const.RequestType.BBONG, {
+            //     rid: this.room_data.rid,
+            //     nickname: this.$store.getters["Users/getUser_nickname"],
+            //     bbong_cards: bbongCards,
+            //     draw_card: drawCard
+            // });
+        },
+        onBtnNatureClicked() {
+            this.isBtnBbongActive = false;
+            this.isBtnNatureActive = false;
+            this.isBtnStopActive = false;
+
+        },
+        onBtnStopClicked() {
+            this.isBtnBbongActive = false;
+            this.isBtnNatureActive = false;
+            this.isBtnStopActive = false;
+
         },
         showGameNotification(message) {
             this.notificationMessage = message;
@@ -360,6 +466,9 @@ export default {
             this.game_data.current_round = data.round + 1;
             this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 시작되었습니다");
             this.showGameNotification(this.game_data.current_round + " 라운드가 시작되었습니다");
+            this.isBtnBbongActive = false;
+            this.isBtnNatureActive = this.isNatureAvailable();
+            this.isBtnStopActive = false;
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
                 this.isDraggable = true;
                 this.showGameNotification("당신의 차례입니다.");
@@ -427,10 +536,14 @@ export default {
             console.log(data);
             if (data.nickname[0] == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
                 this.isDraggable = true;
+                this.isBtnNatureActive = this.isNatureAvailable();
+                this.isBtnStopActive = this.isSum4OrLessAvailable();
                 this.showGameNotification("당신의 차례입니다.");
             } else { // 플레이어의 차례가 아닐 때
                 this.isDraggable = false;
+                this.isBtnStopActive = this.isOverPriceAvailable();
             }
+            this.isBtnBbongActive = this.isBbongAvailable();
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 카드를 한장 받았을 때
             /**
@@ -441,6 +554,8 @@ export default {
             console.log("---------RES_GET_CARD실행-----------");
             console.log(data);
             this.game_data.player_deck.push(data.card);
+            this.isBtnNatureActive = this.isNatureAvailable();
+            this.isBtnStopActive = this.isMaidAvailable();
             // this.game_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
             if (this.game_data.player_deck.length > 2) {
                 var hand_card = [];
@@ -501,10 +616,11 @@ export default {
              */
             console.log("---------RES_DRAW_CARD실행----------");
             console.log(data);
+            this.game_data.last_card = data.card.draw_card;
             this.game_data.push_deck.push({
-                name : data.card.draw_card,
-                top : data.card.x,
-                left : data.card.y,
+                name: data.card.draw_card,
+                top: data.card.x,
+                left: data.card.y,
             });
             //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
         });
@@ -548,8 +664,8 @@ export default {
     position: absolute;
     width: 100%;
     height: 100%;
-    pointer-events: none;
     background-color: rgba(255, 255, 255, 0);
+    pointer-events: none;
 }
 
 .roomname {
@@ -665,6 +781,38 @@ export default {
     background-color: darkorange;
 }
 
+.additional-buttons {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.additional-button {
+    pointer-events: auto;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background-color: orange;
+}
+
+.additional-button.disabled {
+    background-color: gray;
+    pointer-events: none;
+}
+
+.additional-button:hover:active {
+    background-color: darkorange;
+}
+
 .logs {
     padding-left: 10px;
     padding-right: 10px;
@@ -756,7 +904,7 @@ export default {
     align-items: center;
 }
 
-.dropped_cards{
+.dropped_cards {
     position: absolute;
     display: flex;
     bottom: 0;
@@ -765,6 +913,7 @@ export default {
     justify-content: center;
     align-items: center;
 }
+
 .card_mine .nickname {}
 
 .notification {
