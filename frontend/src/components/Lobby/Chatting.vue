@@ -105,7 +105,7 @@ export default {
 .Chatting {
     background-color: #F9F6F6;
     width: 100%;
-    padding-bottom : 80%;
+    height:300px;
     display: flex;
     flex-direction: column;
 }

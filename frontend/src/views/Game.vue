@@ -120,6 +120,7 @@ export default {
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
                 player: [],
+                player_list : [],
                 current_round: -1,
                 current_player: '',
                 // player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
@@ -218,8 +219,6 @@ export default {
             this.isBtnBbongActive = false;
             this.isBtnNatureActive = false;
             this.isBtnStopActive = false;
-            console.log(card, x, y);
-            console.log("---------DRAW_CARD 전송-----------");
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"],
@@ -240,6 +239,7 @@ export default {
             return 0;
         },
         isBbongAvailable(last_card) {
+            console.log("뽕 되는지 안되는지 실행됨");
             const last_number = parseInt(String(last_card).substring(1)); // 입력된 카드에서 숫자 추출
             const number_count = {}; // 각 숫자별 카드 개수를 저장할 객체 생성
 
@@ -253,9 +253,9 @@ export default {
                 }
             }
 
-            // 특정 숫자가 3개 이상 있는지 확인
+            // 특정 숫자가 2개 있는지(뽕) 확인
             for (const [number, count] of Object.entries(number_count)) {
-                if (number === last_number.toString() && count >= 3) {
+                if (number === last_number.toString() && count == 3) {
                     return true;
                 }
             }
@@ -263,12 +263,31 @@ export default {
             return false;
         },
         isNatureAvailable() {
+            console.log("자연 되는지 안되는지 실행됨");
             if (this.game_data.player_deck.length % 3 == 0) {
-                return (this.game_data.player_deck.map(card => parseInt(String(card).substring(1))).some(num => num.filter(n => n === num).length >= 3));
+                const counts = {};
+                // 뒷 숫자만 추출하여 count를 증가시킴
+                for (let i = 0; i < this.game_data.player_deck.length; i++) {
+                const num = this.game_data.player_deck[i].substring(1);
+                counts[num] = (counts[num] || 0) + 1;
+                }
+                // 같은 숫자가 3개 이상인지 확인
+                let hasThreeOfAKind = false;
+                for (const num in counts) {
+                    if (counts[num] >= 3) {
+                        hasThreeOfAKind = true;
+                        break;
+                    }
+                }
+                if(hasThreeOfAKind)
+                    return true;
+                else
+                    return false
             }
             return false;
         },
         isMaidAvailable() { // 플레이어 카드가 메이드 가능 상태인 경우 true, 아닐 경우 false
+            console.log("메이드 되는지 안되는지 실행됨");
             if (this.game_data.player_deck.length == 6) {
                 var hand_card = [];
                 var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
@@ -306,7 +325,12 @@ export default {
             return false;
         },
         isOverPriceAvailable() { // 플레이어가 바가지 상태에서 누군가가 마지막으로 낸 카드가 바가지와 동일한 숫자일 경우 true, 아닐 경우 false
-            return (this.game_data.player.find(player => player.nickname === this.$store.getters["Users/getUser_nickname"]).state == 2 && (
+            console.log(this.game_data.player);
+            console.log("바가지 상태 실행");
+            // for(let player of this.game_data.player){
+            //     if player.nickname[0]
+            // }
+            return (this.game_data.player.find(player => player.nickname[0] === this.$store.getters["Users/getUser_nickname"]).state == 2 && (
                 this.game_data.player_deck[0].match(/\d+/) == this.game_data.last_card.match(/\d+/)));
         },
         isSum4OrLessAvailable() { // 플레이어 카드가 2장이면서 4이하일 경우 true, 아닐 경우 false
@@ -388,7 +412,7 @@ export default {
              *  }
              * }
              */
-            this.game_data.player.push(data.nickname);
+            this.game_data.player_list.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.room_data = data.room_data;
@@ -409,7 +433,7 @@ export default {
              *  }
              * }
              */
-            this.game_data.players = this.game_data.player.filter((player) => {
+            this.game_data.players = this.game_data.player_list.filter((player) => {
                 return player != data.nickname;
             });
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
@@ -508,7 +532,7 @@ export default {
                 ]
             }
             **/
-            console.log("----------RES_GET_CARDS실행-----------");
+            this.game_data.player = data.players;
             this.game_data.other_player_deck = [];
             let my_index;
             for (var i = 0; i < data.players.length; i++) {
@@ -526,7 +550,6 @@ export default {
                 new_arr_item[new_arr[i].nickname] = new_arr[i].cards;
                 this.game_data.other_player_deck.push(new_arr_item);
             }
-            console.log(this.game_data.other_player_deck);
         });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
             /**
@@ -534,8 +557,6 @@ export default {
              *  nickname: 'Player1'
              * }
              */
-            console.log("---------RES_CHANGE_TURN실행-----------");
-            console.log(data);
             if (data.nickname[0] == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
                 this.isClickable = true;
                 this.isBtnNatureActive = this.isNatureAvailable();
@@ -553,9 +574,8 @@ export default {
              *  card: 'C1'
              * }
              */
-            console.log("---------RES_GET_CARD실행-----------");
-            console.log(data);
-            this.game_data.player_deck.push(data.card);
+            this.game_data.player_deck.push(data.card[0]);
+            console.log(this.game_data.player_deck);
             this.isBtnNatureActive = this.isNatureAvailable();
             this.isBtnStopActive = this.isMaidAvailable();
             // this.game_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
@@ -616,8 +636,6 @@ export default {
              *  }
              * }
              */
-            console.log("---------RES_DRAW_CARD실행----------");
-            console.log(data);
             this.game_data.last_card = data.card.draw_card;
             this.game_data.push_deck.push({
                 name: data.card.draw_card,
