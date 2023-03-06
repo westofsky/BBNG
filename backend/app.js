@@ -147,9 +147,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   });
 
   // Socket Listener Event - 사용자 설정 방 생성
-  socket.on(sock_const.RequestType.CREATE_ROOM, (gameRoom) => {
-    gameRoom.rid = createRoomId((gameRoom.host + (new Date()).toLocaleString()));
-    gameRoom['game_data'] = {
+  socket.on(sock_const.RequestType.CREATE_ROOM, (roomData) => {
+    roomData.rid = createRoomId((roomData.host + (new Date()).toLocaleString()));
+    roomData['game_data'] = {
       ready_count: 0,
       current_round: 0,
       current_player: 0,
@@ -159,13 +159,13 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       round_result: [],
       message_key: '',
     }
-    gameRoomList[gameRoom.rid] = gameRoom;
+    gameRoomList[roomData.rid] = roomData;
     socket.leave(sock_const.ChatroomType.LOBBY);
-    socket.join(gameRoom.rid);
-    clientListBySocket[socket.id].rid = gameRoom.rid;
-    clientListByNickname[clientListBySocket[socket.id].nickname].rid = gameRoom.rid;
+    socket.join(roomData.rid);
+    clientListBySocket[socket.id].rid = roomData.rid;
+    clientListByNickname[clientListBySocket[socket.id].nickname].rid = roomData.rid;
     socket.emit(sock_const.ResponseType.RES_GET_ROOM_RID, {
-      room_data: filterRoomData(gameRoom.rid),
+      room_data: filterRoomData(roomData.rid),
     });
     console.log("Socket Event(CREATE_ROOM): Created room list\n########################\n" + JSON.stringify(gameRoomList) + '\n########################');
   });
