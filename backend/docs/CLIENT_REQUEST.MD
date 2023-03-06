@@ -17,12 +17,6 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 > - [LEAVE_LOBBY](#leave_lobby): Lobby 탈퇴(ex. 게임방 이동 시)
 > <br>
 >
-> **친구 요청**
-> - [ADD_FRIEND](#add_friend): 친구 추가
-> - [DELETE_FRIEND](#delete_friend): 친구 삭제
-> - [ACCEPT_INVITE](#accept_invite): 친구 요청 수락
-> <br>
->
 > **목록 요청**
 > - [ROOM_LIST](#room_list): 개설된 사용자 설정 게임방 목록
 > - [GET_ONLINE_LIST](#get_online_list): 현재 접속 중인 사용자 목록
@@ -99,37 +93,6 @@ LOBBY 탈퇴(ex. 게임방 이동 시)
 ```
 {
     none
-}
-```
-<br>
-
-### 친구 요청
-#### ADD_FRIEND
-친구 추가
-- 이곳은 해당 Request에 대한 설명을 작성하는 영역입니다.
-```
-{
-    
-}
-```
-<br>
-
-#### DELETE_FRIEND
-친구 삭제
-- 이곳은 해당 Request에 대한 설명을 작성하는 영역입니다.
-```
-{
-    
-}
-```
-<br>
-
-#### ACCEPT_INVITE
-친구 요청 수락
-- 이곳은 해당 Request에 대한 설명을 작성하는 영역입니다.
-```
-{
-    
 }
 ```
 <br>

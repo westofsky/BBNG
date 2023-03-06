@@ -8,12 +8,6 @@ const RequestType = {
     JOIN_LOBBY: 0,
     LEAVE_LOBBY: 0,
 
-    // Friend Event
-    ADD_FRIEND: 0,
-    DELETE_FRIEND: 0,
-    INVITE_FRIEND: 0,
-    ACCEPT_INVITE: 0,
-
     // Info Event
     ROOM_LIST: 0,
     GET_ONLINE_LIST : 0,
@@ -53,12 +47,6 @@ const ResponseType = {
     RES_ADD_USER_TO_LIST: 0,
     RES_JOIN_LOBBY: 0,
     RES_LEAVE_LOBBY: 0,
-
-    // Friend Event
-    RES_ADD_FRIEND: 0,
-    RES_DELETE_FRIEND: 0,
-    RES_INVITE_FRIEND: 0,
-    RES_ACCEPT_INVITE: 0,
 
     // Info Event
     RES_ROOM_LIST: 0,
