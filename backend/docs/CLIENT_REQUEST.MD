@@ -57,3 +57,97 @@ const RequestType = {
     SEND_MSG_TO_ROOM: 0,    // 게임방으로 채팅 메세지 전송
 }
 ```
+
+- ADD_USER_TO_LIST
+```json
+data : {
+    'test1'                 // 유저 닉네임
+}
+```
+- JOIN_LOBBY
+```json
+data : {
+    user : 'test1'          // 유저 닉네임
+}
+```
+- LEAVE_LOBBY
+```
+
+```
+- ADD_FRIEND
+```
+```
+- DELETE_FRIEND
+```
+```
+- INVITE_FRIEND
+```
+```
+- ACCEPT_FRIEND
+```
+```
+- ROOM_LIST
+```
+```
+- GET_ONLINE_LIST
+```
+```
+- CREATE_ROOM
+```json
+{
+    rid: '',                                
+    host: 'test',         
+    name: '테스트방 이름',      
+    password: '',                                       
+    player_limit: 3,                               
+    current_player_count: 1,
+    show_score: true,
+    round_count: 0,
+    ready_count: 0,
+    state: 0,
+    players: [{
+        socket_id: 'wwtGufs_ieAEEORWWAAAD',
+        oid: 's_reijt4bia1',
+        nickname: 'test1'
+    }]
+}
+```
+- DESTROY_ROOM
+```
+```
+- JOIN_ROOM
+```
+{
+    rid: '3ed00529062893aab92fe92d0d51ae7f',
+    socket_id: 'wwtGufs_ieAEEORWWAAAD',
+    oid: 's_reijt4bia1',
+    nickname: 'test1',
+    password: '',
+}
+```
+- READY
+```
+{
+    rid: '3ed00529062893aab92fe92d0d51ae7f',
+    nickname: 'test1'
+}
+```
+- NOT_READY
+```
+{
+    rid: '3ed00529062893aab92fe92d0d51ae7f',
+    nickname: 'test1'
+}
+```
+- JOIN_NORMAL_QUEUE
+```
+
+```
+- LEAVE_NORMAL_QUEUE
+```
+
+```
+- ACCEPT_NORMAL_QUEUE
+```
+
+```
