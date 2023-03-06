@@ -1,5 +1,4 @@
 # Client Request
----
 CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request에 대한 정보가 포함되어 있습니다.
 <br>
 
@@ -59,8 +58,6 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 > <br>
 
 <br>
-
----
 
 ## Request 데이터
 각각의 Request를 통해 전달되는 데이터가 구체적으로 설명되어 있습니다.
