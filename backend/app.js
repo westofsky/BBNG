@@ -302,7 +302,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
       io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, { // 모든 플레이어에게 라운드가 시작되었다고 알림.
         player_turn:
-          gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit - 1))].nickname,
+          gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit))].nickname,
         round: gameRoomList[data.rid].game_data.current_round
       });
       
