@@ -337,11 +337,16 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 {
     rid: 'Room ID',
     nickname: 'Nickname',
-    bbong_cards: [
+    nature_cards: [
         {
             draw_card: 'Card Type',
             x: 0,
             y: 0 
+        },
+        {
+            draw_card: 'Card Type',
+            x: 0,
+            y: 0
         },
         {
             draw_card: 'Card Type',
@@ -362,7 +367,9 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 - 스톱
 ```
 {
-    
+    rid: 'Room ID',
+    nickname: 'Nickname',
+    type: 0 ~ 4(0: LOW or 42, 1: HIGH or 33, 2: Straight, 3: 222 or 자연, 4: 뽕 4 이하)
 }
 ```
 <br>
@@ -372,7 +379,8 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 ```
 {
     rid: 'Room ID',
-    nickname: 'Nickname'
+    nickname: 'Nickname',
+    target_nickname: 'Nickname'
 }
 ```
 <br>
