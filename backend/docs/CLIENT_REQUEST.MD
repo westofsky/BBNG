@@ -1,12 +1,11 @@
 # Client Request
 CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request에 대한 정보가 포함되어 있습니다.
+
 <br>
 
 ## Request 종류
 각 Request는 /common/socket-constants.js에 RequestType 안에 정의되어 있습니다.
 
-> <br>
->
 > **사용자 관리 요청**
 > - [ADD_USER_TO_LIST](#add_user_to_list): 서버 접속 목록에 사용자 추가
 > <br>
@@ -55,12 +54,12 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 > **채팅**
 > - [SEND_MSG_TO_LOBBY](#send_msg_to_lobby): Lobby로 전체채팅 메세지 전송
 > - [SEND_MSG_TO_ROOM](#send_msg_to_room): 게임방으로 채팅 메세지 전송
-> <br>
 
 <br>
 
 ## Request 데이터
 각각의 Request를 통해 전달되는 데이터가 구체적으로 설명되어 있습니다.
+
 <br>
 
 ### 사용자 관리 요청
