@@ -173,7 +173,6 @@ export default {
             });
             this.game_data.player_deck.splice(data.index-1,1);
             this.drawCard(data.name,data.top,data.left);
-            this.isClickable = false;
         },
 
         getLeft(index) {
@@ -213,6 +212,7 @@ export default {
                     nickname: this.$store.getters["Users/getUser_nickname"]
                 });
                 this.isDraggable = true;
+                this.isClickable = false;
             }
         },
         drawCard(card, x, y) {
@@ -255,7 +255,7 @@ export default {
 
             // 특정 숫자가 2개 있는지(뽕) 확인
             for (const [number, count] of Object.entries(number_count)) {
-                if (number === last_number.toString() && count == 3) {
+                if (number === last_number.toString() && count == 2) {
                     return true;
                 }
             }
