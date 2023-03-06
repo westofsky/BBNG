@@ -25,12 +25,7 @@ let gameRoomList = {
             ready_count: 0,                                 // 준비완료한 플레이어 수
             state: GameState.WAITING / GameState.PLAYING,   // 현재 게임 진행 상태
             players: [                                      // 현재 방에 참여하고 있는 플레이어 목록
-                {
-                    socket_id: '',                          // 플레이어가 사용중인 Socket ID
-                    oid: '',                                // MongoDB 사용자별 고유 OID
-                    nickname: ''                            // 플레이어 닉네임
-                },
-                ...
+                '', ...
             ],
             game_data: {                                    // 게임 진행 중 사용되는 데이터
                 ...
