@@ -104,8 +104,8 @@ export default {
 <style scoped>
 .Chatting {
     background-color: #F9F6F6;
-    width: 320px;
-    height: 340px;
+    width: 100%;
+    padding-bottom : 80%;
     display: flex;
     flex-direction: column;
 }
