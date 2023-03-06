@@ -47,7 +47,6 @@ const RequestType = {
     // Chatting Event
     SEND_MSG_TO_LOBBY: 0,
     SEND_MSG_TO_ROOM: 0,
-    SEND_MSG_TO_INGAME: 0,
 }
 
 const ResponseType = {
