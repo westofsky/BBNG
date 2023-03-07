@@ -10,7 +10,7 @@ SERVER_DATA.MD에는 서버에서 필요한 데이터들에 대해 정의되어 
 
 <br>
 
-```json
+```
 let gameRoomList = {
     {
         'Room ID': {
@@ -43,7 +43,7 @@ let gameRoomList = {
 
 <br>
 
-```json
+```
 let gameRoomList = {
     'Room ID': {
         ...
@@ -80,8 +80,7 @@ let gameRoomList = {
                     }
                 },
                 ...
-            ],
-            message_key: ''                             // 클라이언트의 Request 요청 유효여부 확인용 Key
+            ]
         }
     }
 }

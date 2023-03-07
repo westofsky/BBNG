@@ -95,7 +95,8 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         round_count: 0,
         ready_count: 0,
         state: 0,
-        players: ['', ...]
+        players: ['Nickname', ...]
+        password_required: true/false
         game_data: {
             ready_count: 0,
             current_round: 0,
@@ -106,7 +107,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
             round_result: [],
             message_key: ''
         },
-        password_required: true/false
     },
     ...
 }
