@@ -125,13 +125,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     console.log("Socket Event(JOIN_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' joins the lobby");
   });
 
-  // Socket Listener Event - Lobby에서 떠남
-  socket.on(sock_const.RequestType.LEAVE_LOBBY, function (data) {
-    socket.leave(sock_const.ChatroomType.LOBBY);
-
-    console.log("Socket Event(LEAVE_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' leaves the lobby");
-  });
-
   // Socket Listener Event - Lobby로 전체 메세지 전달
   socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function (data) {
     socket.broadcast.to(sock_const.ChatroomType.LOBBY).emit(sock_const.ResponseType.BROADCAST_LOBBY_MSG, data);
@@ -230,7 +223,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   // Socket Listener Event - 사용자 설정 방 목록 요청
   socket.on(sock_const.RequestType.ROOM_LIST, () => {
     let gameRoomListSendData = {};
-    let excludeProps = ['password', 'players'];
+    let excludeProps = ['password'];
     for (let key in gameRoomList) {
       gameRoomListSendData[key] = Object.assign({}, gameRoomList[key]);
       excludeProps.forEach(prop => delete gameRoomListSendData[key][prop]);

@@ -10,20 +10,20 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 > - [RES_ADD_USER_TO_LIST](#res_add_user_to_list): 서버 접속 목록에 사용자 추가
 > <br>
 >
-> **LOBBY 참여 및 퇴장**
-> - [RES_JOIN_LOBBY](#res_join_lobby): Lobby 참여
+> **LOBBY**
+> - [RES_JOIN_LOBBY](#res_join_lobby): Lobby 참여 응답
 > <br>
 >
 > **목록**
-> - [RES_ROOM_LIST](#res_room_list): 개설된 사용자 설정 게임방 목록
-> - [RES_ONLINE_LIST](#res_online_list): 현재 접속 중인 사용자 목록
+> - [RES_ROOM_LIST](#res_room_list): 개설된 사용자 설정 게임방 목록 반환
+> - [RES_ONLINE_LIST](#res_online_list): 현재 접속 중인 사용자 목록 반환
 > <br>
 >
 > **게임방**
-> - [RES_CREATE_ROOM](#res_creat_room): 새로운 게임방 생성
-> - [RES_JOIN_ROOM](#res_join_room): 게임방 참여
-> - [RES_PLAYER_READY](#res_ready): 준비
-> - [RES_PLAYER_NOT_READY](#not_ready): 준비해제
+> - [RES_CREATE_ROOM](#res_creat_room): 새로운 게임방 생성 응답
+> - [RES_JOIN_ROOM](#res_join_room): 게임방 참여 결과
+> - [RES_PLAYER_READY](#res_ready): 다른 플레이어 준비
+> - [RES_PLAYER_NOT_READY](#not_ready): 다른 플레이어 준비해제
 > - [RES_PLAYER_JOIN](#res_player_join): 다른 플레이어 참여
 > - [RES_PLAYER_LEAVE](#res_player_leave): 다른 플레이어 퇴장
 > <br>
@@ -37,22 +37,21 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 >
 > **게임**
 > - [RES_GAME_START](#res_game_start): 게임 시작 알림
+> - [RES_GAME_END](#res_game_end): 게임 종료 알림
 > - [RES_ROUND_START](#res_round_start): 라운드 시작 알림
 > - [RES_ROUND_END](#res_round_end): 라운드 종료 알림
+> - [RES_CHANGE_TURN](#res_change_turn): 턴 변경 알림
 > - [RES_SPREAD_CARD](#res_spread_card): 무작위로 뽑은 카드 5장 묶음들을 각 플레이어에게 전달
 > - [RES_GET_CARD](#res_get_card): 덱에서 뽑은 카드 전달
 > - [RES_DRAW_CARD](#res_draw_card): 플레이어가 내려놓은 카드 정보 전달
 > - [RES_BBONG](#res_bbong): 뽕 이벤트 발생 알림
-> - [RES_DRAW_BBONG_CARD](#res_draw_bbong_card): 플레이어가 뽕 상태에서 버린 카드 전달
-> - [RES_NATURE](#res_nature): 자연 이벤트 발생 알림
-> - [RES_DRAW_NATURE_CARD](#res_draw_nature_card): 플레이어가 자연 상태에서 버린 카드 전달
-> - [RES_ROUND_END](#res_round_end): 스톱(라운드 종료)
-> - [RES_GAME_END](#res_game_end): 게임 종료 알림
+> - [RES_DRAW_BBONG_CARD](#res_draw_bbong_card): 플레이어가 내려놓은 뽕에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
+> - [RES_NATURE](#res_nature): 플레이어가 내려놓은 자연에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
 > <br>
 >
 > **채팅**
-> - [RES_SEND_MSG_TO_LOBBY](#res_send_msg_to_lobby): Lobby로 전체채팅 메세지 전송
-> - [RES_SEND_MSG_TO_ROOM](#res_send_msg_to_room): 게임방으로 채팅 메세지 전송
+> - [BROADCAST_LOBBY_MSG](#broadcast_lobby_msg): Lobby 채팅 메세지 브로드캐스트
+> - [BROADCAST_ROOM_MSG](#broadcast_room_msg): 게임방 채팅 메세지 브로드캐스트
 
 <br>
 
@@ -62,7 +61,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 <br>
 
 ### 사용자 관리
-#### ADD_USER_TO_LIST
+#### RES_ADD_USER_TO_LIST
 - 서버 접속 목록에 사용자 추가
 ```
 {
@@ -86,8 +85,8 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 개설된 사용자 설정 게임방 목록 반환
 ```
 {
-    'Room id': {
-        id: 'Room id',
+    'Room ID': {
+        rid: 'Room ID',
         host: 'Nickname',
         name: 'Roomname',
         player_limit: 0,
@@ -96,6 +95,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         round_count: 0,
         ready_count: 0,
         state: 0,
+        players: ['', ...]
         game_data: {
             ready_count: 0,
             current_round: 0,
@@ -106,8 +106,9 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
             round_result: [],
             message_key: ''
         },
-        password_required: true
+        password_required: true/false
     },
+    ...
 }
 ```
 <br>
@@ -116,18 +117,18 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 현재 접속 중인 사용자 목록 반환
 ```
 {
-    ['Nickname']
+    ['Nickname', ...]
 }
 ```
 <br>
 
 ### 게임방
-#### RES_GET_ROOM_RID
-- 새로운 게임방에 대한 방 정보 반환
+#### RES_CREATE_ROOM
+- 새로운 게임방 생성 응답
 ```
 {
-    roomdata : {
-        rid: 'Roomid',
+    room_data : {
+        rid: 'Room ID',
         host: 'Nickname',
         name: 'Roomname',
         player_limit: 0,
@@ -136,49 +137,20 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         round_count: 0,
         ready_count: 0,
         state: 0,
-        players: ['Nickname']
-    }
-}
-```
-<br>
-
-#### RES_PLAYER_JOIN
-- 다른 유저 접속에 대한 응답 반환
-```
-{
-    nickname : 'Nickname',
-    roomdata : {
-        rid: 'Roomid',
-        host: 'Nickname',
-        name: 'Roomname',
-        player_limit: 0,
-        current_player_count: 0,
-        show_score: true,
-        round_count: 0,
-        ready_count: 0,
-        state: 0,
-        players: ['Nickname']
+        players: ['Nickname', ...]
     } 
 }
+
 ```
 <br>
 
 #### RES_JOIN_ROOM
-- 게임방 참여 응답 반환
+- 게임방 참여 결과
 ```
 {
-    result : 0
-}
-```
-<br>
-
-#### RES_PLAYER_LEAVE
-- 게임방 퇴장에 대한 응답 반환
-```
-{
-    nickname : 'Nickname',
-    roomdata : {
-        rid: 'Roomid',
+    result : ResponseResult.RES_JOIN_ROOM_SUCCESS / ResponseResult.RES_JOIN_ROOM_FAILED_WRONG_PASSWORD / ResponseResult.RES_JOIN_ROOM_FAILED_ROOM_FULL / ResponseResult.RES_JOIN_ROOM_FAILED_NOT_EXIST,
+    room_data : {
+        rid: 'Room ID',
         host: 'Nickname',
         name: 'Roomname',
         player_limit: 0,
@@ -187,19 +159,19 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         round_count: 0,
         ready_count: 0,
         state: 0,
-        players: ['Nickname']
+        players: ['Nickname', ...]
     } 
 }
 ```
 <br>
 
 #### RES_PLAYER_READY
-- 사용자 게임 준비에 대한 응답 반환
+- 다른 플레이어 준비
 ```
 {
     nickname : 'Nickname',
-    roomdata : {
-        rid: 'Roomid',
+    room_data : {
+        rid: 'Room ID',
         host: 'Nickname',
         name: 'Roomname',
         player_limit: 0,
@@ -208,19 +180,19 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         round_count: 0,
         ready_count: 0,
         state: 0,
-        players: ['Nickname']
+        players: ['Nickname', ...]
     } 
 }
 ```
 <br>
 
 #### RES_PLAYER_NOT_READY
-- 사용자 게임 준비 취소에 대한 응답 반환
+- 다른 플레이어 준비해제
 ```
 {
     nickname : 'Nickname',
-    roomdata : {
-        rid: 'Roomid',
+    room_data : {
+        rid: 'Room ID',
         host: 'Nickname',
         name: 'Roomname',
         player_limit: 0,
@@ -229,19 +201,19 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         round_count: 0,
         ready_count: 0,
         state: 0,
-        players: ['Nickname']
-    }
+        players: ['Nickname', ...]
+    } 
 }
 ```
 <br>
 
-#### RES_GAME_START
-- 사용자 게임 시작에 대한 응답 반환
+#### RES_PLAYER_JOIN
+- 다른 플레이어 참여
 ```
 {
     nickname : 'Nickname',
-    roomdata : {
-        rid: 'Roomid',
+    room_data : {
+        rid: 'Room ID',
         host: 'Nickname',
         name: 'Roomname',
         player_limit: 0,
@@ -250,25 +222,195 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         round_count: 0,
         ready_count: 0,
         state: 0,
-        players: ['Nickname']
-    }
+        players: ['Nickname', ...]
+    } 
+}
+```
+<br>
+
+#### RES_PLAYER_LEAVE
+- 다른 플레이어 퇴장
+```
+{
+    nickname : 'Nickname',
+    room_data : {
+        rid: 'Room ID',
+        host: 'Nickname',
+        name: 'Roomname',
+        player_limit: 0,
+        current_player_count: 0,
+        show_score: true,
+        round_count: 0,
+        ready_count: 0,
+        state: 0,
+        players: ['Nickname', ...]
+    } 
+}
+```
+<br>
+
+### 대기열
+#### RES_JOIN_NORMAL_QUEUE
+- 일반게임 대기열 참가
+```
+{
+
+}
+```
+<br>
+
+#### RES_ACCEPT_NORMAL_QUEUE
+- 일반게임 수락
+```
+{
+
+}
+```
+<br>
+
+#### RES_JOIN_RANK_QUEUE
+- 랭크게임 대기열 참가
+```
+{
+
+}
+```
+<br>
+
+#### RES_ACCEPT_RANK_QUEUE
+- 랭크게임 수락
+```
+{
+
 }
 ```
 <br>
 
 ### 게임
+#### RES_GAME_START
+- 게임 시작 알림
+```
+{
+    room_data : {
+        rid: 'Roomid',
+        host: 'Nickname',
+        name: 'Roomname',
+        player_limit: 0,
+        current_player_count: 0,
+        show_score: true/false,
+        round_count: 0,
+        ready_count: 0,
+        state: GameState.PLAYING,
+        players: ['Nickname', ...]
+    },
+    game_data: {
+        current_round: 0,
+        current_player: '',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {},
+        rounds_result: []
+    }
+}
+```
+<br>
+
+#### RES_GAME_END
+- 게임 종료 알림
+```
+{
+    winner: 'Nickname'
+}
+```
+<br>
+
 #### RES_ROUND_START
-- 게임 라운드 시작에 대한 응답 반환
+- 라운드 시작 알림
 ```
 {
     player_turn : 'Nickname',
-    round : 1
+    round : 0,
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            }
+        },
+        pushed_deck: {},
+        rounds_result: [
+            {
+                round: 0,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
+}
+```
+<br>
+
+#### RES_ROUND_END
+- 라운드 종료 알림
+```
+{
+    type: GameEndType.TYPE_222 / GameEndType.TYPE_33 / GameEndType.TYPE_42 / GameEndType.TYPE_LOW / GameEndType.TYPE_HIGH / GameEndType.TYPE_STRAIGHT / GameEndType.TYPE_OVER_PRICE / GameEndType.TYPE_BBONG_LOW / GameEndType.TYPE_BBONG_NATURE,
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
+}
+```
+<br>
+
+#### RES_CHANGE_TURN
+- 턴 변경 알림
+```
+{
+    nickname : 'Nickname'
 }
 ```
 <br>
 
 #### RES_SPREAD_CARD
-- 게임 라운드 시작 시 시작 카드 반환
+- 무작위로 뽑은 카드 5장 묶음들을 각 플레이어에게 전달
 ```
 {
     cards : ['Card Type','Card Type','Card Type','Card Type','Card Type']
@@ -277,7 +419,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 <br>
 
 #### RES_GET_CARD
-- 카드 한장 뽑았을 때 카드 반환
+- 덱에서 뽑은 카드 전달
 ```
 {
     card : 'Card Type'
@@ -285,41 +427,23 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 ```
 <br>
 
-#### RES_GET_CARDS
-- 카드 갱신 시 카드 정보 전체 반환
-```
-{
-    players : 
-}
-```
-<br>
-
 #### RES_DRAW_CARD
-- 버린 카드에 대한 정보 반환
+- 플레이어가 내려놓은 카드 정보 전달
 ```
 {
     nickname : 'Nickname',
-    over_price : 0,
-    card: {
-        draw_card: 'Card Type',
+    draw_card: {
+        card: 'Card Type',
         x: 0,
         y: 0
     },
-}
-```
-<br>
-
-#### RES_CHANGE_TURN
-- 턴 전환에 대한 응답 반환
-```
-{
-    nickname : 'Nickname'
+    over_price : 0,
 }
 ```
 <br>
 
 #### RES_BBONG
-- 플레이어가 뽕을 했을 경우에 대한 정보 반환
+- 뽕 이벤트 발생 알림
 ```
 {
     nickname : 'Nickname',
@@ -328,24 +452,24 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 <br>
 
 #### RES_DRAW_BBONG_CARD
-- 뽕 로직 처리 후 정보 반환
+- 플레이어가 내려놓은 뽕에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
 ```
 {
     nickname : 'Nickname',
     bbong_cards : [
         {
-            draw_card: 'Card Type',
+            card: 'Card Type',
             x: 0,
             y: 0 
         },
         {
-            draw_card: 'Card Type',
+            card: 'Card Type',
             x: 0,
             y: 0
         }
     ],
     draw_card: {
-        draw_card: 'Card Type',
+        card: 'Card Type',
         x: 0,
         y: 0
     },
@@ -355,33 +479,29 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 <br>
 
 #### RES_NATURE
-- 플레이어가 자연을 했을 경우에 대한 응답 반환
-```
-{
-    nickname : 'Nickname',
-}
-```
-<br>
-
-#### RES_DRAW_NATURE
-- 자연 로직 처리 후 정보 반환
+- 플레이어가 내려놓은 자연에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
 ```
 {
     nickname : 'Nickname',
     nature_cards : [
         {
-            draw_card: 'Card Type',
+            card: 'Card Type',
             x: 0,
             y: 0 
         },
         {
-            draw_card: 'Card Type',
+            card: 'Card Type',
+            x: 0,
+            y: 0
+        },
+        {
+            card: 'Card Type',
             x: 0,
             y: 0
         }
     ],
     draw_card: {
-        draw_card: 'Card Type',
+        card: 'Card Type',
         x: 0,
         y: 0
     },
@@ -390,39 +510,9 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 ```
 <br>
 
-#### RES_OVER_PRICE
-- 플레이어가 바가지에 걸렸을 경우에 대한 정보 반환
-```
-{
-    nickname : 'Nickname',
-    round : 0,
-    player_score : [0,0,0]
-}
-```
-<br>
-
-#### RES_STOP
-- 플레이어가 스톱을 했을 경우 응답 반환
-```
-{
-    nickname : 'Nickname',
-    round : 0,
-    player_score : [0,0,0]
-}
-```
-<br>
-
-#### RES_GAME_END
-- 라운드가 끝났을 경우 응답 반환
-```
-{
-    none
-}
-```
-
 ### 채팅
 #### BROADCAST_LOBBY_MSG
-- Lobby로 전체채팅 메세지 전송
+- Lobby 채팅 메세지 브로드캐스트
 ```
 {
     rid: none,
@@ -433,7 +523,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 <br>
 
 #### BROADCAST_ROOM_MSG
-- 게임방으로 채팅 메세지 전송
+- 게임방 채팅 메세지 브로드캐스트
 ```
 {
     rid: 'Room ID',

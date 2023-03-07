@@ -47,11 +47,11 @@ CLIENT_DATA.MD에는 게임방에 참여 후 게임 진행 중에 필요한 데�
 ```json
 game_data: {
     current_round: 0,                           // 현재 라운드
-    current_player: ,                           // 현재 차례 플레이어
+    current_player: 'Nickname',                 // 현재 차례 플레이어
     players_data: {                             // 플레이어별 게임 정보
         'nickname': {                           // 플레이어 닉네임
             turn_count: 0,                      // 플레이어의 턴 진행 횟수
-            [!] cards: 0,                       // 플레이어가 가지고 있는 카드 개수
+            [!] card_count: 0,                  // 플레이어가 가지고 있는 카드 개수
             state: 0,                           // 플레이어 상태 (0: 기본, 1: 뽕, 2: 바가지)
             [X] over_price: 0                   // 플레이어의 바가지 카드 번호
         },
@@ -64,7 +64,7 @@ game_data: {
         'S1': {                                 // 카드 종류 및 번호
             x: 0,                               // 카드가 놓여있는 X 좌표
             y: 0,                               // 카드가 놓여있는 Y 좌표
-        }
+        },
         ...
     },
     rounds_result: [                            // 라운드 결과 목록

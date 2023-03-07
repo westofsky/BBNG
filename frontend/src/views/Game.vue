@@ -644,13 +644,7 @@ export default {
             });
             //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_OVER_PRICE, (data) => { // 바가지로 라운드가 끝났을 때
-            this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 종료되었습니다");
-            this.showGameNotification(this.game_data.current_round + " 라운드가 종료되었습니다");
-
-            this.game_data.round_result.push(data);
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_STOP, (data) => { // (222), (33), (high), (low), (STOP)으로 라운드가 끝났을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_ROUND_END, (data) => { // 라운드가 끝났을 때
             this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 종료되었습니다");
             this.showGameNotification(this.game_data.current_round + " 라운드가 종료되었습니다");
 

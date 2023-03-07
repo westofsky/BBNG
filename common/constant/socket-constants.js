@@ -6,7 +6,6 @@ const ChatroomType = {
 const RequestType = {
     ADD_USER_TO_LIST: 0,
     JOIN_LOBBY: 0,
-    LEAVE_LOBBY: 0,
 
     // Info Event
     ROOM_LIST: 0,
@@ -14,7 +13,6 @@ const RequestType = {
 
     // Room Event
     CREATE_ROOM: 0,
-    DESTROY_ROOM: 0,
     JOIN_ROOM: 0,
     LEAVE_ROOM: 0,
     READY: 0,
@@ -34,9 +32,9 @@ const RequestType = {
     GET_CARD: 0,
     DRAW_CARD: 0,
     BBONG: 0,
-    NATURE_BBONG: 0,
+    DRAW_BBONG_CARD: 0,
+    NATURE: 0,
     STOP: 0,
-    OVER_PRICE: 0,
 
     // Chatting Event
     SEND_MSG_TO_LOBBY: 0,
@@ -67,18 +65,16 @@ const ResponseType = {
 
     // Game Event
     RES_GAME_START : 0,
+    RES_GAME_END: 0,
     RES_ROUND_START: 0,
     RES_ROUND_END: 0,
+    RES_CHANGE_TURN: 0,
     RES_SPREAD_CARD: 0,
     RES_GET_CARD : 0,
     RES_DRAW_CARD : 0,
-    RES_CHANGE_TURN: 0,
     RES_BBONG: 0,
     RES_DRAW_BBONG_CARD: 0,
     RES_NATURE: 0,
-    RES_DRAW_NATURE_CARD: 0,
-    RES_ROUND_END: 0,
-    RES_GAME_END: 0,
 
     // Chatting Event
     BROADCAST_LOBBY_MSG: 0,
