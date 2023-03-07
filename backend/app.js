@@ -164,7 +164,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     socket.join(roomData.rid);
     clientListBySocket[socket.id].rid = roomData.rid;
     clientListByNickname[clientListBySocket[socket.id].nickname].rid = roomData.rid;
-    socket.emit(sock_const.ResponseType.RES_GET_ROOM_RID, {
+    socket.emit(sock_const.ResponseType.RES_CREATE_ROOM, {
       room_data: filterRoomData(roomData.rid),
     });
     console.log("Socket Event(CREATE_ROOM): Created room list\n########################\n" + JSON.stringify(gameRoomList) + '\n########################');
@@ -429,7 +429,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   });
 
   // 자연 처리 로직
-  socket.on(sock_const.RequestType.NATURE_BBONG, (data) => {
+  socket.on(sock_const.RequestType.NATURE, (data) => {
     for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
       if (gameRoomList[data.rid].game_data.player[i].nickname == data.nickname) {
         var j = i;
@@ -446,7 +446,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       gameRoomList[data.rid].game_data.player[j].state = 1;
     }
     gameRoomList[data.rid].game_data.player[j].turn_count++;
-    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_NATURE_BBONG, {
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_NATURE, {
       nickname: data.nickname,
       cards: data.nature_cards,
       draw_card: data.draw_card,
@@ -571,7 +571,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round = gameRoomList[data.rid].game_data.current_round;
-    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_STOP, {
+    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_ROUND_END, {
       nickname: gameRoomList[data.rid].game_data.player[j].nickname,
       round: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].round,
       player_score: gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].player_score

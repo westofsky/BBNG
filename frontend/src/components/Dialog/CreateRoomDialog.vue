@@ -131,7 +131,7 @@ export default {
         }
     },
     mounted() {
-        this.$socket.value.on(sock_const.ResponseType.RES_GET_ROOM_RID, (data) => {
+        this.$socket.value.on(sock_const.ResponseType.RES_CREATE_ROOM, (data) => {
             this.$store.commit("Games/setGame_rid", data.rid);
             this.$router.push({
                 name: 'Game', params: {

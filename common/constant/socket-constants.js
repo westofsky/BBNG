@@ -46,18 +46,14 @@ const RequestType = {
 const ResponseType = {
     RES_ADD_USER_TO_LIST: 0,
     RES_JOIN_LOBBY: 0,
-    RES_LEAVE_LOBBY: 0,
 
     // Info Event
     RES_ROOM_LIST: 0,
     RES_ONLINE_LIST : 0,
 
     // Room Event
-    RES_CREATE_ROOM: 0,
-    RES_GET_ROOM_RID : 0,
-    RES_DESTROY_ROOM: 0,
+    RES_CREATE_ROOM : 0,
     RES_JOIN_ROOM: 0,
-    RES_LEAVE_ROOM: 0,
     RES_PLAYER_READY: 0,
     RES_PLAYER_NOT_READY: 0,
     RES_PLAYER_JOIN: 0,
@@ -65,33 +61,28 @@ const ResponseType = {
 
     // Queue Event
     RES_JOIN_NORMAL_QUEUE: 0,
-    RES_LEAVE_NORMAL_QUEUE: 0,
     RES_ACCEPT_NORMAL_QUEUE: 0,
-    RES_REJECT_NORMAL_QUEUE: 0,
     RES_JOIN_RANK_QUEUE: 0,
-    RES_LEAVE_RANK_QUEUE: 0,
     RES_ACCEPT_RANK_QUEUE: 0,
-    RES_REJECT_RANK_QUEUE: 0,
 
     // Game Event
     RES_GAME_START : 0,
     RES_ROUND_START: 0,
     RES_ROUND_END: 0,
     RES_SPREAD_CARD: 0,
-    RES_GET_CARDS : 0,
     RES_GET_CARD : 0,
     RES_DRAW_CARD : 0,
     RES_CHANGE_TURN: 0,
     RES_BBONG: 0,
-    RES_NATURE_BBONG: 0,
-    RES_STOP: 0,
-    RES_OVER_PRICE: 0,
+    RES_DRAW_BBONG_CARD: 0,
+    RES_NATURE: 0,
+    RES_DRAW_NATURE_CARD: 0,
+    RES_ROUND_END: 0,
     RES_GAME_END: 0,
 
     // Chatting Event
     BROADCAST_LOBBY_MSG: 0,
     BROADCAST_ROOM_MSG: 0,
-    BROADCAST_INGAME_MSG: 0,
 }
 
 const ResponseResult = {
