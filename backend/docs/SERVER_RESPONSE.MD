@@ -36,8 +36,10 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에 응답을 보내는 Respon
 > - [RES_GET_CARDS](#res_get_card): 카드 갱신 시 카드 정보 전체 반환 <!--추후 없어질 예정-->
 > - [RES_DRAW_CARD](#res_draw_card): 버린 카드에 대한 정보 반환
 > - [RES_CHANGE_TURN](#res_change_turn): 턴 전환에 대한 응답 반환
-> - [RES_BBONG](#res_bbong): 플레이어가 뽕을 했을 경우에 대한 정보 반환
-> - [RES_NATURE_BBONG](#res_nature_bbong): 플레이어가 자연을 했을 경우에 대한 정보 반환
+> - [RES_BBONG](#res_bbong): 플레이어가 뽕을 했을 경우에 대한 응답 반환
+> - [REE_DRAW_BBONG_CARD](#res_draw_bbong_card) : 뽕 로직 처리 후 정보 반환
+> - [RES_NATURE](#res_nature): 플레이어가 자연을 했을 경우에 대한 응답 반환
+> - [RES_DRAW_NATURE](#res_draw_nature) : 자연 로직 처리 후 정보 반환
 > - [RES_OVER_PRICE](#res_over_price): 플레이어가 바가지에 걸렸을 경우에 대한 정보 반환
 > - [RES_STOP](#res_stop): 플레이어가 스톱을 했을 경우 응답 반환
 > - [RES_GAME_END](#res_game_end): 라운드가 끝났을 경우 응답 반환
@@ -317,7 +319,16 @@ Game Room에 대한 정보는 {roomdata}를 이용하여 계속 갱신하고 있
 ```
 {
     nickname : 'Nickname',
-    cards : [
+}
+```
+<br>
+
+#### RES_DRAW_BBONG_CARD
+- 뽕 로직 처리 후 정보 반환
+```
+{
+    nickname : 'Nickname',
+    bbong_cards : [
         {
             draw_card: 'Card Type',
             x: 0,
@@ -339,12 +350,21 @@ Game Room에 대한 정보는 {roomdata}를 이용하여 계속 갱신하고 있
 ```
 <br>
 
-#### RES_NATURE_BBONG
-- 플레이어가 자연을 했을 경우에 대한 정보 반환
+#### RES_NATURE
+- 플레이어가 자연을 했을 경우에 대한 응답 반환
 ```
 {
     nickname : 'Nickname',
-    cards : [
+}
+```
+<br>
+
+#### RES_DRAW_NATURE
+- 자연 로직 처리 후 정보 반환
+```
+{
+    nickname : 'Nickname',
+    nature_cards : [
         {
             draw_card: 'Card Type',
             x: 0,

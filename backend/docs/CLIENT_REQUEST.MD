@@ -289,23 +289,6 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 {
     rid: 'Room ID',
     nickname: 'Nickname',
-    bbong_cards: [
-        {
-            draw_card: 'Card Type',
-            x: 0,
-            y: 0 
-        },
-        {
-            draw_card: 'Card Type',
-            x: 0,
-            y: 0
-        }
-    ],
-    card: {
-        draw_card: 'Card Type',
-        x: 0,
-        y: 0
-    }
 }
 ```
 <br>
