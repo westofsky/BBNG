@@ -65,7 +65,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 서버 접속 목록에 사용자 추가
 ```
 {
-    nickname: 'Nickname'
+    none
 }
 ```
 <br>
