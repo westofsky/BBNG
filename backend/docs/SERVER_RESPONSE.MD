@@ -128,7 +128,19 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         ready_count: 0,
         state: 0,
         players: ['Nickname', ...]
-    } 
+    },
+    game_data: {
+        current_round: 0,
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            }
+        },
+        pushed_deck: {},
+        rounds_result: []
+    }
 }
 
 ```
@@ -150,7 +162,20 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         ready_count: 0,
         state: 0,
         players: ['Nickname', ...]
-    } 
+    },
+    game_data: {
+        current_round: 0,
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {},
+        rounds_result: []
+    }
 }
 ```
 <br>
@@ -295,7 +320,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     },
     game_data: {
         current_round: 0,
-        current_player: '',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -328,7 +352,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     round : 0,
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -359,7 +382,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     type: GameEndType.TYPE_222 / GameEndType.TYPE_33 / GameEndType.TYPE_42 / GameEndType.TYPE_LOW / GameEndType.TYPE_HIGH / GameEndType.TYPE_STRAIGHT / GameEndType.TYPE_OVER_PRICE / GameEndType.TYPE_BBONG_LOW / GameEndType.TYPE_BBONG_NATURE,
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -397,7 +419,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     nickname : 'Nickname',
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -435,7 +456,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     cards : ['Card Type','Card Type','Card Type','Card Type','Card Type'],
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -473,7 +493,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     card : 'Card Type',
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -517,7 +536,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     over_price : 0,
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -555,7 +573,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     nickname : 'Nickname',
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -611,7 +628,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     over_price : 0,
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
@@ -672,7 +688,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
     over_price : 0,
     game_data: {
         current_round: 0,
-        current_player: 'Nickname',
         players_data: {
             'Nickname': {
                 turn_count: 0,
