@@ -62,9 +62,6 @@ game_data: {
         },
         ...
     ],
-    player_data {                               // 각 플레이어의 정보
-        player_deck : []                        // 플레이어가 현재 갖고 있는 카드    
-    }
 }
 
 ```
