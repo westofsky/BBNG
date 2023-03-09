@@ -49,16 +49,16 @@
                 <div class="game_table">
                     <!-- 여기 안에 다른 card들 component들어가야함-->
                     <div class="table">
-                        <div v-for="(o_card, index) in game_data.other_player_deck" :key="index"
+                        <div v-for="(o_card, index) in other_cards(game_data.players_data)" :key="index"
                             :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]"
                             :style="{
-                                transform: `rotate(${180 - (game_data.other_player_deck.length - 1) * 45 + (index) * 90}deg)`,
-                                top: (index == 0 || index == game_data.other_player_deck.length - 1) ? 10 + (game_data.other_player_deck.length - 2) * 30 + '%' : '0%',
+                                transform: `rotate(${180 - (game_data.players_data.length - 2) * 45 + (index) * 90}deg)`,
+                                top: (index == 0 || index == game_data.players_data.length - 2) ? 10 + (game_data.players_data.length - 3) * 30 + '%' : '0%',
                             }">
-                            <Other_Card v-for="index in Object.values(o_card)[0].length" :key="index"
+                            <Other_Card v-for="index in o_card" :key="index"
                                 :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
-                                    width: (14 - Object.values(o_card)[0].length) * 0.5 + 'vw',
-                                    height: (14 - Object.values(o_card)[0].length) * 0.7 + 'vw',
+                                    width: (14 - o_card) * 0.5 + 'vw',
+                                    height: (14 - o_card) * 0.7 + 'vw',
                                     'z-index': (index + 1),
                                 }" />
                         </div>
@@ -72,8 +72,8 @@
                                 }" />
                         </div>
                         <div class="card_mine">
-                            <Card v-for="(card, index) in game_data.player_deck" :key="index" :name="card"
-                                :card_index="index + 1" :card_length="game_data.player_deck.length"
+                            <Card v-for="(card, index) in player_data.player_deck" :key="index" :name="card"
+                                :card_index="index + 1" :card_length="player_data.player_deck.length"
                                 :is-draggable="isDraggable" @set-draggable="set_draggable" />
                         </div>
                     </div>
@@ -164,15 +164,18 @@ export default {
     methods: {
         set_draggable(data) {
             this.isDraggable = data.pos;
-            this.game_data.push_deck.push({
-                name: data.name,
-                top: data.top,
-                left: data.left,
-            });
-            this.game_data.player_deck.splice(data.index-1,1);
+            this.player_data.player_deck.splice(data.index-1,1);
             this.drawCard(data.name,data.top,data.left);
         },
-
+        other_cards(players_data){
+            let other_card = []
+            for(let nick in players_data){
+                if(nick !=this.$store.getters["Users/getUser_nickname"]){
+                    other_card.append(players_data[nick].card_count);
+                }
+            }
+            return other_card;
+        },
         getLeft(index) {
             if (parseInt(this.game_data.other_player_deck.length / 2) > index)
                 return true;
@@ -230,7 +233,7 @@ export default {
         },
         checkOverPrice() { // 플레이어의 카드 덱의 바가지 여부 확인
             let cardNumbers = {};
-            for (let card of this.game_data.player_deck) {
+            for (let card of this.player_data.player_deck) {
                 let cardNumber = String(card).substring(1);
                 if (cardNumbers[cardNumber]) {
                     return cardNumber;
@@ -266,11 +269,11 @@ export default {
         },
         isNatureAvailable() {
             console.log("자연 되는지 안되는지 실행됨");
-            if (this.game_data.player_deck.length % 3 == 0) {
+            if (this.player_data.player_deck.length % 3 == 0) {
                 const counts = {};
                 // 뒷 숫자만 추출하여 count를 증가시킴
-                for (let i = 0; i < this.game_data.player_deck.length; i++) {
-                const num = this.game_data.player_deck[i].substring(1);
+                for (let i = 0; i < this.player_data.player_deck.length; i++) {
+                const num = this.player_data.player_deck[i].substring(1);
                 counts[num] = (counts[num] || 0) + 1;
                 }
                 // 같은 숫자가 3개 이상인지 확인
@@ -290,15 +293,15 @@ export default {
         },
         isMaidAvailable() { // 플레이어 카드가 메이드 가능 상태인 경우 true, 아닐 경우 false
             console.log("메이드 되는지 안되는지 실행됨");
-            if (this.game_data.player_deck.length == 6) {
+            if (this.player_data.player_deck.length == 6) {
                 var hand_card = [];
                 var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
                 for (var i = 1; i < 13; i++) {
                     hand_card[i] = 0;
                 }
                 for (var i = 0; i < 6; i++) {
-                    hand_card[Number(this.game_data.player_deck[i].slice(1))]++;
-                    sum += Number(this.game_data.player_deck[i].slice(1));
+                    hand_card[Number(this.player_data.player_deck[i].slice(1))]++;
+                    sum += Number(this.player_data.player_deck[i].slice(1));
                 }
                 for (var i = 1; i < 13; i++) {
                     if (straight < 6) {
@@ -327,16 +330,11 @@ export default {
             return false;
         },
         isOverPriceAvailable() { // 플레이어가 바가지 상태에서 누군가가 마지막으로 낸 카드가 바가지와 동일한 숫자일 경우 true, 아닐 경우 false
-            console.log(this.game_data.player);
-            console.log("바가지 상태 실행");
-            // for(let player of this.game_data.player){
-            //     if player.nickname[0]
-            // }
-            return (this.game_data.player.find(player => player.nickname[0] === this.$store.getters["Users/getUser_nickname"]).state == 2 && (
-                this.game_data.player_deck[0].match(/\d+/) == this.game_data.last_card.match(/\d+/)));
+            return (this.game_data.players_data.find(player => player.nickname === this.$store.getters["Users/getUser_nickname"]).state == 2 && (
+                this.player_data.player_deck[0].match(/\d+/) == this.game_data.last_card.match(/\d+/)));
         },
         isSum4OrLessAvailable() { // 플레이어 카드가 2장이면서 4이하일 경우 true, 아닐 경우 false
-            return (this.game_data.player_deck.length == 2 && ((parseInt(this.game_data.player_deck[0].match(/\d+/)[0]) + parseInt(this.game_data.player_deck[0].match(/\d+/)[1])) <= 4));
+            return (this.player_data.player_deck.length == 2 && ((parseInt(this.player_data.player_deck[0].match(/\d+/)[0]) + parseInt(this.player_data.player_deck[0].match(/\d+/)[1])) <= 4));
         },
         onBtnBbongClicked(bbongCards, drawCard) {
             this.isBtnBbongActive = false;
@@ -354,12 +352,11 @@ export default {
             //     this.game_data.player_deck.splice(drawCardIndex, 1);
             // }
 
-            // this.$socket.value.emit(sock_const.RequestType.BBONG, {
-            //     rid: this.room_data.rid,
-            //     nickname: this.$store.getters["Users/getUser_nickname"],
-            //     bbong_cards: bbongCards,
-            //     draw_card: drawCard
-            // });
+            this.$socket.value.emit(sock_const.RequestType.BBONG, {
+                rid: this.room_data.rid,
+                nickname: this.$store.getters["Users/getUser_nickname"],
+            });
+            // 뽕 할 카드 선택
         },
         onBtnNatureClicked() {
             this.isBtnBbongActive = false;
