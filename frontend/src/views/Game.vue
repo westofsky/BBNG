@@ -246,7 +246,7 @@ export default {
             const number_count = {}; // 각 숫자별 카드 개수를 저장할 객체 생성
 
             // 플레이어 덱에서 카드 숫자별 개수 계산
-            for (const card of this.game_data.player_deck) {
+            for (const card of this.player_data.player_deck) {
                 const number = parseInt(String(card).substring(1));
                 if (!number_count[number]) {
                     number_count[number] = 1;
@@ -515,7 +515,7 @@ export default {
             */
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
             this.showGameNotification("게임이 시작되었습니다");
-            this.game_data.current_round = data.game_data.current_round;
+            this.game_data = data.game_data;
             this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
@@ -564,58 +564,114 @@ export default {
         this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
             /*
             {
-                cards : ['Card Type','Card Type','Card Type','Card Type','Card Type']
-            }
-            */
-            // for(var i =0;i<data.cards.length;i++){
-            //     this.game_data.player_deck.push(data.cards[i]);
-            // }
-            this.game_data.player_deck = data.cards;
-            this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
-        });
-
-        this.$socket.value.on(sock_const.ResponseType.RES_GET_CARDS, (data) => { // 카드가 갱신될 때마다 다른 플레이어 카드포함 받음
-            /**
-            data: {
-                players : [
-                    {
-                        nickname : 'test',
-                        turn_count: 0,
-                        cards: [
-                            'C1', 'C2'
-                        ],
-                        state: 0/1(뽕)/2(바가지),
-                        over_price: 2,
-                    }
-                ]
-            }
-            **/
-            this.game_data.player = data.players;
-            this.game_data.other_player_deck = [];
-            let my_index;
-            for (var i = 0; i < data.players.length; i++) {
-                if (data.players[i].nickname == this.$store.getters["Users/getUser_nickname"]) {
-                    my_index = i;
+                cards : ['Card Type','Card Type','Card Type','Card Type','Card Type'],
+                game_data: {
+                    current_round: 0,
+                    current_player: 'Nickname',
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
                 }
             }
-
-            let new_arr = data.players;
-            let arr1 = new_arr.slice(my_index + 1);
-            let arr2 = new_arr.slice(0, my_index);
-            new_arr = arr1.concat(arr2);
-            for (var i = 0; i < new_arr.length; i++) {
-                let new_arr_item = {}
-                new_arr_item[new_arr[i].nickname] = new_arr[i].cards;
-                this.game_data.other_player_deck.push(new_arr_item);
-            }
+            */
+            this.player_data.player_deck = data.cards;
+            this.game_data = data.game_data;
+            this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
+        // this.$socket.value.on(sock_const.ResponseType.RES_GET_CARDS, (data) => { // 카드가 갱신될 때마다 다른 플레이어 카드포함 받음
+        //     /**
+        //     data: {
+        //         players : [
+        //             {
+        //                 nickname : 'test',
+        //                 turn_count: 0,
+        //                 cards: [
+        //                     'C1', 'C2'
+        //                 ],
+        //                 state: 0/1(뽕)/2(바가지),
+        //                 over_price: 2,
+        //             }
+        //         ]
+        //     }
+        //     **/
+        //     this.game_data.player = data.players;
+        //     this.game_data.other_player_deck = [];
+        //     let my_index;
+        //     for (var i = 0; i < data.players.length; i++) {
+        //         if (data.players[i].nickname == this.$store.getters["Users/getUser_nickname"]) {
+        //             my_index = i;
+        //         }
+        //     }
+
+        //     let new_arr = data.players;
+        //     let arr1 = new_arr.slice(my_index + 1);
+        //     let arr2 = new_arr.slice(0, my_index);
+        //     new_arr = arr1.concat(arr2);
+        //     for (var i = 0; i < new_arr.length; i++) {
+        //         let new_arr_item = {}
+        //         new_arr_item[new_arr[i].nickname] = new_arr[i].cards;
+        //         this.game_data.other_player_deck.push(new_arr_item);
+        //     }
+        // });
         this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
-            /**
-             * data: {
-             *  nickname: 'Player1'
-             * }
-             */
-            if (data.nickname[0] == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
+            /*
+            {
+                nickname : 'Nickname',
+                game_data: {
+                    current_round: 0,
+                    current_player: 'Nickname',
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }
+            */
+            this.game_data = data.game_data;    
+            if (data.nickname == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
                 this.isClickable = true;
                 this.isBtnNatureActive = this.isNatureAvailable();
                 this.isBtnStopActive = this.isSum4OrLessAvailable();
@@ -624,28 +680,56 @@ export default {
                 this.isClickable = false;
                 this.isBtnStopActive = this.isOverPriceAvailable();
             }
-            this.isBtnBbongActive = this.isBbongAvailable();
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 카드를 한장 받았을 때
-            /**
-             * data: {
-             *  card: 'C1'
-             * }
-             */
-            this.game_data.player_deck.push(data.card[0]);
-            console.log(this.game_data.player_deck);
+            /*
+            {
+                card : 'Card Type',
+                game_data: {
+                    current_round: 0,
+                    current_player: 'Nickname',
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }
+            */
+            this.game_data = data.game_data;
+            this.player_data.player_deck.push(data.card);
             this.isBtnNatureActive = this.isNatureAvailable();
             this.isBtnStopActive = this.isMaidAvailable();
-            // this.game_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
-            if (this.game_data.player_deck.length > 2) {
+            // this.player_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
+            if (this.player_data.player_deck.length > 2) {
                 var hand_card = [];
                 var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
                 for (var i = 1; i < 13; i++) {
                     hand_card[i] = 0;
                 }
                 for (var i = 0; i < 6; i++) {
-                    hand_card[Number(this.game_data.player_deck[i].slice(1))]++;
-                    sum += Number(this.game_data.player_deck[i].slice(1));
+                    hand_card[Number(this.player_data.player_deck[i].slice(1))]++;
+                    sum += Number(this.player_data.player_deck[i].slice(1));
                 }
                 for (var i = 1; i < 13; i++) {
                     if (straight < 6) {
@@ -684,22 +768,48 @@ export default {
             }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 다른 플레이어가 카드를 한장 냈을 때
-            /**
-             * data: {
-             *  over_price: 1,
-             *  card: {
-             *      draw_card: 'C1',
-             *      x: 0,
-             *      y: 0,
-             *  }
-             * }
-             */
-            this.game_data.last_card = data.draw_card.card;
-            this.game_data.push_deck.push({
-                name: data.card.draw_card,
-                top: data.card.x,
-                left: data.card.y,
-            });
+            /*
+            {
+                nickname : 'Nickname',
+                draw_card: {
+                    card: 'Card Type',
+                    x: 0,
+                    y: 0
+                },
+                over_price : 0,
+                game_data: {
+                    current_round: 0,
+                    current_player: 'Nickname',
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }
+            */
+            this.game_data = data.game_data;
+            this.isBtnBbongActive = this.isBbongAvailable(data.draw_card.card);
             //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_END, (data) => { // 라운드가 끝났을 때
