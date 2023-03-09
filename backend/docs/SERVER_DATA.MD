@@ -49,7 +49,6 @@ let gameRoomList = {
         ...
         game_data: {
             current_round: 0,                           // 현재 라운드
-            current_player: ,                           // 현재 차례 플레이어
             players_data: {                             // 플레이어별 게임 정보
                 'nickname': {                           // 플레이어 닉네임
                     turn_count: 0,                      // 플레이어의 턴 진행 횟수
