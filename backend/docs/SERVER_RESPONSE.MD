@@ -238,7 +238,20 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         ready_count: 0,
         state: 0,
         players: ['Nickname', ...]
-    } 
+    },
+    game_data: {
+        current_round: 0,
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {},
+        rounds_result: []
+    }
 }
 ```
 <br>
@@ -259,7 +272,20 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         ready_count: 0,
         state: 0,
         players: ['Nickname', ...]
-    } 
+    } ,
+    game_data: {
+        current_round: 0,
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {},
+        rounds_result: []
+    }
 }
 ```
 <br>
