@@ -122,11 +122,7 @@ export default {
                 round_count: this.roundCount,
                 ready_count: 0,
                 state: game_const.GameState.WAITING,
-                players: [{
-                    socket_id: this.$socket.value.id,
-                    oid: this.$store.getters["Users/getUser_oid"],
-                    nickname: this.$store.getters["Users/getUser_nickname"]
-                }]
+                players: [this.$socket.value.id]
             });
         }
     },
@@ -136,6 +132,7 @@ export default {
             this.$router.push({
                 name: 'Game', params: {
                     room_data: JSON.stringify(data.room_data),
+                    game_data: JSON.stringify(data.game_data)
                 }
             });
         });

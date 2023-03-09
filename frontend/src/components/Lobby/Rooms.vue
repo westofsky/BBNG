@@ -77,7 +77,7 @@ export default {
             filterShowScore: 'all',
             filterName: '',
             filteredRoomList: [],
-            roomList: [],
+            roomList: {},
             clicked_room_rid: '',
             selectedRoomName: '',
         }
@@ -134,7 +134,7 @@ export default {
             }
         },
         btnRefreshClicked() {
-            this.$socket.value.emit(sock_const.RequestType.ROOM_LIST, '');
+            this.$socket.value.emit(sock_const.RequestType.ROOM_LIST);
         },
         onRoomClicked(roomInfo) {
             this.selectedRoomName = roomInfo.name;
@@ -146,8 +146,6 @@ export default {
                 } else {
                     this.$socket.value.emit(sock_const.RequestType.JOIN_ROOM, {
                         rid: roomInfo.rid,
-                        socket_id: this.$socket.value.id,
-                        oid: this.$store.getters["Users/getUser_oid"],
                         nickname: this.$store.getters["Users/getUser_nickname"],
                         password: '',
                     });
@@ -162,7 +160,6 @@ export default {
     mounted() {
         this.$socket.value.on(sock_const.ResponseType.RES_ROOM_LIST, (data) => {
             this.roomList = data;
-            console.log(JSON.stringify(this.roomList));
             this.applyFilter();
         });
         this.$socket.value.on(sock_const.ResponseType.RES_JOIN_ROOM, (data) => {
@@ -171,7 +168,8 @@ export default {
                     this.$store.commit("Games/setGame_rid", this.clicked_room_rid);
                     this.$router.push({
                         name: 'Game', params: {
-                            room_data: JSON.stringify(data.room_data)
+                            room_data: JSON.stringify(data.room_data),
+                            game_data: JSON.stringify(data.game_data)
                         }
                     });
                     break;

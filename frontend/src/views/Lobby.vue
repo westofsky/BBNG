@@ -89,7 +89,7 @@ export default {
             this.$refs.RoomComponent.refreshData();
             this.$refs.FriendsComponent.refreshData();
         });
-        this.$socket.value.emit(sock_const.RequestType.JOIN_LOBBY, { user: this.$store.getters["Users/getUser_oid"] });
+        this.$socket.value.emit(sock_const.RequestType.JOIN_LOBBY);
 
         // Implement load initial datas from server.
         let rankList = [{ tier: "Challenger", nick: "Nickname1", rank_point: 99999 },

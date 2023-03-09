@@ -80,7 +80,11 @@ export default {
                     this.$socket.value.on(sock_const.ResponseType.RES_ADD_USER_TO_LIST, () => {
                         this.$router.push({ name: 'Lobby' });
                     });
-                    this.$socket.value.emit(sock_const.RequestType.ADD_USER_TO_LIST, this.$store.getters["Users/getUser_nickname"]);
+                    this.$socket.value.emit(sock_const.RequestType.ADD_USER_TO_LIST,
+                        {
+                            nickname: this.$store.getters["Users/getUser_nickname"]
+                        }
+                    );
                 }
                 else if (res.data.status == 500) {
                     alert(res.data.msg);
