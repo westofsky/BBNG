@@ -105,6 +105,7 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
     room_data: {
         rid: 'Room ID',
         host: 'Nickname',
+        name: 'Roomname',
         password: 'Room Password',
         player_limit: 0,
         current_player_count: 0,

@@ -97,16 +97,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         state: 0,
         players: ['Nickname', ...]
         password_required: true/false
-        game_data: {
-            ready_count: 0,
-            current_round: 0,
-            current_player: 0,
-            player: [],
-            deck: [],
-            push_deck: [],
-            round_result: [],
-            message_key: ''
-        },
     },
     ...
 }
