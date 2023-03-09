@@ -119,19 +119,17 @@ export default {
             isClickable : false,
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: {
-                player: [],
-                player_list : [],
                 current_round: -1,
                 current_player: '',
-                // player_deck: ['H2','H5','S1','C5','H9','H2'], // test용 실 사용시 []
-                player_deck: [],
-                other_player_deck: [
+                players_data : {
 
-                ],
-                push_deck: [],
+                },
+                push_deck: {},
                 round_result: [
-                ],
-                last_card: '',
+                ]
+            },
+            player_data : {
+
             },
             notificationMessage: '',
             showNotification: false,
@@ -222,7 +220,11 @@ export default {
             this.$socket.value.emit(sock_const.RequestType.DRAW_CARD, {
                 rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"],
-                card: { draw_card: card, x: x, y: y },
+                card: {
+                    draw_card: card,
+                    x: x,
+                    y: y
+                },
                 over_price: this.checkOverPrice()
             });
         },
@@ -397,42 +399,46 @@ export default {
 
         this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
-            /**
-             * data: {
-             *  nickname: 'Player1',
-             *  room_data: {
-             *    rid: '',
-             *    host: 'Player1',
-             *    name: 'Room Name',
-             *    player_limit: 3,
-             *    current_player_count: 1,
-             *    show_score: true,
-             *    round_count: 10,
-             *    state: game_const.GameState.WAITING
-             *  }
-             * }
-             */
+            /*
+            {
+                nickname : 'Nickname',
+                room_data : {
+                    rid: 'Room ID',
+                    host: 'Nickname',
+                    name: 'Roomname',
+                    player_limit: 0,
+                    current_player_count: 0,
+                    show_score: true,
+                    round_count: 0,
+                    ready_count: 0,
+                    state: 0,
+                    players: ['Nickname', ...]
+                } 
+            }
+            */
             this.game_data.player_list.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
-            /**
-             * data: {
-             *  nickname: 'Player1',
-             *  room_data: {
-             *    rid: '',
-             *    host: 'Player1',
-             *    name: 'Room Name',
-             *    player_limit: 3,
-             *    current_player_count: 1,
-             *    show_score: true,
-             *    round_count: 10,
-             *    state: game_const.GameState.WAITING
-             *  }
-             * }
-             */
+            /*
+            {
+                nickname : 'Nickname',
+                room_data : {
+                    rid: 'Room ID',
+                    host: 'Nickname',
+                    name: 'Roomname',
+                    player_limit: 0,
+                    current_player_count: 0,
+                    show_score: true,
+                    round_count: 0,
+                    ready_count: 0,
+                    state: 0,
+                    players: ['Nickname', ...]
+                } 
+            }
+            */
             this.game_data.players = this.game_data.player_list.filter((player) => {
                 return player != data.nickname;
             });
@@ -477,19 +483,71 @@ export default {
             this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, (data) => { // 게임이 시작되었을 때
+            /*
+            {
+                room_data : {
+                    rid: 'Roomid',
+                    host: 'Nickname',
+                    name: 'Roomname',
+                    player_limit: 0,
+                    current_player_count: 0,
+                    show_score: true/false,
+                    round_count: 0,
+                    ready_count: 0,
+                    state: GameState.PLAYING,
+                    players: ['Nickname', ...]
+                },
+                game_data: {
+                    current_round: 0,
+                    current_player: '',
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {},
+                    rounds_result: []
+                }
+            }
+            */
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
             this.showGameNotification("게임이 시작되었습니다");
-            this.game_data.current_round = 1;
+            this.game_data.current_round = data.game_data.current_round;
             this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
-            /**
-             * data: {
-             *  player_turn: 'Player1',
-             *  round: 1
-             * }
-             */
-            this.game_data.current_round = data.round + 1;
+            /*
+            {
+                player_turn : 'Nickname',
+                round : 0,
+                game_data: {
+                    current_round: 0,
+                    current_player: 'Nickname',
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        }
+                    },
+                    pushed_deck: {},
+                    rounds_result: [
+                        {
+                            round: 0,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }
+            */
+            this.game_data = data.game_data;
             this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 시작되었습니다");
             this.showGameNotification(this.game_data.current_round + " 라운드가 시작되었습니다");
             this.isBtnBbongActive = false;
@@ -504,11 +562,11 @@ export default {
             }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
-            /**
-             * data: {
-             *  cards: ['C1', 'C2', 'C3', 'C4', 'C5']
-             * } 
-             */
+            /*
+            {
+                cards : ['Card Type','Card Type','Card Type','Card Type','Card Type']
+            }
+            */
             // for(var i =0;i<data.cards.length;i++){
             //     this.game_data.player_deck.push(data.cards[i]);
             // }
@@ -636,7 +694,7 @@ export default {
              *  }
              * }
              */
-            this.game_data.last_card = data.card.draw_card;
+            this.game_data.last_card = data.draw_card.card;
             this.game_data.push_deck.push({
                 name: data.card.draw_card,
                 top: data.card.x,

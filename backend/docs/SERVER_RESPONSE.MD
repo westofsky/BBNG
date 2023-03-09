@@ -404,7 +404,36 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 턴 변경 알림
 ```
 {
-    nickname : 'Nickname'
+    nickname : 'Nickname',
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
 }
 ```
 <br>
@@ -413,7 +442,36 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 무작위로 뽑은 카드 5장 묶음들을 각 플레이어에게 전달
 ```
 {
-    cards : ['Card Type','Card Type','Card Type','Card Type','Card Type']
+    cards : ['Card Type','Card Type','Card Type','Card Type','Card Type'],
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
 }
 ```
 <br>
@@ -422,7 +480,36 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 덱에서 뽑은 카드 전달
 ```
 {
-    card : 'Card Type'
+    card : 'Card Type',
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
 }
 ```
 <br>
@@ -438,6 +525,35 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         y: 0
     },
     over_price : 0,
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
 }
 ```
 <br>
@@ -447,6 +563,35 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 ```
 {
     nickname : 'Nickname',
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
 }
 ```
 <br>
@@ -473,7 +618,36 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         x: 0,
         y: 0
     },
-    over_price : 0
+    over_price : 0,
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
 }
 ```
 <br>
@@ -505,7 +679,36 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
         x: 0,
         y: 0
     },
-    over_price : 0
+    over_price : 0,
+    game_data: {
+        current_round: 0,
+        current_player: 'Nickname',
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {
+            'S1': {
+                x: 0,
+                y: 0,
+            },
+            ...
+        },
+        rounds_result: [
+            {
+                round: 1,
+                players_score: {
+                    'Nickname': 0,
+                    ...
+                }
+            },
+            ...
+        ]
+    }
 }
 ```
 <br>
