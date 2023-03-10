@@ -20,7 +20,7 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 > <br>
 >
 > **게임방**
-> - [CREATE_ROOM](#creat_room): 새로운 게임방 생성
+> - [CREATE_ROOM](#create_room): 새로운 게임방 생성
 > - [JOIN_ROOM](#join_room): 게임방 참여
 > - [LEAVE_ROOM](#leave_room): 게임방 퇴장
 > - [READY](#ready): 준비
