@@ -16,7 +16,7 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 >
 > **목록**
 > - [ROOM_LIST](#room_list): 개설된 사용자 설정 게임방 목록
-> - [GET_ONLINE_LIST](#get_online_list): 현재 접속 중인 사용자 목록
+> - [ONLINE_LIST](#online_list): 현재 접속 중인 사용자 목록
 > <br>
 >
 > **게임방**
@@ -88,7 +88,7 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 ```
 <br>
 
-#### GET_ONLINE_LIST
+#### ONLINE_LIST
 - 현재 접속 중인 사용자 목록
 ```
 {

@@ -109,13 +109,13 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   });
 
   // Socket Listener Event - 온라인 상태 친구목록 요청
-  socket.on(sock_const.RequestType.GET_ONLINE_LIST, () => {
+  socket.on(sock_const.RequestType.ONLINE_LIST, () => {
     let onlineList = [];
     for (var i = 0; i < Object.values(clientListBySocket).length; i++) {
       onlineList.push(Object.values(clientListBySocket)[i].nickname);
     }
     socket.emit(sock_const.ResponseType.RES_ONLINE_LIST, onlineList);
-    console.log("Socket Event(GET_ONLINE_LIST): Player '" + clientListBySocket[socket.id].nickname + "' request online friend list");
+    console.log("Socket Event(ONLINE_LIST): Player '" + clientListBySocket[socket.id].nickname + "' request online friend list");
   });
 
   // Socket Listener Event - Lobby에 참여

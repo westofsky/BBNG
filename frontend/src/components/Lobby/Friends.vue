@@ -56,7 +56,7 @@ export default {
     },
     methods: {
         async refreshData() {
-            this.$socket.value.emit(sock_const.RequestType.GET_ONLINE_LIST);
+            this.$socket.value.emit(sock_const.RequestType.ONLINE_LIST);
             await this.get_requests();
             await this.get_friends();
         },
