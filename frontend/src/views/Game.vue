@@ -52,8 +52,8 @@
                         <div v-for="(o_card, index) in other_cards(game_data.players_data)" :key="index"
                             :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]"
                             :style="{
-                                transform: `rotate(${180 - (game_data.players_data.length - 2) * 45 + (index) * 90}deg)`,
-                                top: (index == 0 || index == game_data.players_data.length - 2) ? 10 + (game_data.players_data.length - 3) * 30 + '%' : '0%',
+                                transform: `rotate(${180 - (game_data.players_data.size - 2) * 45 + (index) * 90}deg)`,
+                                top: (index == 0 || index == game_data.players_data.size - 2) ? 10 + (game_data.players_data.size - 3) * 30 + '%' : '0%',
                             }">
                             <Other_Card v-for="index in o_card" :key="index"
                                 :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
@@ -136,6 +136,7 @@ export default {
             return this.isReady ? '준비완료' : '준비';
         },
         currentRoundText() {
+            
             if (this.game_data.current_round === -1) {
                 return `모든 플레이어가 준비하면 게임이 시작됩니다: ${this.room_data.ready_count} / ${this.room_data.player_limit}`;
             } else {
@@ -175,15 +176,15 @@ export default {
             return other_card;
         },
         getLeft(index) {
-            if (parseInt((this.game_data.players_data.length-1) / 2) > index)
+            if (parseInt((this.game_data.players_data.size-1) / 2) > index)
                 return true;
-            else if (this.game_data.players_data.length == 2 && index == 1)
+            else if (this.game_data.players_data.size == 2 && index == 1)
                 return true;
             else
                 return false;
         },
         getRight(index) {
-            if (parseInt((this.game_data.players_data.length-1) / 2) <= index)
+            if (parseInt((this.game_data.players_data.size-1) / 2) <= index)
                 return true;
             else
                 return false;
