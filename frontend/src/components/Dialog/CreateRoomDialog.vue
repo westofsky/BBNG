@@ -112,17 +112,19 @@ export default {
         createRoom() {
             this.$emit('close');
             this.$socket.value.emit(sock_const.RequestType.CREATE_ROOM, {
-                rid: '',
-                host: this.$store.getters["Users/getUser_nickname"],
-                name: this.name,
-                password: this.password,
-                player_limit: this.playerLimit,
-                current_player_count: 1,
-                show_score: this.showScore,
-                round_count: this.roundCount,
-                ready_count: 0,
-                state: game_const.GameState.WAITING,
-                players: [this.$socket.value.id]
+                room_data: {
+                    rid: '',
+                    host: this.$store.getters["Users/getUser_nickname"],
+                    name: this.name,
+                    password: this.password,
+                    player_limit: this.playerLimit,
+                    current_player_count: 1,
+                    show_score: this.showScore,
+                    round_count: this.roundCount,
+                    ready_count: 0,
+                    state: game_const.GameState.WAITING,
+                    players: [this.$socket.value.id]
+                }
             });
         }
     },
@@ -347,4 +349,5 @@ export default {
 .CreateRoomDialog-leave-to .CreateRoomDialog-Container {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
-}</style>
+}
+</style>
