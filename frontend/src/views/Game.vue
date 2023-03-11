@@ -413,10 +413,10 @@ export default {
                 } 
             }
             */
-            this.game_data.player_list.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.room_data = data.room_data;
+            this.game_data = data.game_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
             /*
@@ -436,12 +436,10 @@ export default {
                 } 
             }
             */
-            this.game_data.players = this.game_data.player_list.filter((player) => {
-                return player != data.nickname;
-            });
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
             this.room_data = data.room_data;
+            this.game_data = data.game_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
             /**
@@ -460,6 +458,7 @@ export default {
              * }
              */
             this.room_data = data.room_data;
+            this.game_data = data.game_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어가 준비해제 했을 때
             /**
@@ -478,6 +477,7 @@ export default {
              * }
              */
             this.room_data = data.room_data;
+            this.game_data = data.game_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, (data) => { // 게임이 시작되었을 때
             /*
@@ -510,10 +510,10 @@ export default {
                 }
             }
             */
+            this.room_data = data.room_data;
+            this.game_data = data.game_data;
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
             this.showGameNotification("게임이 시작되었습니다");
-            this.game_data = data.game_data;
-            this.room_data = data.room_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
             /*
@@ -593,8 +593,8 @@ export default {
                 }
             }
             */
-            this.player_data.player_deck = data.cards;
             this.game_data = data.game_data;
+            this.player_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
         // this.$socket.value.on(sock_const.ResponseType.RES_GET_CARDS, (data) => { // 카드가 갱신될 때마다 다른 플레이어 카드포함 받음
@@ -667,7 +667,7 @@ export default {
                 }
             }
             */
-            this.game_data = data.game_data;    
+            this.game_data = data.game_data;
             if (data.nickname == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
                 this.isClickable = true;
                 this.isBtnNatureActive = this.isNatureAvailable();
@@ -810,14 +810,14 @@ export default {
             //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
         });
         this.$socket.value.on(sock_const.ResponseType.RES_ROUND_END, (data) => { // 라운드가 끝났을 때
-            this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 종료되었습니다");
-            this.showGameNotification(this.game_data.current_round + " 라운드가 종료되었습니다");
+            this.game_data = data.game_data;
 
-            this.game_data.round_result.push(data);
+            this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 종료되었습니다. 이번 라운드 승자는 " + data.winner + "입니다");
+            this.showGameNotification(this.game_data.current_round + " 라운드가 종료되었습니다. 이번 라운드 승자는 " + data.winner + "입니다");
         });
         this.$socket.value.on(sock_const.ResponseType.RES_GAME_END, () => { // 게임이 끝났을 때
-            this.$refs.LogComponent.addLog("게임이 종료되었습니다.");
-            this.showGameNotification("게임이 종료되었습니다.");
+            this.$refs.LogComponent.addLog("게임이 종료되었습니다. " + data.winner + "가 우승했습니다!");
+            this.showGameNotification("게임이 종료되었습니다. " + data.winner + "가 우승했습니다!");
         });
     }
 }
