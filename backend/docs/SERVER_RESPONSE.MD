@@ -20,7 +20,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 > <br>
 >
 > **게임방**
-> - [RES_CREATE_ROOM](#res_creat_room): 새로운 게임방 생성 응답
+> - [RES_CREATE_ROOM](#res_create_room): 새로운 게임방 생성 응답
 > - [RES_JOIN_ROOM](#res_join_room): 게임방 참여 결과
 > - [RES_PLAYER_READY](#res_ready): 다른 플레이어 준비
 > - [RES_PLAYER_NOT_READY](#not_ready): 다른 플레이어 준비해제
