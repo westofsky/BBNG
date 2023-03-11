@@ -290,7 +290,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     gameRoomList[data.rid].ready_count += 1;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_READY, { // 다른 플레이어에게 해당 플레이어가 Ready 했다고 알림.
       nickname: data.nickname,
-      room_data: filterRoomData(data.rid)
+      room_data: filterRoomData(data.rid),
+      game_data: filterGameData(data.rid)
     });
     if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].ready_count) { // 모든 플레이어가 Ready 했을 경우.
       gameRoomList[data.rid].state = game_const.GameState.PLAYING;
@@ -319,7 +320,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, { // 모든 플레이어에게 라운드가 시작되었다고 알림.
         player_turn:
           gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit))].nickname,
-        round: gameRoomList[data.rid].game_data.current_round
+        round: gameRoomList[data.rid].game_data.current_round,
+        game_data: filterGameData(data.rid)
       });
       
       setTimeout(function () { // 3초 뒤에 각각의 플레이어에게 카드 배분.
@@ -350,7 +352,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     gameRoomList[data.rid].ready_count -= 1;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_NOT_READY, {
       nickname: data.nickname,
-      room_data: filterRoomData(data.rid)
+      room_data: filterRoomData(data.rid),
+      game_data: filterGameData(data.rid)
     })
     console.log("Room Event: Player '" + data.nickname + "' not ready");
   })
