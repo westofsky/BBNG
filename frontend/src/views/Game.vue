@@ -25,12 +25,9 @@
                     {{ readyButtonText }}
                 </button>
                 <div class="additional-buttons" v-else>
-                    <button class="additional-button" :disabled="!isBtnBbongActive"
-                        @click="onBtnBbongClicked">뽕</button>
-                    <button class="additional-button" :disabled="!isBtnNatureActive"
-                        @click="onBtnNatureClicked">자연</button>
-                    <button class="additional-button" :disabled="!isBtnStopActive"
-                        @click="onBtnStopClicked">스톱</button>
+                    <button class="additional-button" :disabled="!isBtnBbongActive" @click="onBtnBbongClicked">뽕</button>
+                    <button class="additional-button" :disabled="!isBtnNatureActive" @click="onBtnNatureClicked">자연</button>
+                    <button class="additional-button" :disabled="!isBtnStopActive" @click="onBtnStopClicked">스톱</button>
                 </div>
             </div>
             <div class="logs">
@@ -39,7 +36,8 @@
                     :response-type="chatResponseType" :chatting-delay-time="0" :rid="this.room_data.rid" />
                 <div class="card_deck">
                     <p>카드 뽑기</p>
-                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()" :class="{ 'clickable': isClickable }">
+                    <img src="../assets/images/cards/back_card.png" style="width:100px; height:140px;" @click="getCard()"
+                        :class="{ 'clickable': isClickable }">
                 </div>
             </div>
             <div class="game_zone">
@@ -116,11 +114,11 @@ export default {
             chatRequestType: sock_const.RequestType.SEND_MSG_TO_ROOM,
             chatResponseType: sock_const.ResponseType.BROADCAST_ROOM_MSG,
             isDraggable: false,  //test용 실 사용시 false
-            isClickable : false,
+            isClickable: false,
             room_data: JSON.parse(this.$route.params.room_data),
             game_data: JSON.parse(this.$route.params.game_data),
-            player_data : {
-                player_deck : [],
+            player_data: {
+                player_deck: [],
             },
             notificationMessage: '',
             showNotification: false,
@@ -136,7 +134,7 @@ export default {
             return this.isReady ? '준비완료' : '준비';
         },
         currentRoundText() {
-            
+
             if (this.game_data.current_round === -1) {
                 return `모든 플레이어가 준비하면 게임이 시작됩니다: ${this.room_data.ready_count} / ${this.room_data.player_limit}`;
             } else {
@@ -156,10 +154,10 @@ export default {
     methods: {
         set_draggable(data) {
             this.isDraggable = data.pos;
-            this.player_data.player_deck.splice(data.index-1,1);
-            this.drawCard(data.name,data.top,data.left);
+            this.player_data.player_deck.splice(data.index - 1, 1);
+            this.drawCard(data.name, data.top, data.left);
         },
-        other_cards(players_data){
+        other_cards(players_data) {
             let other_card = [];
             const targetNick = this.$store.getters["Users/getUser_nickname"];
             const targetIndex = Object.keys(players_data).indexOf(targetNick);
@@ -168,7 +166,7 @@ export default {
             const sortedEntries = entries.slice(targetIndex).sort((a, b) => a[0].localeCompare(b[0]));
 
             for (const [nickname, data] of [...entries.slice(0, targetIndex), ...sortedEntries]) {
-                if(nickname != targetNick){
+                if (nickname != targetNick) {
                     console.log(data);
                     other_card.push(data.card_count);
                 }
@@ -176,7 +174,7 @@ export default {
             return other_card;
         },
         getLeft(index) {
-            if (parseInt((this.game_data.players_data.size-1) / 2) > index)
+            if (parseInt((this.game_data.players_data.size - 1) / 2) > index)
                 return true;
             else if (this.game_data.players_data.size == 2 && index == 1)
                 return true;
@@ -184,7 +182,7 @@ export default {
                 return false;
         },
         getRight(index) {
-            if (parseInt((this.game_data.players_data.size-1) / 2) <= index)
+            if (parseInt((this.game_data.players_data.size - 1) / 2) <= index)
                 return true;
             else
                 return false;
@@ -206,7 +204,7 @@ export default {
             this.isReady = !this.isReady;
         },
         getCard() {
-            if(this.isClickable){
+            if (this.isClickable) {
                 this.$socket.value.emit(sock_const.RequestType.GET_CARD, {
                     rid: this.room_data.rid,
                     nickname: this.$store.getters["Users/getUser_nickname"]
@@ -271,8 +269,8 @@ export default {
                 const counts = {};
                 // 뒷 숫자만 추출하여 count를 증가시킴
                 for (let i = 0; i < this.player_data.player_deck.length; i++) {
-                const num = this.player_data.player_deck[i].substring(1);
-                counts[num] = (counts[num] || 0) + 1;
+                    const num = this.player_data.player_deck[i].substring(1);
+                    counts[num] = (counts[num] || 0) + 1;
                 }
                 // 같은 숫자가 3개 이상인지 확인
                 let hasThreeOfAKind = false;
@@ -282,7 +280,7 @@ export default {
                         break;
                     }
                 }
-                if(hasThreeOfAKind)
+                if (hasThreeOfAKind)
                     return true;
                 else
                     return false

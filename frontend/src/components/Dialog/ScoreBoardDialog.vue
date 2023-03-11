@@ -35,7 +35,7 @@ export default {
     },
     methods: {
         updateRoundResults(players, roundResults) {
-            this.players = players.reduce((acc, player) => {acc[player] = 0; return acc;}, {});
+            this.players = players.reduce((acc, player) => { acc[player] = 0; return acc; }, {});
             this.rounds = roundResults.map((roundResult) => 'Round ' + roundResult.round);
             this.scores = {};
 

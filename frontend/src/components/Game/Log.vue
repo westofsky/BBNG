@@ -2,7 +2,7 @@
     <div class="Log RoundBorder">
         <div class="ChattingLog">
             <div class="MessageSet" v-for="messageSet in Logs" :key="messageSet">
-                <label class="Message">{{messageSet.message}}</label>
+                <label class="Message">{{ messageSet.message }}</label>
             </div>
         </div>
     </div>
@@ -15,7 +15,7 @@ export default {
     name: 'Log',
     data() {
         return {
-            Logs : [],
+            Logs: [],
         }
     },
     props: {
@@ -46,7 +46,7 @@ export default {
 
 <style scoped>
 .Log {
-    background-color:rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.7);
     width: 280px;
     height: 240px;
     display: flex;
@@ -56,7 +56,9 @@ export default {
 
 .RoundBorder {
     border-radius: 8px;
-}.ChattingLog {
+}
+
+.ChattingLog {
     flex: 1;
     margin: 8px;
     overflow: auto;
@@ -71,7 +73,7 @@ export default {
 
 .ChattingLog .Message {
     flex: 1;
-    color : white;
+    color: white;
     display: block;
     margin-bottom: 8px;
 }

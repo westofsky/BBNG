@@ -364,4 +364,5 @@ export default {
     font-size: 14pt;
     user-select: none;
     float: right;
-}</style>
+}
+</style>
