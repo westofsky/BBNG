@@ -365,7 +365,32 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 게임 종료 알림
 ```
 {
-    winner: 'Nickname'
+    winner: 'Nickname',
+    room_data : {
+        rid: 'Room ID',
+        host: 'Nickname',
+        name: 'Roomname',
+        player_limit: 0,
+        current_player_count: 0,
+        show_score: true,
+        round_count: 0,
+        ready_count: 0,
+        state: 0,
+        players: ['Nickname', ...]
+    } ,
+    game_data: {
+        current_round: 0,
+        players_data: {
+            'Nickname': {
+                turn_count: 0,
+                card_count: 0,
+                state: 0
+            },
+            ...
+        },
+        pushed_deck: {},
+        rounds_result: []
+    }
 }
 ```
 <br>
@@ -405,6 +430,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 라운드 종료 알림
 ```
 {
+    winner: 'Nickname',
     type: GameEndType.TYPE_222 / GameEndType.TYPE_33 / GameEndType.TYPE_42 / GameEndType.TYPE_LOW / GameEndType.TYPE_HIGH / GameEndType.TYPE_STRAIGHT / GameEndType.TYPE_OVER_PRICE / GameEndType.TYPE_BBONG_LOW / GameEndType.TYPE_BBONG_NATURE,
     game_data: {
         current_round: 0,
