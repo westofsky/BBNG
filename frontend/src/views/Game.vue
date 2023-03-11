@@ -167,22 +167,23 @@ export default {
             const sortedEntries = entries.slice(targetIndex).sort((a, b) => a[0].localeCompare(b[0]));
 
             for (const [nickname, data] of [...entries.slice(0, targetIndex), ...sortedEntries]) {
-                if(nickname != targetNick)
-                    other_card.append(data.cards.length);
+                if(nickname != targetNick){
+                    console.log(data);
+                    other_card.push(data.card_count);
+                }
             }
-            
             return other_card;
         },
         getLeft(index) {
-            if (parseInt(this.game_data.other_player_deck.length / 2) > index)
+            if (parseInt((this.game_data.players_data.length-1) / 2) > index)
                 return true;
-            else if (this.game_data.other_player_deck.length == 3 && index == 1)
+            else if (this.game_data.players_data.length == 2 && index == 1)
                 return true;
             else
                 return false;
         },
         getRight(index) {
-            if (parseInt(this.game_data.other_player_deck.length / 2) <= index)
+            if (parseInt((this.game_data.players_data.length-1) / 2) <= index)
                 return true;
             else
                 return false;
