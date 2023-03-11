@@ -129,7 +129,7 @@ export default {
                 ]
             },
             player_data : {
-
+                player_deck : [],
             },
             notificationMessage: '',
             showNotification: false,
@@ -168,12 +168,18 @@ export default {
             this.drawCard(data.name,data.top,data.left);
         },
         other_cards(players_data){
-            let other_card = []
-            for(let nick in players_data){
-                if(nick !=this.$store.getters["Users/getUser_nickname"]){
-                    other_card.append(players_data[nick].card_count);
-                }
+            let other_card = [];
+            const targetNick = this.$store.getters["Users/getUser_nickname"];
+            const targetIndex = Object.keys(players_data).indexOf(targetNick);
+
+            const entries = Object.entries(players_data);
+            const sortedEntries = entries.slice(targetIndex).sort((a, b) => a[0].localeCompare(b[0]));
+
+            for (const [nickname, data] of [...entries.slice(0, targetIndex), ...sortedEntries]) {
+                if(nickname != targetNick)
+                    other_card.append(data.cards.length);
             }
+            
             return other_card;
         },
         getLeft(index) {
@@ -244,7 +250,6 @@ export default {
             return 0;
         },
         isBbongAvailable(last_card) {
-            console.log("뽕 되는지 안되는지 실행됨");
             const last_number = parseInt(String(last_card).substring(1)); // 입력된 카드에서 숫자 추출
             const number_count = {}; // 각 숫자별 카드 개수를 저장할 객체 생성
 
@@ -413,7 +418,6 @@ export default {
                 } 
             }
             */
-            this.game_data.player_list.push(data.nickname);
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
             this.room_data = data.room_data;
@@ -436,9 +440,6 @@ export default {
                 } 
             }
             */
-            this.game_data.players = this.game_data.player_list.filter((player) => {
-                return player != data.nickname;
-            });
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
             this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
             this.room_data = data.room_data;
