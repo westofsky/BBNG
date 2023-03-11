@@ -118,16 +118,7 @@ export default {
             isDraggable: false,  //test용 실 사용시 false
             isClickable : false,
             room_data: JSON.parse(this.$route.params.room_data),
-            game_data: {
-                current_round: -1,
-                current_player: '',
-                players_data : {
-
-                },
-                push_deck: {},
-                round_result: [
-                ]
-            },
+            game_data: JSON.parse(this.$route.params.game_data),
             player_data : {
                 player_deck : [],
             },
@@ -395,6 +386,7 @@ export default {
         }
     },
     mounted() {
+        console.log(JSON.stringify(this.room_data) + "/" + JSON.stringify(this.game_data));
         const container = this.$el;
         this.containerWidth = container.clientWidth;
         this.rid = this.$store.getters["Games/getGame_rid"];

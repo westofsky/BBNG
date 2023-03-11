@@ -141,7 +141,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   socket.on(sock_const.RequestType.CREATE_ROOM, (data) => {
     data.room_data.rid = createRoomId((data.room_data.host + (new Date()).toLocaleString()));
     data.room_data.game_data = {
-      current_round: 0,
+      current_round: -1,
       players_data: {
         [data.room_data.host]: {
           turn_count: 0,
@@ -268,10 +268,10 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         gameRoomList[joinedGameRoom].players = gameRoomList[joinedGameRoom].players.filter(function (player) {
           return player.nickname !== nickname
         });
-        if(gameRoomList[data.rid].state == game_const.GameState.WAITING) { // 게임이 진행 중이 아닐 경우, game_data에서도 제거
-          delete gameRoomList[data.rid].game_data.players_data[data.nickname];
+        if(gameRoomList[joinedGameRoom].state == game_const.GameState.WAITING) { // 게임이 진행 중이 아닐 경우, game_data에서도 제거
+          delete gameRoomList[joinedGameRoom].game_data.players_data[data.nickname];
         }
-        gameRoomList[data.rid].current_player_count -= 1;
+        gameRoomList[joinedGameRoom].current_player_count -= 1;
 
         io.to(joinedGameRoom).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
           nickname: nickname,
@@ -294,7 +294,11 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     });
     if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].ready_count) { // 모든 플레이어가 Ready 했을 경우.
       gameRoomList[data.rid].state = game_const.GameState.PLAYING;
-      io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START, {room_data: filterRoomData(data.rid)}); // 모든 플레이어에게 게임이 시작되었다고 알림.
+      gameRoomList[data.rid].game_data.current_round = 0;
+      io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START, {
+        room_data: filterRoomData(data.rid),
+        game_data: filterGameData(data.rid)
+      }); // 모든 플레이어에게 게임이 시작되었다고 알림.
 
       setTimeout(function () { // 3초 뒤에 모든 플레이어에게 라운드가 시작되었다고 알림.
         console.log('delay');
