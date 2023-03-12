@@ -392,7 +392,7 @@ export default {
         this.rid = this.$store.getters["Games/getGame_rid"];
 
         this.$refs.LogComponent.addLog("플레이어 '" + this.$store.getters["Users/getUser_nickname"] + "'이(가) 참여하였습니다");
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 새로운 플레이어가 참여했을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_JOIN, (data) => { // 다른 플레이어 참여
             /*
             {
                 nickname : 'Nickname',
@@ -407,7 +407,20 @@ export default {
                     ready_count: 0,
                     state: 0,
                     players: ['Nickname', ...]
-                } 
+                },
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {},
+                    rounds_result: []
+                }
             }
             */
             this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 참여하였습니다");
@@ -415,7 +428,43 @@ export default {
             this.room_data = data.room_data;
             this.game_data = data.game_data;
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어가 방을 떠났을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_LEAVE, (data) => { // 다른 플레이어 퇴장
+            /*
+            {
+                nickname : 'Nickname',
+                room_data : {
+                    rid: 'Room ID',
+                    host: 'Nickname',
+                    name: 'Roomname',
+                    player_limit: 0,
+                    current_player_count: 0,
+                    show_score: true,
+                    round_count: 0,
+                    ready_count: 0,
+                    state: 0,
+                    players: ['Nickname', ...]
+                } ,
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {},
+                    rounds_result: []
+                }
+            }
+            */
+            this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
+            this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
+            this.room_data = data.room_data;
+            this.game_data = data.game_data;
+        });
+        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어 준비
             /*
             {
                 nickname : 'Nickname',
@@ -432,51 +481,32 @@ export default {
                     players: ['Nickname', ...]
                 } 
             }
-            */
-            this.$refs.LogComponent.addLog("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
-            this.showGameNotification("플레이어 '" + data.nickname + "'이(가) 방을 떠났습니다");
-            this.room_data = data.room_data;
-            this.game_data = data.game_data;
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_READY, (data) => { // 다른 플레이어가 준비완료 했을 때
-            /**
-             * data: {
-             *  nickname: 'Player1',
-             *  room_data: {
-             *    rid: '',
-             *    host: 'Player1',
-             *    name: 'Room Name',
-             *    player_limit: 3,
-             *    current_player_count: 1,
-             *    show_score: true,
-             *    round_count: 10,
-             *    state: game_const.GameState.WAITING
-             *  }
-             * }
              */
             this.room_data = data.room_data;
             this.game_data = data.game_data;
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어가 준비해제 했을 때
-            /**
-             * data: {
-             *  nickname: 'Player1',
-             *  room_data: {
-             *    rid: '',
-             *    host: 'Player1',
-             *    name: 'Room Name',
-             *    player_limit: 3,
-             *    current_player_count: 1,
-             *    show_score: true,
-             *    round_count: 10,
-             *    state: game_const.GameState.WAITING
-             *  }
-             * }
+        this.$socket.value.on(sock_const.ResponseType.RES_PLAYER_NOT_READY, (data) => { // 다른 플레이어 준비해제
+            /*
+            {
+                nickname : 'Nickname',
+                room_data : {
+                    rid: 'Room ID',
+                    host: 'Nickname',
+                    name: 'Roomname',
+                    player_limit: 0,
+                    current_player_count: 0,
+                    show_score: true,
+                    round_count: 0,
+                    ready_count: 0,
+                    state: 0,
+                    players: ['Nickname', ...]
+                } 
+            }
              */
             this.room_data = data.room_data;
             this.game_data = data.game_data;
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, (data) => { // 게임이 시작되었을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_GAME_START, (data) => { // 게임 시작 알림
             /*
             {
                 room_data : {
@@ -493,7 +523,6 @@ export default {
                 },
                 game_data: {
                     current_round: 0,
-                    current_player: '',
                     players_data: {
                         'Nickname': {
                             turn_count: 0,
@@ -512,14 +541,47 @@ export default {
             this.$refs.LogComponent.addLog("게임이 시작되었습니다");
             this.showGameNotification("게임이 시작되었습니다");
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드가 시작되었을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_GAME_END, () => { // 게임 종료 알림
+            /*
+            {
+                winner: 'Nickname',
+                room_data : {
+                    rid: 'Room ID',
+                    host: 'Nickname',
+                    name: 'Roomname',
+                    player_limit: 0,
+                    current_player_count: 0,
+                    show_score: true,
+                    round_count: 0,
+                    ready_count: 0,
+                    state: 0,
+                    players: ['Nickname', ...]
+                } ,
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {},
+                    rounds_result: []
+                }
+            }
+            */
+            this.$refs.LogComponent.addLog("게임이 종료되었습니다. " + data.winner + "가 우승했습니다!");
+            this.showGameNotification("게임이 종료되었습니다. " + data.winner + "가 우승했습니다!");
+        });
+        this.$socket.value.on(sock_const.ResponseType.RES_ROUND_START, (data) => { // 라운드 시작 알림
             /*
             {
                 player_turn : 'Nickname',
                 round : 0,
                 game_data: {
                     current_round: 0,
-                    current_player: 'Nickname',
                     players_data: {
                         'Nickname': {
                             turn_count: 0,
@@ -555,13 +617,97 @@ export default {
                 this.isClickable = false;
             }
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 카드를 나눠받았을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_ROUND_END, (data) => { // 라운드 종료 알림
+            /*
+            {
+                winner: 'Nickname',
+                type: GameEndType.TYPE_222 / GameEndType.TYPE_33 / GameEndType.TYPE_42 / GameEndType.TYPE_LOW / GameEndType.TYPE_HIGH 
+                    / GameEndType.TYPE_STRAIGHT / GameEndType.TYPE_OVER_PRICE / GameEndType.TYPE_BBONG_LOW / GameEndType.TYPE_BBONG_NATURE,
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }            
+            */
+            this.game_data = data.game_data;
+
+            this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 종료되었습니다. 이번 라운드 승자는 " + data.winner + "입니다");
+            this.showGameNotification(this.game_data.current_round + " 라운드가 종료되었습니다. 이번 라운드 승자는 " + data.winner + "입니다");
+        });
+        this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 턴 변경 알림
+            /*
+            {
+                nickname : 'Nickname',
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            */
+            this.game_data = data.game_data;
+            if (data.nickname == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
+                this.isClickable = true;
+                this.isBtnNatureActive = this.isNatureAvailable();
+                this.isBtnStopActive = this.isSum4OrLessAvailable();
+                this.showGameNotification("당신의 차례입니다.");
+            } else { // 플레이어의 차례가 아닐 때
+                this.isClickable = false;
+                this.isBtnStopActive = this.isOverPriceAvailable();
+            }
+        });
+        this.$socket.value.on(sock_const.ResponseType.RES_SPREAD_CARD, (data) => { // 무작위로 뽑은 카드 5장 묶음들을 각 플레이어에게 전달
             /*
             {
                 cards : ['Card Type','Card Type','Card Type','Card Type','Card Type'],
                 game_data: {
                     current_round: 0,
-                    current_player: 'Nickname',
                     players_data: {
                         'Nickname': {
                             turn_count: 0,
@@ -594,94 +740,12 @@ export default {
             this.player_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
-        // this.$socket.value.on(sock_const.ResponseType.RES_GET_CARDS, (data) => { // 카드가 갱신될 때마다 다른 플레이어 카드포함 받음
-        //     /**
-        //     data: {
-        //         players : [
-        //             {
-        //                 nickname : 'test',
-        //                 turn_count: 0,
-        //                 cards: [
-        //                     'C1', 'C2'
-        //                 ],
-        //                 state: 0/1(뽕)/2(바가지),
-        //                 over_price: 2,
-        //             }
-        //         ]
-        //     }
-        //     **/
-        //     this.game_data.player = data.players;
-        //     this.game_data.other_player_deck = [];
-        //     let my_index;
-        //     for (var i = 0; i < data.players.length; i++) {
-        //         if (data.players[i].nickname == this.$store.getters["Users/getUser_nickname"]) {
-        //             my_index = i;
-        //         }
-        //     }
-
-        //     let new_arr = data.players;
-        //     let arr1 = new_arr.slice(my_index + 1);
-        //     let arr2 = new_arr.slice(0, my_index);
-        //     new_arr = arr1.concat(arr2);
-        //     for (var i = 0; i < new_arr.length; i++) {
-        //         let new_arr_item = {}
-        //         new_arr_item[new_arr[i].nickname] = new_arr[i].cards;
-        //         this.game_data.other_player_deck.push(new_arr_item);
-        //     }
-        // });
-        this.$socket.value.on(sock_const.ResponseType.RES_CHANGE_TURN, (data) => { // 차례가 바뀌었을 때
-            /*
-            {
-                nickname : 'Nickname',
-                game_data: {
-                    current_round: 0,
-                    current_player: 'Nickname',
-                    players_data: {
-                        'Nickname': {
-                            turn_count: 0,
-                            card_count: 0,
-                            state: 0
-                        },
-                        ...
-                    },
-                    pushed_deck: {
-                        'S1': {
-                            x: 0,
-                            y: 0,
-                        },
-                        ...
-                    },
-                    rounds_result: [
-                        {
-                            round: 1,
-                            players_score: {
-                                'Nickname': 0,
-                                ...
-                            }
-                        },
-                        ...
-                    ]
-                }
-            }
-            */
-            this.game_data = data.game_data;
-            if (data.nickname == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
-                this.isClickable = true;
-                this.isBtnNatureActive = this.isNatureAvailable();
-                this.isBtnStopActive = this.isSum4OrLessAvailable();
-                this.showGameNotification("당신의 차례입니다.");
-            } else { // 플레이어의 차례가 아닐 때
-                this.isClickable = false;
-                this.isBtnStopActive = this.isOverPriceAvailable();
-            }
-        });
-        this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 카드를 한장 받았을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_GET_CARD, (data) => { // 덱에서 뽑은 카드 전달
             /*
             {
                 card : 'Card Type',
                 game_data: {
                     current_round: 0,
-                    current_player: 'Nickname',
                     players_data: {
                         'Nickname': {
                             turn_count: 0,
@@ -761,7 +825,7 @@ export default {
                 }
             }
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 다른 플레이어가 카드를 한장 냈을 때
+        this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 플레이어가 내려놓은 카드 정보 전달
             /*
             {
                 nickname : 'Nickname',
@@ -773,7 +837,6 @@ export default {
                 over_price : 0,
                 game_data: {
                     current_round: 0,
-                    current_player: 'Nickname',
                     players_data: {
                         'Nickname': {
                             turn_count: 0,
@@ -806,15 +869,151 @@ export default {
             this.isBtnBbongActive = this.isBbongAvailable(data.draw_card.card);
             //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_ROUND_END, (data) => { // 라운드가 끝났을 때
-            this.game_data = data.game_data;
-
-            this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 종료되었습니다. 이번 라운드 승자는 " + data.winner + "입니다");
-            this.showGameNotification(this.game_data.current_round + " 라운드가 종료되었습니다. 이번 라운드 승자는 " + data.winner + "입니다");
+        this.$socket.value.on(sock_const.ResponseType.RES_BBONG, (data) => { // 뽕 이벤트 발생 알림
+            /*
+            {
+                nickname : 'Nickname',
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }            
+            */
         });
-        this.$socket.value.on(sock_const.ResponseType.RES_GAME_END, () => { // 게임이 끝났을 때
-            this.$refs.LogComponent.addLog("게임이 종료되었습니다. " + data.winner + "가 우승했습니다!");
-            this.showGameNotification("게임이 종료되었습니다. " + data.winner + "가 우승했습니다!");
+        this.$socket.value.on(sock_const.ResponseType.RES_DRAW_BBONG_CARD, (data) => { // 플레이어가 내려놓은 뽕에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
+            /*
+            {
+                nickname : 'Nickname',
+                bbong_cards : [
+                    {
+                        card: 'Card Type',
+                        x: 0,
+                        y: 0 
+                    },
+                    {
+                        card: 'Card Type',
+                        x: 0,
+                        y: 0
+                    }
+                ],
+                draw_card: {
+                    card: 'Card Type',
+                    x: 0,
+                    y: 0
+                },
+                over_price : 0,
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }            
+            */
+        });
+        this.$socket.value.on(sock_const.ResponseType.RES_NATURE, (data) => { // 플레이어가 내려놓은 자연에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
+            /*
+            {
+                nickname : 'Nickname',
+                nature_cards : [
+                    {
+                        card: 'Card Type',
+                        x: 0,
+                        y: 0 
+                    },
+                    {
+                        card: 'Card Type',
+                        x: 0,
+                        y: 0
+                    },
+                    {
+                        card: 'Card Type',
+                        x: 0,
+                        y: 0
+                    }
+                ],
+                draw_card: {
+                    card: 'Card Type',
+                    x: 0,
+                    y: 0
+                },
+                over_price : 0,
+                game_data: {
+                    current_round: 0,
+                    players_data: {
+                        'Nickname': {
+                            turn_count: 0,
+                            card_count: 0,
+                            state: 0
+                        },
+                        ...
+                    },
+                    pushed_deck: {
+                        'S1': {
+                            x: 0,
+                            y: 0,
+                        },
+                        ...
+                    },
+                    rounds_result: [
+                        {
+                            round: 1,
+                            players_score: {
+                                'Nickname': 0,
+                                ...
+                            }
+                        },
+                        ...
+                    ]
+                }
+            }
+            */
         });
     }
 }

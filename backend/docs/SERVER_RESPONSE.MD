@@ -22,10 +22,10 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 > **게임방**
 > - [RES_CREATE_ROOM](#res_create_room): 새로운 게임방 생성 응답
 > - [RES_JOIN_ROOM](#res_join_room): 게임방 참여 결과
-> - [RES_PLAYER_READY](#res_ready): 다른 플레이어 준비
-> - [RES_PLAYER_NOT_READY](#not_ready): 다른 플레이어 준비해제
 > - [RES_PLAYER_JOIN](#res_player_join): 다른 플레이어 참여
 > - [RES_PLAYER_LEAVE](#res_player_leave): 다른 플레이어 퇴장
+> - [RES_PLAYER_READY](#res_ready): 다른 플레이어 준비
+> - [RES_PLAYER_NOT_READY](#not_ready): 다른 플레이어 준비해제
 > <br>
 >
 > **대기열**
@@ -180,48 +180,6 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 ```
 <br>
 
-#### RES_PLAYER_READY
-- 다른 플레이어 준비
-```
-{
-    nickname : 'Nickname',
-    room_data : {
-        rid: 'Room ID',
-        host: 'Nickname',
-        name: 'Roomname',
-        player_limit: 0,
-        current_player_count: 0,
-        show_score: true,
-        round_count: 0,
-        ready_count: 0,
-        state: 0,
-        players: ['Nickname', ...]
-    } 
-}
-```
-<br>
-
-#### RES_PLAYER_NOT_READY
-- 다른 플레이어 준비해제
-```
-{
-    nickname : 'Nickname',
-    room_data : {
-        rid: 'Room ID',
-        host: 'Nickname',
-        name: 'Roomname',
-        player_limit: 0,
-        current_player_count: 0,
-        show_score: true,
-        round_count: 0,
-        ready_count: 0,
-        state: 0,
-        players: ['Nickname', ...]
-    } 
-}
-```
-<br>
-
 #### RES_PLAYER_JOIN
 - 다른 플레이어 참여
 ```
@@ -290,6 +248,48 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 ```
 <br>
 
+
+#### RES_PLAYER_READY
+- 다른 플레이어 준비
+```
+{
+    nickname : 'Nickname',
+    room_data : {
+        rid: 'Room ID',
+        host: 'Nickname',
+        name: 'Roomname',
+        player_limit: 0,
+        current_player_count: 0,
+        show_score: true,
+        round_count: 0,
+        ready_count: 0,
+        state: 0,
+        players: ['Nickname', ...]
+    } 
+}
+```
+<br>
+
+#### RES_PLAYER_NOT_READY
+- 다른 플레이어 준비해제
+```
+{
+    nickname : 'Nickname',
+    room_data : {
+        rid: 'Room ID',
+        host: 'Nickname',
+        name: 'Roomname',
+        player_limit: 0,
+        current_player_count: 0,
+        show_score: true,
+        round_count: 0,
+        ready_count: 0,
+        state: 0,
+        players: ['Nickname', ...]
+    } 
+}
+```
+<br>
 ### 대기열
 #### RES_JOIN_NORMAL_QUEUE
 - 일반게임 대기열 참가
