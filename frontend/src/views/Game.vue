@@ -229,6 +229,9 @@ export default {
             });
         },
         checkOverPrice() { // 플레이어의 카드 덱의 바가지 여부 확인
+            if(this.player_data.player_deck.length != 3)
+                return 0;
+                
             let cardNumbers = {};
             for (let card of this.player_data.player_deck) {
                 let cardNumber = String(card).substring(1);
@@ -238,9 +241,10 @@ export default {
                     cardNumbers[cardNumber] = true;
                 }
             }
+            
             return 0;
         },
-        isBbongAvailable(last_card) {
+        isBbongAvailable(last_card) { // 현재 플레이어가 뽕이 가능할 경우 true, 불가능할 경우 false
             const last_number = parseInt(String(last_card).substring(1)); // 입력된 카드에서 숫자 추출
             const number_count = {}; // 각 숫자별 카드 개수를 저장할 객체 생성
 
@@ -263,7 +267,7 @@ export default {
 
             return false;
         },
-        isNatureAvailable() {
+        isNatureAvailable() { // 현재 플레이어가 자연이 가능할 경우 true, 불가능할 경우 false
             console.log("자연 되는지 안되는지 실행됨");
             if (this.player_data.player_deck.length % 3 == 0) {
                 const counts = {};
@@ -287,7 +291,7 @@ export default {
             }
             return false;
         },
-        isMaidAvailable() { // 플레이어 카드가 메이드 가능 상태인 경우 true, 아닐 경우 false
+        isMadeAvailable() { // 플레이어 카드가 메이드 가능 상태인 경우 true, 아닐 경우 false
             console.log("메이드 되는지 안되는지 실행됨");
             if (this.player_data.player_deck.length == 6) {
                 var hand_card = [];
@@ -777,7 +781,7 @@ export default {
             this.game_data = data.game_data;
             this.player_data.player_deck.push(data.card);
             this.isBtnNatureActive = this.isNatureAvailable();
-            this.isBtnStopActive = this.isMaidAvailable();
+            this.isBtnStopActive = this.isMadeAvailable();
             // this.player_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
             if (this.player_data.player_deck.length > 2) {
                 var hand_card = [];
@@ -903,6 +907,7 @@ export default {
                 }
             }            
             */
+            this.game_data = data.game_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_DRAW_BBONG_CARD, (data) => { // 플레이어가 내려놓은 뽕에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
             /*
@@ -956,6 +961,7 @@ export default {
                 }
             }            
             */
+           this.game_data = data.game_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_NATURE, (data) => { // 플레이어가 내려놓은 자연에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
             /*
@@ -1014,6 +1020,7 @@ export default {
                 }
             }
             */
+           this.game_data = data.game_data;
         });
     }
 }
