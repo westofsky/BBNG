@@ -120,6 +120,7 @@ export default {
             player_data: {
                 player_deck: [],
             },
+            last_draw_player: '',
             notificationMessage: '',
             showNotification: false,
             notificationTimeout: 0,
@@ -336,6 +337,54 @@ export default {
         isSum4OrLessAvailable() { // 플레이어 카드가 2장이면서 4이하일 경우 true, 아닐 경우 false
             return (this.player_data.player_deck.length == 2 && ((parseInt(this.player_data.player_deck[0].match(/\d+/)[0]) + parseInt(this.player_data.player_deck[0].match(/\d+/)[1])) <= 4));
         },
+        checkEndType() {
+            if (this.player_data.player_deck.length == 6) {
+                var hand_card = [];
+                var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
+                for (var i = 1; i < 13; i++) {
+                    hand_card[i] = 0;
+                }
+                for (var i = 0; i < 6; i++) {
+                    hand_card[Number(this.player_data.player_deck[i].slice(1))]++;
+                    sum += Number(this.player_data.player_deck[i].slice(1));
+                }
+                for (var i = 1; i < 13; i++) {
+                    if (straight < 6) {
+                        if (hand_card[i] == 1) {
+                            if (straight == 0) {
+                                start = i;
+                            }
+                            straight++;
+                        }
+                        else {
+                            straight = 0;
+                        }
+                    }
+                    if (hand_card[i] == 2) {
+                        two++;
+                    }
+                    else if (hand_card[i] == 3) {
+                        three++;
+                    }
+                    else if (hand_card[i] == 4) {
+                        four++;
+                    }
+                }
+
+                if(four == 1 && two == 1) return game_const.GameEndType.TYPE_42;
+                if(sum <= 10) return game_const.GameEndType.TYPE_LOW;
+                if(three == 2) return game_const.GameEndType.TYPE_33;
+                if(sum >= 60) return game_const.GameEndType.TYPE_HIGH;
+                if(straight == 6) return game_const.GameEndType.TYPE_STRAIGHT;
+                if(two == 3) return game_const.GameEndType.TYPE_222;
+
+                return ((four == 1 && two == 1) || sum <= 10) || (three == 2 || sum >= 60) || (straight == 6) || (two == 3);
+            } else {
+                if(this.isOverPriceAvailable()) return game_const.GameEndType.TYPE_OVER_PRICE;
+                if(this.isSum4OrLessAvailable()) return game_const.GameEndType.TYPE_BBONG_LOW;
+                if(this.isNatureAvailable()) return game_const.GameEndType.TYPE_BBONG_NATURE;
+            }
+        },
         onBtnBbongClicked(bbongCards, drawCard) {
             this.isBtnBbongActive = false;
             this.isBtnNatureActive = false;
@@ -369,6 +418,12 @@ export default {
             this.isBtnNatureActive = false;
             this.isBtnStopActive = false;
 
+            this.$socket.value.emit(sock_const.RequestType.STOP, {
+                rid: this.room_data.rid,
+                nickname: this.$store.getters["Users/getUser_nickname"],
+                overprice_nickname: this.checkEndType() == game_const.GameEndType.TYPE_OVER_PRICE? this.last_draw_player:'',
+                type: this.checkEndType() 
+            });
         },
         showGameNotification(message) {
             this.notificationMessage = message;
@@ -782,52 +837,6 @@ export default {
             this.player_data.player_deck.push(data.card);
             this.isBtnNatureActive = this.isNatureAvailable();
             this.isBtnStopActive = this.isMadeAvailable();
-            // this.player_data.player_deck 이 6장 or 3장일때 메이드 확인해야함
-            if (this.player_data.player_deck.length > 2) {
-                var hand_card = [];
-                var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
-                for (var i = 1; i < 13; i++) {
-                    hand_card[i] = 0;
-                }
-                for (var i = 0; i < 6; i++) {
-                    hand_card[Number(this.player_data.player_deck[i].slice(1))]++;
-                    sum += Number(this.player_data.player_deck[i].slice(1));
-                }
-                for (var i = 1; i < 13; i++) {
-                    if (straight < 6) {
-                        if (hand_card[i] == 1) {
-                            if (straight == 0) {
-                                start = i;
-                            }
-                            straight++;
-                        }
-                        else {
-                            straight = 0;
-                        }
-                    }
-                    if (hand_card[i] == 2) {
-                        two++;
-                    }
-                    else if (hand_card[i] == 3) {
-                        three++;
-                    }
-                    else if (hand_card[i] == 4) {
-                        four++;
-                    }
-                }
-                if ((four == 1 && two == 1) || sum <= 10) {  // 4 2 메이드, low 메이드
-
-                }
-                else if (three == 2 || sum >= 60) { // 3 3 메이드, high 메이드
-
-                }
-                else if (straight == 6) { // 스트레이트
-
-                }
-                else if (two == 3) { // 2 2 2 메이드
-
-                }
-            }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 플레이어가 내려놓은 카드 정보 전달
             /*
@@ -869,6 +878,7 @@ export default {
                 }
             }
             */
+            this.last_draw_player = data.nickname;
             this.game_data = data.game_data;
             this.isBtnBbongActive = this.isBbongAvailable(data.draw_card.card);
             //뽕 가능 여부 확인 해야함 가능하면 버튼 활성화, 
