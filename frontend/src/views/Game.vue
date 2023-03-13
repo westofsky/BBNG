@@ -379,7 +379,7 @@ export default {
             }, 2000);
         },
         toggleScoreBoardDialog(event) {
-            if (event.keyCode === 192) {
+            if (this.room_data.show_score && event.keyCode === 192) {
                 this.isScoreBoardDialogVisible = !this.isScoreBoardDialogVisible;
                 if (this.isScoreBoardDialogVisible) {
                     this.$nextTick(() => {
