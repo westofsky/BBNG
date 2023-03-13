@@ -7,7 +7,7 @@
                     <label class="BtnText" style="user-select: none; flex: 1;">How to Play?</label>
                 </div>
             </div>
-            <Rooms ref="RoomComponent"/>
+            <Rooms ref="RoomComponent" />
             <div class="BtnArea">
                 <div class="Btn BtnQuickMatch RoundBorder" @click="btnQuickMatchClicked">
                     <label class="BtnText" style="user-select: none; flex: 1;">빠른매칭</label>
@@ -25,8 +25,9 @@
                 <img class="AccountImage" src="../assets/images/icon_account.png" />
                 <label class="UserName">{{ nickname }}</label>
             </div>
-            <Friends ref="FriendsComponent"/>
-            <Chatting ref="ChattingComponent" :request-type="chatRequestType" :response-type="chatResponseType" :chatting-delay-time="3"/>
+            <Friends ref="FriendsComponent" />
+            <Chatting ref="ChattingComponent" :request-type="chatRequestType" :response-type="chatResponseType"
+                :chatting-delay-time="3" />
         </div>
         <div class="popup_rules" v-if="isRuleActive">
             <Rules @event-isRules="setIsRuleActive" />

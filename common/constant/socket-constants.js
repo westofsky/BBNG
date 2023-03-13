@@ -9,7 +9,7 @@ const RequestType = {
 
     // Info Event
     ROOM_LIST: 0,
-    GET_ONLINE_LIST : 0,
+    ONLINE_LIST : 0,
 
     // Room Event
     CREATE_ROOM: 0,

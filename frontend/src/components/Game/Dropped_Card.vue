@@ -1,29 +1,26 @@
 <template>
-    <div
-      class="dropped_card small"
-      :style="{
-        'background-image': `url(${getImageSrc()})`,
-      }"
-    ></div>
-  </template>
+  <div class="dropped_card small" :style="{
+    'background-image': `url(${getImageSrc()})`,
+  }"></div>
+</template>
   
-  <script>
-  export default {
-    props : {
-        name: String,
+<script>
+export default {
+  props: {
+    name: String,
+  },
+  data() {
+    return {
+    };
+  },
+  methods: {
+    getImageSrc() {
+      return require(`../../assets/images/cards/${this.name}.png`);
     },
-    data() {
-      return {
-      };
-    },
-    methods: {
-        getImageSrc(){
-            return require(`../../assets/images/cards/${this.name}.png`);
-        },
-    },
-    mounted() {
-    }
-  };
+  },
+  mounted() {
+  }
+};
 </script>
   
 <style>
@@ -34,9 +31,10 @@
   background-size: cover;
   box-sizing: border-box;
 }
+
 .small {
-    width: 4vw;
-    height: 5.6vw;
+  width: 4vw;
+  height: 5.6vw;
 }
-  </style>
+</style>
   

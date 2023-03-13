@@ -1,7 +1,6 @@
 <template>
-  <div class="square" :class="[{'border-highlight':highlight},{'small' : toSmall}]" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" @mousedown="handleMouseDown"
-    @mouseup="handleMouseUp" ref = "cardDiv"
-    :style="{
+  <div class="square" :class="[{ 'border-highlight': highlight }, { 'small': toSmall }]" @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave" @mousedown="handleMouseDown" @mouseup="handleMouseUp" ref="cardDiv" :style="{
       zIndex: zIndex,
       left: x + 'px',
       top: y + 'px',
@@ -14,9 +13,9 @@
 export default {
   props: {
     name: String,
-    card_index : Number,
-    isDraggable : Boolean,
-    card_length : Number,
+    card_index: Number,
+    isDraggable: Boolean,
+    card_length: Number,
   },
   data() {
     return {
@@ -31,25 +30,25 @@ export default {
       initialY: 0,
       highlight: false,
       zIndex: 1,
-      toSmall : false,
+      toSmall: false,
     };
   },
   methods: {
-    getImageSrc(){
-        return require(`../../assets/images/cards/${this.name}.png`);
+    getImageSrc() {
+      return require(`../../assets/images/cards/${this.name}.png`);
     },
     handleMouseEnter() {
-      if(this.isDraggable){
-          if (!this.isDragging) {
+      if (this.isDraggable) {
+        if (!this.isDragging) {
           // 해당 카드 강조 효과 및 가장 앞으로 가져오기
-            this.highlight = true;
-            this.zIndex = 10;
+          this.highlight = true;
+          this.zIndex = 10;
         }
       }
-      
+
     },
     handleMouseLeave() {
-      if(this.isDraggable){
+      if (this.isDraggable) {
         if (!this.isDragging) {
           this.highlight = false;
           this.zIndex = 1;
@@ -57,31 +56,31 @@ export default {
       }
     },
     handleMouseDown(event) { // 카드를 집었을때의 event
-      if(this.isDraggable){
+      if (this.isDraggable) {
         this.initialX = event.clientX - this.x;
         this.initialY = event.clientY - this.y;
         this.isDragging = true;
       }
     },
-    
+
     handleMouseUp() { // 카드를 놓았을때의 event
-      this.isDragging = false; 
-      if(this.y>=-500 && this.y<=-50 && this.x>=(this.card_index-1)*(-100)-160 + (this.card_length/3-1)*140 && this.x<=460+(this.card_length/3-1)*140 - (this.card_index)*100){
+      this.isDragging = false;
+      if (this.y >= -500 && this.y <= -50 && this.x >= (this.card_index - 1) * (-100) - 160 + (this.card_length / 3 - 1) * 140 && this.x <= 460 + (this.card_length / 3 - 1) * 140 - (this.card_index) * 100) {
         this.highlight = false;
         const width = this.$refs.cardDiv.offsetWidth;
         // console.log(`너비 : ${width}px`);
-        this.$emit("set-draggable", {pos : false, name : this.name, top : this.y, index : this.card_index, left : this.x});
+        this.$emit("set-draggable", { pos: false, name: this.name, top: this.y, index: this.card_index, left: this.x });
         this.x = 0;
         this.y = 0;
         // this.toSmall = true;
       }
-      else{
+      else {
         this.x = 0;
         this.y = 0;
       }
     },
     handleMouseMove(event) {
-      if(this.isDraggable){
+      if (this.isDraggable) {
         if (this.isDragging) {
           this.currentX = event.clientX - this.initialX;
           this.currentY = event.clientY - this.initialY;
@@ -90,7 +89,7 @@ export default {
           console.log(this.x);
         }
       }
-      
+
     }
   },
   mounted() {

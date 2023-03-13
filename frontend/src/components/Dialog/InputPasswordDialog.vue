@@ -14,8 +14,7 @@
                         <div class="BtnCancel" @click="$emit('close')">
                             <label class="BtnText">취소</label>
                         </div>
-                        <button v-bind:disabled="password.length == 0" class="BtnJoin BtnText"
-                            @click="joinRoom">참여</button>
+                        <button v-bind:disabled="password.length == 0" class="BtnJoin BtnText" @click="joinRoom">참여</button>
                     </div>
                 </div>
             </div>

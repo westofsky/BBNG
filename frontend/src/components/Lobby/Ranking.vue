@@ -5,9 +5,9 @@
         <div style="overflow: auto; flex: 1;">
             <div class="RankInfoArea" v-for="rankInfo in rankList">
                 <img class="TierImage" src="../../assets/images/tier_challenger.png" />
-                <label class="Nickname" >{{ rankInfo.nick }}</label>
-                <img class="IconRankPoint" src="../../assets/images/icon_rankpoint.png"/>
-                <label class="RankPoint" >{{ rankInfo.rank_point }}</label>
+                <label class="Nickname">{{ rankInfo.nick }}</label>
+                <img class="IconRankPoint" src="../../assets/images/icon_rankpoint.png" />
+                <label class="RankPoint">{{ rankInfo.rank_point }}</label>
             </div>
         </div>
     </div>
@@ -57,7 +57,7 @@ export default {
     margin: 8px;
 }
 
-.RankInfoArea:hover{
+.RankInfoArea:hover {
     background-color: #acacac;
 }
 

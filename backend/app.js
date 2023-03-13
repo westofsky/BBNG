@@ -108,14 +108,14 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     console.log('Socket Event(ADD_USER_TO_LIST): Connected client list\n########################\n' + JSON.stringify(clientListBySocket) + '\n########################');
   });
 
-  // Socket Listener Event - 온라인 상태 친구목록 요청
-  socket.on(sock_const.RequestType.GET_ONLINE_LIST, () => {
+  // Socket Listener Event - 온라인 상태 목록 요청
+  socket.on(sock_const.RequestType.ONLINE_LIST, () => {
     let onlineList = [];
     for (var i = 0; i < Object.values(clientListBySocket).length; i++) {
       onlineList.push(Object.values(clientListBySocket)[i].nickname);
     }
     socket.emit(sock_const.ResponseType.RES_ONLINE_LIST, onlineList);
-    console.log("Socket Event(GET_ONLINE_LIST): Player '" + clientListBySocket[socket.id].nickname + "' request online friend list");
+    console.log("Socket Event(ONLINE_LIST): Player '" + clientListBySocket[socket.id].nickname + "' request online list");
   });
 
   // Socket Listener Event - Lobby에 참여
@@ -128,24 +128,22 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   // Socket Listener Event - Lobby로 전체 메세지 전달
   socket.on(sock_const.RequestType.SEND_MSG_TO_LOBBY, function (data) {
     socket.broadcast.to(sock_const.ChatroomType.LOBBY).emit(sock_const.ResponseType.BROADCAST_LOBBY_MSG, data);
-
-    console.log("Socket Event(SEND_MSG_TO_LOBBY): Player '" + clientListBySocket[socket.id].nickname + "' send message '" + data.message + "' to lobby");
+    console.log("Socket Event(SEND_MSG_TO_LOBBY): Player '" + data.nickname + "' send message '" + data.message + "' to lobby");
   });
 
   // Socket Listener Event - Room으로 채팅 메세지 전달
   socket.on(sock_const.RequestType.SEND_MSG_TO_ROOM, function (data) {
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.BROADCAST_ROOM_MSG, data);
-
-    console.log("Socket Event(SEND_MSG_TO_ROOM): Player '" + clientListBySocket[socket.id].nickname + "' send message '" + data.message + "' to room '" + data.rid + "'");
+    console.log("Socket Event(SEND_MSG_TO_ROOM): Player '" + data.nickname + "' send message '" + data.message + "' to room '" + data.rid + "'");
   });
 
   // Socket Listener Event - 사용자 설정 방 생성
   socket.on(sock_const.RequestType.CREATE_ROOM, (data) => {
-    data.rid = createRoomId((data.host + (new Date()).toLocaleString()));
-    data['game_data'] = {
-      current_round: 0,
+    data.room_data.rid = createRoomId((data.room_data.host + (new Date()).toLocaleString()));
+    data.room_data.game_data = {
+      current_round: -1,
       players_data: {
-        [data.host]: {
+        [data.room_data.host]: {
           turn_count: 0,
           cards: [],
           state: 0,
@@ -153,17 +151,17 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       },
       deck: [],
-      push_deck: {},
-      round_result: [],
+      pushed_deck: {},
+      rounds_result: [],
     }
-    gameRoomList[data.rid] = data;
+    gameRoomList[data.room_data.rid] = data.room_data;
     socket.leave(sock_const.ChatroomType.LOBBY);
-    socket.join(data.rid);
-    clientListBySocket[socket.id].rid = data.rid;
-    clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.rid;
+    socket.join(data.room_data.rid);
+    clientListBySocket[socket.id].rid = data.room_data.rid;
+    clientListByNickname[clientListBySocket[socket.id].nickname].rid = data.room_data.rid;
     socket.emit(sock_const.ResponseType.RES_CREATE_ROOM, {
-      room_data: filterRoomData(data.rid),
-      game_data: filterGameData(data.rid)
+      room_data: filterRoomData(data.room_data.rid),
+      game_data: filterGameData(data.room_data.rid)
     });
     console.log("Socket Event(CREATE_ROOM): Created room list\n########################\n" + JSON.stringify(gameRoomList) + '\n########################');
   });
@@ -175,8 +173,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         if (data.password == gameRoomList[data.rid].password) { // 참여하려는 방의 비밀번호가 일치할 경우
           socket.leave(sock_const.ChatroomType.LOBBY);
           socket.join(data.rid);
-          gameRoomList[data.rid]['players'].push(data.nickname);
-          gameRoomList[data.rid]['game_data']['players_data'][data.nickname] = {
+          gameRoomList[data.rid].players.push(data.nickname);
+          gameRoomList[data.rid].game_data.players_data[data.nickname] = {
             turn_count: 0,
             cards: [],
             state: 0,
@@ -220,9 +218,16 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // Socket Listener Event - 사용자 설정 방 떠나기
   socket.on(sock_const.RequestType.LEAVE_ROOM, (data) => {
+    // room_data의 플레이어 목록에서 해당 플레이어 제거
     gameRoomList[data.rid].players = gameRoomList[data.rid].players.filter(function (player) {
       return player.nickname !== nickname
     });
+    gameRoomList[data.rid].current_player_count -= 1;
+
+    if (gameRoomList[data.rid].state == game_const.GameState.WAITING) { // 게임이 진행 중이 아닐 경우, game_data에서도 제거
+      delete gameRoomList[data.rid].game_data.players_data[data.nickname];
+    }
+
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
       nickname: data.nickname,
       room_data: filterRoomData(data.rid),
@@ -237,7 +242,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     for (let rid in gameRoomList) {
       gameRoomListSendData[rid] = Object.assign({}, gameRoomList[rid]);
       excludeProps.forEach(key => delete gameRoomListSendData[rid][key]);
-      gameRoomListSendData[rid]['password_required'] = (gameRoomList[rid].password != '');
+      gameRoomListSendData[rid].password_required = (gameRoomList[rid].password != '');
     }
     socket.emit(sock_const.ResponseType.RES_ROOM_LIST, gameRoomListSendData);
     console.log("Socket Event(ROOM_LIST): Player '" + clientListBySocket[socket.id].nickname + "' request created room list");
@@ -260,14 +265,18 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       } else { // 방에 다른 플레이어가 남아있을 경우
         console.log("Room Event: Player '" + nickname + "' has been removed from room '" + JSON.stringify(gameRoomList[joinedGameRoom]) + "'");
         // 게임이 진행 중일 경우와 진행 중이지 않을 경우에 따라 플레이어 목록에서 플레이어를 제거할지 제거하지 않을 지에 대한 로직 추가 필요
-        //
-
         gameRoomList[joinedGameRoom].players = gameRoomList[joinedGameRoom].players.filter(function (player) {
           return player.nickname !== nickname
         });
+        if (gameRoomList[joinedGameRoom].state == game_const.GameState.WAITING) { // 게임이 진행 중이 아닐 경우, game_data에서도 제거
+          delete gameRoomList[joinedGameRoom].game_data.players_data[data.nickname];
+        }
+        gameRoomList[joinedGameRoom].current_player_count -= 1;
+
         io.to(joinedGameRoom).emit(sock_const.ResponseType.RES_PLAYER_LEAVE, {
           nickname: nickname,
           room_data: filterRoomData(joinedGameRoom),
+          game_data: filterGameData(joinedGameRoom)
         });
       }
     }
@@ -281,11 +290,16 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     gameRoomList[data.rid].ready_count += 1;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_READY, { // 다른 플레이어에게 해당 플레이어가 Ready 했다고 알림.
       nickname: data.nickname,
-      room_data: filterRoomData(data.rid)
+      room_data: filterRoomData(data.rid),
+      game_data: filterGameData(data.rid)
     });
     if (gameRoomList[data.rid].player_limit == gameRoomList[data.rid].ready_count) { // 모든 플레이어가 Ready 했을 경우.
       gameRoomList[data.rid].state = game_const.GameState.PLAYING;
-      io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START, {room_data: filterRoomData(data.rid)}); // 모든 플레이어에게 게임이 시작되었다고 알림.
+      gameRoomList[data.rid].game_data.current_round = 0;
+      io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_START, {
+        room_data: filterRoomData(data.rid),
+        game_data: filterGameData(data.rid)
+      }); // 모든 플레이어에게 게임이 시작되었다고 알림.
 
       setTimeout(function () { // 3초 뒤에 모든 플레이어에게 라운드가 시작되었다고 알림.
         console.log('delay');
@@ -307,9 +321,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         player_turn:
           gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit))].nickname,
         round: gameRoomList[data.rid].game_data.current_round,
-        game_data: filterGameData(data.rid),
+        game_data: filterGameData(data.rid)
       });
-      
+
       setTimeout(function () { // 3초 뒤에 각각의 플레이어에게 카드 배분.
         console.log('delay');
       }, 3000);
@@ -335,7 +349,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     gameRoomList[data.rid].ready_count -= 1;
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_PLAYER_NOT_READY, {
       nickname: data.nickname,
-      room_data: filterRoomData(data.rid)
+      room_data: filterRoomData(data.rid),
+      game_data: filterGameData(data.rid)
     })
     console.log("Room Event: Player '" + data.nickname + "' not ready");
   })
@@ -589,7 +604,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       game_data: filterGameData(data.rid)
     })
     gameRoomList[data.rid].game_data.current_round++;
-    if(gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count){
+    if (gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count) {
       setTimeout(function () { // 최종 라운드 종료 후 2초 뒤에 게임종료.
         console.log('delay');
       }, 2000);
@@ -642,18 +657,18 @@ function shuffleDeck(deck) {
 }
 
 function filterRoomData(rid) {
-  return {...gameRoomList[rid], password: undefined, game_data: undefined};
+  return { ...gameRoomList[rid], password: undefined, game_data: undefined };
 }
 
 function filterGameData(rid) {
-  const { players_data, deck, filteredData} = gameRoomList[rid]['game_data'];
-  filteredData['players_data'] = []
-  const nicknames = Object.keys(gameRoomList[rid]['game_data']['players_data']);
+  const { players_data, deck, ...filteredData } = gameRoomList[rid].game_data;
+  filteredData.players_data = {};
+  const nicknames = Object.keys(gameRoomList[rid].game_data.players_data);
   nicknames.forEach(nickname => {
-    filteredData['players_data'][nickname] = {
-      turn_count: gameRoomList[rid]['game_data']['players_data'][nickname]['turn_count'],
-      card_count: gameRoomList[rid]['game_data']['players_data'][nickname]['cards'].length,
-      state: gameRoomList[rid]['game_data']['players_data'][nickname]['state']
+    filteredData.players_data[nickname] = {
+      turn_count: gameRoomList[rid].game_data.players_data[nickname].turn_count,
+      card_count: gameRoomList[rid].game_data.players_data[nickname].cards.length,
+      state: gameRoomList[rid].game_data.players_data[nickname].state
     }
   });
   return filteredData;
@@ -663,14 +678,14 @@ function filterGameData(rid) {
 function threecard_except(cards) {
   var number = 0, flag = 0;
   var hand_card = [];
-  for (var i = 1; i < 13; i++){
+  for (var i = 1; i < 13; i++) {
     hand_card[i] = 0;
   }
-  for (var i = 0; i < 6; i++){
+  for (var i = 0; i < 6; i++) {
     hand_card[Number(cards[i].slice(1))]++;
   }
-  for (var i = 1; i < 13; i++){
-    if(hand_card[i] >= 3){
+  for (var i = 1; i < 13; i++) {
+    if (hand_card[i] >= 3) {
       number = i;
       break;
     }

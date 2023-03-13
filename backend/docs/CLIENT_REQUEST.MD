@@ -16,11 +16,11 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 >
 > **목록**
 > - [ROOM_LIST](#room_list): 개설된 사용자 설정 게임방 목록
-> - [GET_ONLINE_LIST](#get_online_list): 현재 접속 중인 사용자 목록
+> - [ONLINE_LIST](#online_list): 현재 접속 중인 사용자 목록
 > <br>
 >
 > **게임방**
-> - [CREATE_ROOM](#creat_room): 새로운 게임방 생성
+> - [CREATE_ROOM](#create_room): 새로운 게임방 생성
 > - [JOIN_ROOM](#join_room): 게임방 참여
 > - [LEAVE_ROOM](#leave_room): 게임방 퇴장
 > - [READY](#ready): 준비
@@ -88,7 +88,7 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 ```
 <br>
 
-#### GET_ONLINE_LIST
+#### ONLINE_LIST
 - 현재 접속 중인 사용자 목록
 ```
 {
@@ -341,6 +341,7 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 {
     rid: 'Room ID',
     nickname: 'Nickname',
+    overprice_nickname: 'Nickname',
     type: GameEndType.TYPE_222 / GameEndType.TYPE_33 / GameEndType.TYPE_42 / GameEndType.TYPE_LOW / GameEndType.TYPE_HIGH / GameEndType.TYPE_STRAIGHT / GameEndType.TYPE_OVER_PRICE / GameEndType.TYPE_BBONG_LOW / GameEndType.TYPE_BBONG_NATURE
 }
 ```
