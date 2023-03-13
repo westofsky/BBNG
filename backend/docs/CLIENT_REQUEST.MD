@@ -341,6 +341,7 @@ CLIENT_REQUEST.MD에는 클라이언트가 서버에 요청을 보내는 Request
 {
     rid: 'Room ID',
     nickname: 'Nickname',
+    overprice_nickname: 'Nickname',
     type: GameEndType.TYPE_222 / GameEndType.TYPE_33 / GameEndType.TYPE_42 / GameEndType.TYPE_LOW / GameEndType.TYPE_HIGH / GameEndType.TYPE_STRAIGHT / GameEndType.TYPE_OVER_PRICE / GameEndType.TYPE_BBONG_LOW / GameEndType.TYPE_BBONG_NATURE
 }
 ```
