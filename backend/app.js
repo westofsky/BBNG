@@ -305,10 +305,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         console.log('delay');
       }, 3000);
 
-      for (var i = 0; i < gameRoomList[data.rid].player_limit; i++) {
-        gameRoomList[data.rid].game_data.player.push(
+      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+        gameRoomList[data.rid].game_data.players_data[nickname].push(
           {
-            nickname: [gameRoomList[data.rid].players[i].nickname],
             turn_count: 0,
             cards: [],
             state: 0,
