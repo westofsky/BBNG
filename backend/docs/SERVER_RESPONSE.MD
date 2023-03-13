@@ -290,6 +290,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 }
 ```
 <br>
+
 ### 대기열
 #### RES_JOIN_NORMAL_QUEUE
 - 일반게임 대기열 참가
