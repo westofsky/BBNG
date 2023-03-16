@@ -354,18 +354,18 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // Socket Listener Event(Game) - 카드뽑기 요청
   socket.on(sock_const.RequestType.GET_CARD, (data) => {
-    
+
     gameRoomList[data.rid].game_data.players_data[data.nickname].cards.push(gameRoomList[data.rid].game_data.deck.slice(0, 1));
     let return_card = gameRoomList[data.rid].game_data.deck.splice(0, 1);
-    
+
     if (gameRoomList[data.rid].game_data.deck.length == 0) {
       gameRoomList[data.rid].game_data.deck = shuffleDeck(Object.keys(gameRoomList[data.rid].game_data.pushed_deck));
       gameRoomList[data.rid].game_data.pushed_deck = new Map();
     }
     io.to(data.rid).emit(sock_const.ResponseType.RES_GET_CARD, {
-        nickname: data.nickname,
-        card: return_card[0],
-        game_data: filterGameData(data.rid)
+      nickname: data.nickname,
+      card: return_card[0],
+      game_data: filterGameData(data.rid)
     })
   })
 
@@ -395,11 +395,14 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       draw_card: data.card,
       game_data: filterGameData(data.rid)
     })
-    var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
-    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
-      nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
-      game_data: filterGameData(data.rid)
-    })
+    setTimeout(function () { // 최종 라운드 종료 후 2초 뒤에 게임종료.
+
+      var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
+      socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
+        nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
+        game_data: filterGameData(data.rid)
+      })
+    }, 1000);
   })
 
   // 뽕 이후 순서 변경
