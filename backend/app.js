@@ -301,41 +301,37 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         game_data: filterGameData(data.rid)
       }); // 모든 플레이어에게 게임이 시작되었다고 알림.
 
-      setTimeout(function () { // 3초 뒤에 모든 플레이어에게 라운드가 시작되었다고 알림.
-        console.log('delay');
-      }, 3000);
-
-      for (nickname in Object.keys(gameRoomList[data.rid].game_data.players_data)){
-        gameRoomList[data.rid].game_data.players_data[nickname] = {
+      setTimeout(function () { // 1초 뒤에 모든 플레이어에게 라운드가 시작되었다고 알림.
+        for (nickname in Object.keys(gameRoomList[data.rid].game_data.players_data)) {
+          gameRoomList[data.rid].game_data.players_data[nickname] = {
             turn_count: 0,
             cards: [],
             state: 0,
             over_price: 0,
           };
-      }
+        }
 
-      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, { // 모든 플레이어에게 라운드가 시작되었다고 알림.
-        player_turn:
-          gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit))].nickname,
-        round: gameRoomList[data.rid].game_data.current_round,
-        game_data: filterGameData(data.rid)
-      });
+        io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, { // 모든 플레이어에게 라운드가 시작되었다고 알림.
+          player_turn:
+            gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit))].nickname,
+          round: gameRoomList[data.rid].game_data.current_round,
+          game_data: filterGameData(data.rid)
+        });
 
-      setTimeout(function () { // 3초 뒤에 각각의 플레이어에게 카드 배분.
-        console.log('delay');
-      }, 3000);
-
-      var j = 0;
-      gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
-      for (nickname in Object.keys(gameRoomList[data.rid].game_data.players_data)){
-        gameRoomList[data.rid].game_data.players_data[nickname].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
-        io.to(clientListByNickname[nickname].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
-          cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5),
-          game_data: filterGameData(data.rid),
-        })
-        j += 5;
-      }
-      gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
+        setTimeout(function () { // 1초 뒤에 각각의 플레이어에게 카드 배분.
+          var j = 0;
+          gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
+          for (nickname in Object.keys(gameRoomList[data.rid].game_data.players_data)) {
+            gameRoomList[data.rid].game_data.players_data[nickname].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
+            io.to(clientListByNickname[nickname].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
+              cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5),
+              game_data: filterGameData(data.rid),
+            })
+            j += 5;
+          }
+          gameRoomList[data.rid].game_data.deck.splice(0, 5 * gameRoomList[data.rid].player_limit);
+        }, 1000);
+      }, 1000);
     }
 
     console.log("Room Event: Player '" + data.nickname + "' ready");
@@ -393,16 +389,13 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     })
     var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
-      nickname: players[((players.indexOf(data.nickname))+1)%gameRoomList[data.rid].player_limit],
+      nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
       game_data: filterGameData(data.rid)
     })
   })
 
   // 뽕 이후 순서 변경
   socket.on(sock_const.RequestType.BBONG, (data) => {
-    setTimeout(function () { // 뽕 한사람으로 턴이 넘어감으로 잠시 정지
-      console.log('delay');
-    }, 3000);
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_BBONG, {
       nickname: data.nickname,
       game_data: filterGameData(data.rid)
@@ -439,7 +432,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     })
     var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
-      nickname: players[((players.indexOf(data.nickname))+1)%gameRoomList[data.rid].player_limit],
+      nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
       game_data: filterGameData(data.rid)
     })
   });
@@ -473,7 +466,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     })
     var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
     socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
-      nickname: players[((players.indexOf(data.nickname))+1)%gameRoomList[data.rid].player_limit],
+      nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
       game_data: filterGameData(data.rid)
     })
   });
@@ -481,8 +474,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   // 스탑(뽕 상태 스탑, 메이드) 처리 로직
   socket.on(sock_const.RequestType.STOP, (data) => {
     var card_sum = 0;
-    if (data.type == game_const.GameEndType.TYPE_LOW || data.type ==  game_const.GameEndType.TYPE_42) { // low, 4 2
-      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
+    if (data.type == game_const.GameEndType.TYPE_LOW || data.type == game_const.GameEndType.TYPE_42) { // low, 4 2
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = -100;
         }
@@ -495,8 +488,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
     }
-    else if (data.type == game_const.GameEndType.TYPE_HIGH || data.type ==  game_const.GameEndType.TYPE_33) {  // 3 3, high
-      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
+    else if (data.type == game_const.GameEndType.TYPE_HIGH || data.type == game_const.GameEndType.TYPE_33) {  // 3 3, high
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = -60;
         }
@@ -510,7 +503,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     else if (data.type == game_const.GameEndType.TYPE_STRAIGHT) {  // 스트레이트
-      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
         for (var k = 0; k < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; k++) {
           card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[k].slice(1));
         }
@@ -523,8 +516,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
     }
-    else if (data.type == game_const.GameEndType.TYPE_222 || data.type ==  game_const.GameEndType.TYPE_BBONG_NATURE) {  // 2 2 2, 뽕 상태에서 같은 카드 3장일 때 스탑
-      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
+    else if (data.type == game_const.GameEndType.TYPE_222 || data.type == game_const.GameEndType.TYPE_BBONG_NATURE) {  // 2 2 2, 뽕 상태에서 같은 카드 3장일 때 스탑
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = 0;
         }
@@ -540,7 +533,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     else if (data.type == game_const.GameEndType.TYPE_BBONG_LOW) {  // 뽕 스탑
       var flag = 0;
       var mycard_sum = Number(gameRoomList[data.rid].game_data.players_data[data.nickname].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.players_data[data.nickname].cards[1].slice(1))
-      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
         if (gameRoomList[data.rid].game_data.players_data[nickname].state != 0 && nickname != data.nickname) {
           if (mycard_sum >= Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[1].slice(1)))
             flag++
@@ -548,7 +541,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
       if (flag == 0) {  // 자기보다 낮은숫자의 카드가 없을 때
-        for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
+        for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
           if (nickname == data.nickname) {
             gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = 0;
           }
@@ -562,7 +555,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
       else { // 자기보다 낮은숫자의 카드가 있을 때
-        for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
+        for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
           for (var k = 0; k < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; k++) {
             card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[k].slice(1));
           }
@@ -576,14 +569,14 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
     }
-    else if(data.type == game_const.GameEndType.TYPE_OVER_PRICE){ // 바가지 처리
-      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
-        for (var i= 0; i < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; i++) {
+    else if (data.type == game_const.GameEndType.TYPE_OVER_PRICE) { // 바가지 처리
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])) {
+        for (var i = 0; i < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; i++) {
           card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[i].slice(1));
         }
         if (nickname == data.overprice_nickname) { // 바가지 먹은 사람
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].
-          players_score[data.overprice_nickname] = card_sum + 30 - threecard_except(gameRoomList[data.rid].game_data.players_data[data.overprice_nickname].cards) * 3;
+            players_score[data.overprice_nickname] = card_sum + 30 - threecard_except(gameRoomList[data.rid].game_data.players_data[data.overprice_nickname].cards) * 3;
         }
         else if (nickname == data.nickname) {  // 바가지 먹인 사람
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = 0;
@@ -603,12 +596,11 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     gameRoomList[data.rid].game_data.current_round++;
     if (gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count) {
       setTimeout(function () { // 최종 라운드 종료 후 2초 뒤에 게임종료.
-        console.log('delay');
+        io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GAME_END, {
+          room_data: filterRoomData(data.rid),
+          game_data: filterGameData(data.rid)
+        });
       }, 2000);
-      io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GAME_END, {
-        room_data: filterRoomData(data.rid),
-        game_data: filterGameData(data.rid)
-      });
     }
   });
 });
