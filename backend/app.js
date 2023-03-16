@@ -362,7 +362,8 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       gameRoomList[data.rid].game_data.deck = shuffleDeck(Object.keys(gameRoomList[data.rid].game_data.pushed_deck));
       gameRoomList[data.rid].game_data.pushed_deck = new Map();
     }
-    socket.emit(sock_const.ResponseType.RES_GET_CARD, {
+    io.to(data.rid).emit(sock_const.ResponseType.RES_GET_CARD, {
+        nickname: data.nickname,
         card: return_card[0],
         game_data: filterGameData(data.rid)
     })
