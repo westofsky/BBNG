@@ -50,8 +50,8 @@
                         <div v-for="(o_card, index) in other_cards(game_data.players_data)" :key="index"
                             :class="[{ other_card: true }, { isLeft: getLeft(index) }, { isRight: getRight(index) }]"
                             :style="{
-                                transform: `rotate(${180 - (game_data.players_data.size - 2) * 45 + (index) * 90}deg)`,
-                                top: (index == 0 || index == game_data.players_data.size - 2) ? 10 + (game_data.players_data.size - 3) * 30 + '%' : '0%',
+                                transform: `rotate(${180 - (get_length() - 2) * 45 + (index) * 90}deg)`,
+                                top: (index == 0 || index == get_length() - 2) ? 10 + (get_length() - 3) * 30 + '%' : '0%',
                             }">
                             <Other_Card v-for="index in o_card" :key="index"
                                 :image_src="require(`../assets/images/cards/back_card.png`)" :style="{
@@ -172,18 +172,25 @@ export default {
                     other_card.push(data.card_count);
                 }
             }
+            console.log("-------------상대방 card 표현-------");
+            console.log(other_card);
+            console.log("------------players_data-------");
+            console.log(this.game_data.players_data);
             return other_card;
         },
+        get_length(){
+            return Object.keys(this.game_data.players_data).length;
+        },
         getLeft(index) {
-            if (parseInt((this.game_data.players_data.size - 1) / 2) > index)
+            if (parseInt((this.get_length() - 1) / 2) > index)
                 return true;
-            else if (this.game_data.players_data.size == 2 && index == 1)
+            else if (this.get_length() == 2 && index == 1)
                 return true;
             else
                 return false;
         },
         getRight(index) {
-            if (parseInt((this.game_data.players_data.size - 1) / 2) <= index)
+            if (parseInt((this.get_length() - 1) / 2) <= index)
                 return true;
             else
                 return false;
@@ -273,8 +280,9 @@ export default {
             if (this.player_data.player_deck.length % 3 == 0) {
                 const counts = {};
                 // 뒷 숫자만 추출하여 count를 증가시킴
+                console.log(this.player_data.player_deck[0]);
                 for (let i = 0; i < this.player_data.player_deck.length; i++) {
-                    const num = this.player_data.player_deck[i].substring(1);
+                    const num = this.player_data.player_deck[i].toString().substring(1);
                     counts[num] = (counts[num] || 0) + 1;
                 }
                 // 같은 숫자가 3개 이상인지 확인
@@ -668,6 +676,8 @@ export default {
             this.isBtnBbongActive = false;
             this.isBtnNatureActive = this.isNatureAvailable();
             this.isBtnStopActive = false;
+            console.log("-----------누구턴인가여-----------");
+            console.log(data.player_turn);
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
                 this.isClickable = true;
                 this.showGameNotification("당신의 차례입니다.");
@@ -796,6 +806,8 @@ export default {
             }
             */
             this.game_data = data.game_data;
+            console.log("-----------게임데이터-----------");
+            console.log(data.game_data);
             this.player_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });

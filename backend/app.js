@@ -313,7 +313,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
         io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, { // 모든 플레이어에게 라운드가 시작되었다고 알림.
           player_turn:
-            gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit))].nickname,
+            gameRoomList[data.rid].players[Math.floor(Math.random() * (gameRoomList[data.rid].player_limit))],
           round: gameRoomList[data.rid].game_data.current_round,
           game_data: filterGameData(data.rid)
         });
@@ -369,7 +369,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   // 게임방 카드 한장 버리기
   socket.on(sock_const.RequestType.DRAW_CARD, (data) => {
     gameRoomList[data.rid].game_data.players_data[data.nickname].cards = gameRoomList[data.rid].game_data.players_data[data.nickname].cards.filter(item => item !== data.card.draw_card);
-    gameRoomList[data.rid].game_data.push_deck.push(data.card.draw_card);
+    gameRoomList[data.rid].game_data.pushed_deck[data.card.draw_card] = new Map();
     gameRoomList[data.rid].game_data.pushed_deck[data.card.draw_card].x = data.card.x;
     gameRoomList[data.rid].game_data.pushed_deck[data.card.draw_card].y = data.card.y;
     if (data.over_price == 0 && gameRoomList[data.rid].game_data.players_data[data.nickname].state == 1) {
@@ -413,7 +413,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   // 뽕 처리
   socket.on(sock_const.RequestType.DRAW_BBONG_CARD, (data) => {
     gameRoomList[data.rid].game_data.players_data[data.nickname].cards = gameRoomList[data.rid].game_data.players_data[data.nickname].cards.filter(item => item !== data.bbong_cards[0].card && item !== data.bbong_cards[1].card && item !== data.draw_card.card);
-    gameRoomList[data.rid].game_data.push_deck.push(data.bbong_cards[0].card, data.bbong_cards[1].card, data.draw_card.card);
     gameRoomList[data.rid].game_data.pushed_deck[data.bbong_cards[0].card].x = data.bbong_cards[0].x;
     gameRoomList[data.rid].game_data.pushed_deck[data.bbong_cards[0].card].y = data.bbong_cards[0].y;
     gameRoomList[data.rid].game_data.pushed_deck[data.bbong_cards[1].card].x = data.bbong_cards[1].x;
@@ -444,7 +443,6 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   // 자연 처리 로직
   socket.on(sock_const.RequestType.NATURE, (data) => {
     gameRoomList[data.rid].game_data.players_data[data.nickname].cards = gameRoomList[data.rid].game_data.players_data[data.nickname].cards.filter(item => item !== data.nature_cards[0].card && item !== data.nature_cards[1].card && item !== data.nature_cards[2].card && item !== data.draw_card.card);
-    gameRoomList[data.rid].game_data.push_deck.push(data.nature_cards[0].card, data.nature_cards[1].card, data.nature_cards[2].card, data.draw_card.card);
     gameRoomList[data.rid].game_data.pushed_deck[data.nature_cards[0].card].x = data.nature_cards[0].x;
     gameRoomList[data.rid].game_data.pushed_deck[data.nature_cards[0].card].y = data.nature_cards[0].y;
     gameRoomList[data.rid].game_data.pushed_deck[data.nature_cards[1].card].x = data.nature_cards[1].x;
