@@ -385,7 +385,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     gameRoomList[data.rid].game_data.players_data[data.nickname].turn_count++;
-    socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_DRAW_CARD, {
+    io.to(data.rid).emit(sock_const.ResponseType.RES_DRAW_CARD, {
       nickname: data.nickname,
       over_price: gameRoomList[data.rid].game_data.players_data[data.nickname].over_price,
       draw_card: data.card,
@@ -597,7 +597,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     gameRoomList[data.rid].game_data.current_round++;
     if (gameRoomList[data.rid].game_data.current_round == gameRoomList[data.rid].round_count) {
       setTimeout(function () { // 최종 라운드 종료 후 2초 뒤에 게임종료.
-        io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_GAME_END, {
+        io.to(data.rid).emit(sock_const.ResponseType.RES_GAME_END, {
           room_data: filterRoomData(data.rid),
           game_data: filterGameData(data.rid)
         });
