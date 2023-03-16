@@ -307,6 +307,7 @@ export default {
                 for (var i = 1; i < 13; i++) {
                     hand_card[i] = 0;
                 }
+                console.log(this.player_data.player_deck);
                 for (var i = 0; i < 6; i++) {
                     hand_card[Number(this.player_data.player_deck[i].slice(1))]++;
                     sum += Number(this.player_data.player_deck[i].slice(1));
@@ -333,7 +334,8 @@ export default {
                         four++;
                     }
                 }
-                return ((four == 1 && two == 1) || sum <= 10) || (three == 2 || sum >= 60) || (straight == 6) || (two == 3);
+                console.log(four,two,sum,three,straight);
+                return (four == 1 && two == 1) || sum <= 10 || (three == 2 || sum >= 60) || (straight == 6) || (two == 3);
             }
             return false;
         },

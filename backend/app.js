@@ -354,16 +354,18 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
   // Socket Listener Event(Game) - 카드뽑기 요청
   socket.on(sock_const.RequestType.GET_CARD, (data) => {
-    socket.emit(sock_const.ResponseType.RES_GET_CARD, {
-      card: gameRoomList[data.rid].game_data.deck.slice(0, 1),
-      game_data: filterGameData(data.rid)
-    })
+    
     gameRoomList[data.rid].game_data.players_data[data.nickname].cards.push(gameRoomList[data.rid].game_data.deck.slice(0, 1));
-    gameRoomList[data.rid].game_data.deck.splice(0, 1);
+    let return_card = gameRoomList[data.rid].game_data.deck.splice(0, 1);
+    
     if (gameRoomList[data.rid].game_data.deck.length == 0) {
       gameRoomList[data.rid].game_data.deck = shuffleDeck(Object.keys(gameRoomList[data.rid].game_data.pushed_deck));
       gameRoomList[data.rid].game_data.pushed_deck = new Map();
     }
+    socket.emit(sock_const.ResponseType.RES_GET_CARD, {
+        card: return_card[0],
+        game_data: filterGameData(data.rid)
+    })
   })
 
   // 게임방 카드 한장 버리기
@@ -385,6 +387,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     gameRoomList[data.rid].game_data.players_data[data.nickname].turn_count++;
+    gameRoomList[data.rid].game_data.players_data[data.nickname].card_count--;
     io.to(data.rid).emit(sock_const.ResponseType.RES_DRAW_CARD, {
       nickname: data.nickname,
       over_price: gameRoomList[data.rid].game_data.players_data[data.nickname].over_price,
