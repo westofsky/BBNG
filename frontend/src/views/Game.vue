@@ -61,12 +61,11 @@
                                 }" />
                         </div>
                         <div class="dropped_cards">
-                            <Dropped_Card v-for="(cards, index) in game_data.push_deck" :key="index" :name="cards.name"
+                            <Dropped_Card v-for="(cards, key) in game_data.pushed_deck" :key="key" :name="key"
                                 :style="{
                                     'position': 'absolute',
-                                    'z-index': (index + 1),
-                                    'top': (cards.top) + 'px',
-                                    'left': (cards.left) + 'px',
+                                    'top': (cards.x) + 'px',
+                                    'left': (cards.y) + 'px',
                                 }" />
                         </div>
                         <div class="card_mine">
@@ -339,8 +338,8 @@ export default {
             return false;
         },
         isOverPriceAvailable() { // 플레이어가 바가지 상태에서 누군가가 마지막으로 낸 카드가 바가지와 동일한 숫자일 경우 true, 아닐 경우 false
-            return (this.game_data.players_data.find(player => player.nickname === this.$store.getters["Users/getUser_nickname"]).state == 2 && (
-                this.player_data.player_deck[0].match(/\d+/) == this.game_data.last_card.match(/\d+/)));
+            return this.game_data.players_data[this.$store.getters["Users/getUser_nickname"]].state == 2 && (
+                this.player_data.player_deck[0].match(/\d+/) == this.game_data.last_card.match(/\d+/));
         },
         isSum4OrLessAvailable() { // 플레이어 카드가 2장이면서 4이하일 경우 true, 아닐 경우 false
             return (this.player_data.player_deck.length == 2 && ((parseInt(this.player_data.player_deck[0].match(/\d+/)[0]) + parseInt(this.player_data.player_deck[0].match(/\d+/)[1])) <= 4));
