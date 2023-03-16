@@ -543,6 +543,7 @@ SERVER_RESPONSE.MD에는 서버가 클라이언트에게 응답하는 Response�
 - 덱에서 뽑은 카드 전달
 ```
 {
+    nickname: 'Nickname',
     card : 'Card Type',
     game_data: {
         current_round: 0,

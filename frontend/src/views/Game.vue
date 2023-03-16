@@ -61,12 +61,11 @@
                                 }" />
                         </div>
                         <div class="dropped_cards">
-                            <Dropped_Card v-for="(cards, key) in game_data.pushed_deck" :key="key" :name="key"
-                                :style="{
-                                    'position': 'absolute',
-                                    'top': (cards.x) + 'px',
-                                    'left': (cards.y) + 'px',
-                                }" />
+                            <Dropped_Card v-for="(cards, key) in game_data.pushed_deck" :key="key" :name="key" :style="{
+                                'position': 'absolute',
+                                'top': (cards.x) + 'px',
+                                'left': (cards.y) + 'px',
+                            }" />
                         </div>
                         <div class="card_mine">
                             <Card v-for="(card, index) in player_data.player_deck" :key="index" :name="card"
@@ -177,7 +176,7 @@ export default {
             console.log(this.game_data.players_data);
             return other_card;
         },
-        get_length(){
+        get_length() {
             return Object.keys(this.game_data.players_data).length;
         },
         getLeft(index) {
@@ -236,9 +235,9 @@ export default {
             });
         },
         checkOverPrice() { // 플레이어의 카드 덱의 바가지 여부 확인
-            if(this.player_data.player_deck.length != 3)
+            if (this.player_data.player_deck.length != 3)
                 return 0;
-                
+
             let cardNumbers = {};
             for (let card of this.player_data.player_deck) {
                 let cardNumber = String(card).substring(1);
@@ -248,7 +247,7 @@ export default {
                     cardNumbers[cardNumber] = true;
                 }
             }
-            
+
             return 0;
         },
         isBbongAvailable(last_card) { // 현재 플레이어가 뽕이 가능할 경우 true, 불가능할 경우 false
@@ -334,7 +333,7 @@ export default {
                         four++;
                     }
                 }
-                console.log(four,two,sum,three,straight);
+                console.log(four, two, sum, three, straight);
                 return (four == 1 && two == 1) || sum <= 10 || (three == 2 || sum >= 60) || (straight == 6) || (two == 3);
             }
             return false;
@@ -380,18 +379,18 @@ export default {
                     }
                 }
 
-                if(four == 1 && two == 1) return game_const.GameEndType.TYPE_42;
-                if(sum <= 10) return game_const.GameEndType.TYPE_LOW;
-                if(three == 2) return game_const.GameEndType.TYPE_33;
-                if(sum >= 60) return game_const.GameEndType.TYPE_HIGH;
-                if(straight == 6) return game_const.GameEndType.TYPE_STRAIGHT;
-                if(two == 3) return game_const.GameEndType.TYPE_222;
+                if (four == 1 && two == 1) return game_const.GameEndType.TYPE_42;
+                if (sum <= 10) return game_const.GameEndType.TYPE_LOW;
+                if (three == 2) return game_const.GameEndType.TYPE_33;
+                if (sum >= 60) return game_const.GameEndType.TYPE_HIGH;
+                if (straight == 6) return game_const.GameEndType.TYPE_STRAIGHT;
+                if (two == 3) return game_const.GameEndType.TYPE_222;
 
                 return ((four == 1 && two == 1) || sum <= 10) || (three == 2 || sum >= 60) || (straight == 6) || (two == 3);
             } else {
-                if(this.isOverPriceAvailable()) return game_const.GameEndType.TYPE_OVER_PRICE;
-                if(this.isSum4OrLessAvailable()) return game_const.GameEndType.TYPE_BBONG_LOW;
-                if(this.isNatureAvailable()) return game_const.GameEndType.TYPE_BBONG_NATURE;
+                if (this.isOverPriceAvailable()) return game_const.GameEndType.TYPE_OVER_PRICE;
+                if (this.isSum4OrLessAvailable()) return game_const.GameEndType.TYPE_BBONG_LOW;
+                if (this.isNatureAvailable()) return game_const.GameEndType.TYPE_BBONG_NATURE;
             }
         },
         onBtnBbongClicked(bbongCards, drawCard) {
@@ -430,8 +429,8 @@ export default {
             this.$socket.value.emit(sock_const.RequestType.STOP, {
                 rid: this.room_data.rid,
                 nickname: this.$store.getters["Users/getUser_nickname"],
-                overprice_nickname: this.checkEndType() == game_const.GameEndType.TYPE_OVER_PRICE? this.last_draw_player:'',
-                type: this.checkEndType() 
+                overprice_nickname: this.checkEndType() == game_const.GameEndType.TYPE_OVER_PRICE ? this.last_draw_player : '',
+                type: this.checkEndType()
             });
         },
         showGameNotification(message) {
@@ -847,9 +846,11 @@ export default {
             }
             */
             this.game_data = data.game_data;
-            this.player_data.player_deck.push(data.card);
-            this.isBtnNatureActive = this.isNatureAvailable();
-            this.isBtnStopActive = this.isMadeAvailable();
+            if (data.nickname === this.$store.getters["Users/getUser_nickname"]) {
+                this.player_data.player_deck.push(data.card);
+                this.isBtnNatureActive = this.isNatureAvailable();
+                this.isBtnStopActive = this.isMadeAvailable();
+            }
         });
         this.$socket.value.on(sock_const.ResponseType.RES_DRAW_CARD, (data) => { // 플레이어가 내려놓은 카드 정보 전달
             /*
@@ -984,7 +985,7 @@ export default {
                 }
             }            
             */
-           this.game_data = data.game_data;
+            this.game_data = data.game_data;
         });
         this.$socket.value.on(sock_const.ResponseType.RES_NATURE, (data) => { // 플레이어가 내려놓은 자연에 해당되는 카드와 함께 버린 카드, 바가지 여부 반환
             /*
@@ -1043,7 +1044,7 @@ export default {
                 }
             }
             */
-           this.game_data = data.game_data;
+            this.game_data = data.game_data;
         });
     }
 }
