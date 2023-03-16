@@ -159,21 +159,27 @@ export default {
         other_cards(players_data) {
             let other_card = [];
             const targetNick = this.$store.getters["Users/getUser_nickname"];
-            const targetIndex = Object.keys(players_data).indexOf(targetNick);
+            const keys = Object.keys(players_data);
+            const index = keys.indexOf(targetNick);
 
-            const entries = Object.entries(players_data);
-            const sortedEntries = entries.slice(targetIndex).sort((a, b) => a[0].localeCompare(b[0]));
+            const newObj = {};
+            if (index !== -1) {
+                const slice1 = keys.slice(index);
+                const slice2 = keys.slice(0, index);
 
-            for (const [nickname, data] of [...entries.slice(0, targetIndex), ...sortedEntries]) {
-                if (nickname != targetNick) {
-                    console.log(data);
-                    other_card.push(data.card_count);
+                slice1.forEach(key => {
+                    newObj[key] = players_data[key];
+                });
+
+                slice2.forEach(key => {
+                    newObj[key] = players_data[key];
+                });
+            }
+            for(const key of Object.keys(newObj)){
+                if(key!=targetNick){
+                    other_card.push(newObj[key].card_count);
                 }
             }
-            console.log("-------------상대방 card 표현-------");
-            console.log(other_card);
-            console.log("------------players_data-------");
-            console.log(this.game_data.players_data);
             return other_card;
         },
         get_length() {
@@ -274,11 +280,9 @@ export default {
             return false;
         },
         isNatureAvailable() { // 현재 플레이어가 자연이 가능할 경우 true, 불가능할 경우 false
-            console.log("자연 되는지 안되는지 실행됨");
             if (this.player_data.player_deck.length % 3 == 0) {
                 const counts = {};
                 // 뒷 숫자만 추출하여 count를 증가시킴
-                console.log(this.player_data.player_deck[0]);
                 for (let i = 0; i < this.player_data.player_deck.length; i++) {
                     const num = this.player_data.player_deck[i].toString().substring(1);
                     counts[num] = (counts[num] || 0) + 1;
@@ -299,14 +303,12 @@ export default {
             return false;
         },
         isMadeAvailable() { // 플레이어 카드가 메이드 가능 상태인 경우 true, 아닐 경우 false
-            console.log("메이드 되는지 안되는지 실행됨");
             if (this.player_data.player_deck.length == 6) {
                 var hand_card = [];
                 var two = 0, three = 0, four = 0, flag = 0, sum = 0, straight = 0, start, card_sum = 0;
                 for (var i = 1; i < 13; i++) {
                     hand_card[i] = 0;
                 }
-                console.log(this.player_data.player_deck);
                 for (var i = 0; i < 6; i++) {
                     hand_card[Number(this.player_data.player_deck[i].slice(1))]++;
                     sum += Number(this.player_data.player_deck[i].slice(1));
@@ -333,7 +335,6 @@ export default {
                         four++;
                     }
                 }
-                console.log(four, two, sum, three, straight);
                 return (four == 1 && two == 1) || sum <= 10 || (three == 2 || sum >= 60) || (straight == 6) || (two == 3);
             }
             return false;
@@ -453,7 +454,6 @@ export default {
         }
     },
     mounted() {
-        console.log(JSON.stringify(this.room_data) + "/" + JSON.stringify(this.game_data));
         const container = this.$el;
         this.containerWidth = container.clientWidth;
         this.rid = this.$store.getters["Games/getGame_rid"];
@@ -671,13 +671,13 @@ export default {
             }
             */
             this.game_data = data.game_data;
+            console.log("-----------누구턴인가여-----------");
+            console.log(data.nickname);
             this.$refs.LogComponent.addLog(this.game_data.current_round + " 라운드가 시작되었습니다");
             this.showGameNotification(this.game_data.current_round + " 라운드가 시작되었습니다");
             this.isBtnBbongActive = false;
             this.isBtnNatureActive = this.isNatureAvailable();
             this.isBtnStopActive = false;
-            console.log("-----------누구턴인가여-----------");
-            console.log(data.player_turn);
             if (data.player_turn == this.$store.getters["Users/getUser_nickname"]) { // 플레이어가 첫 번째 차례일 때
                 this.isClickable = true;
                 this.showGameNotification("당신의 차례입니다.");
@@ -761,6 +761,8 @@ export default {
                 }
             */
             this.game_data = data.game_data;
+            console.log("-----------누구턴인가여-----------");
+            console.log(data.nickname);
             if (data.nickname == this.$store.getters["Users/getUser_nickname"]) { // 플레이어의 차례일 때
                 this.isClickable = true;
                 this.isBtnNatureActive = this.isNatureAvailable();
@@ -806,8 +808,6 @@ export default {
             }
             */
             this.game_data = data.game_data;
-            console.log("-----------게임데이터-----------");
-            console.log(data.game_data);
             this.player_data.player_deck = data.cards;
             this.$refs.LogComponent.addLog('카드 5장을 받았습니다');
         });
