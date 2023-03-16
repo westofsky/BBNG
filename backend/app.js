@@ -302,7 +302,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }); // 모든 플레이어에게 게임이 시작되었다고 알림.
 
       setTimeout(function () { // 1초 뒤에 모든 플레이어에게 라운드가 시작되었다고 알림.
-        Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+        Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
           gameRoomList[data.rid].game_data.players_data[nickname] = {
             turn_count: 0,
             cards: [],
@@ -321,8 +321,12 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         setTimeout(function () { // 1초 뒤에 각각의 플레이어에게 카드 배분.
           var j = 0;
           gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
-          Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+          Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
             gameRoomList[data.rid].game_data.players_data[nickname].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
+            j += 5;
+          });
+          j = 0;
+          Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
             io.to(clientListByNickname[nickname].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
               cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5),
               game_data: filterGameData(data.rid),
@@ -475,7 +479,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   socket.on(sock_const.RequestType.STOP, (data) => {
     var card_sum = 0;
     if (data.type == game_const.GameEndType.TYPE_LOW || data.type == game_const.GameEndType.TYPE_42) { // low, 4 2
-      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = -100;
         }
@@ -489,7 +493,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       });
     }
     else if (data.type == game_const.GameEndType.TYPE_HIGH || data.type == game_const.GameEndType.TYPE_33) {  // 3 3, high
-      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = -60;
         }
@@ -503,7 +507,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       });
     }
     else if (data.type == game_const.GameEndType.TYPE_STRAIGHT) {  // 스트레이트
-      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
         for (var k = 0; k < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; k++) {
           card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[k].slice(1));
         }
@@ -517,7 +521,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       });
     }
     else if (data.type == game_const.GameEndType.TYPE_222 || data.type == game_const.GameEndType.TYPE_BBONG_NATURE) {  // 2 2 2, 뽕 상태에서 같은 카드 3장일 때 스탑
-      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = 0;
         }
@@ -533,14 +537,14 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     else if (data.type == game_const.GameEndType.TYPE_BBONG_LOW) {  // 뽕 스탑
       var flag = 0;
       var mycard_sum = Number(gameRoomList[data.rid].game_data.players_data[data.nickname].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.players_data[data.nickname].cards[1].slice(1))
-      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
         if (gameRoomList[data.rid].game_data.players_data[nickname].state != 0 && nickname != data.nickname) {
           if (mycard_sum >= Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[1].slice(1)))
             flag++
         }
       });
       if (flag == 0) {  // 자기보다 낮은숫자의 카드가 없을 때
-        Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+        Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
           if (nickname == data.nickname) {
             gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = 0;
           }
@@ -554,7 +558,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         });
       }
       else { // 자기보다 낮은숫자의 카드가 있을 때
-        Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+        Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
           for (var k = 0; k < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; k++) {
             card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[k].slice(1));
           }
@@ -569,7 +573,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     else if (data.type == game_const.GameEndType.TYPE_OVER_PRICE) { // 바가지 처리
-      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function(nickname) {
+      Object.keys(gameRoomList[data.rid].game_data.players_data).forEach(function (nickname) {
         for (var i = 0; i < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; i++) {
           card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[i].slice(1));
         }
