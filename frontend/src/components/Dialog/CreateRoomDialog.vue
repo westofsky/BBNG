@@ -123,7 +123,7 @@ export default {
                     round_count: this.roundCount,
                     ready_count: 0,
                     state: game_const.GameState.WAITING,
-                    players: [this.$socket.value.id]
+                    players: [this.$store.getters["Users/getUser_nickname"]]
                 }
             });
         }
