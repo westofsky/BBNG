@@ -305,15 +305,13 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         console.log('delay');
       }, 3000);
 
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
-        gameRoomList[data.rid].game_data.players_data[nickname].push(
-          {
+      for (nickname in Object.keys(gameRoomList[data.rid].game_data.players_data)){
+        gameRoomList[data.rid].game_data.players_data[nickname] = {
             turn_count: 0,
             cards: [],
             state: 0,
             over_price: 0,
-          }
-        )
+          };
       }
 
       io.to(data.rid).to(data.rid).emit(sock_const.ResponseType.RES_ROUND_START, { // 모든 플레이어에게 라운드가 시작되었다고 알림.
@@ -329,7 +327,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
 
       var j = 0;
       gameRoomList[data.rid].game_data.deck = shuffleDeck(createDeck());
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid].game_data.players_data)){
         gameRoomList[data.rid].game_data.players_data[nickname].cards = gameRoomList[data.rid].game_data.deck.slice(j, j + 5);
         io.to(clientListByNickname[nickname].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
           cards: gameRoomList[data.rid].game_data.deck.slice(j, j + 5),
@@ -484,7 +482,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
   socket.on(sock_const.RequestType.STOP, (data) => {
     var card_sum = 0;
     if (data.type == game_const.GameEndType.TYPE_LOW || data.type ==  game_const.GameEndType.TYPE_42) { // low, 4 2
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = -100;
         }
@@ -498,7 +496,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     else if (data.type == game_const.GameEndType.TYPE_HIGH || data.type ==  game_const.GameEndType.TYPE_33) {  // 3 3, high
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = -60;
         }
@@ -512,7 +510,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     else if (data.type == game_const.GameEndType.TYPE_STRAIGHT) {  // 스트레이트
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
         for (var k = 0; k < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; k++) {
           card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[k].slice(1));
         }
@@ -526,7 +524,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     else if (data.type == game_const.GameEndType.TYPE_222 || data.type ==  game_const.GameEndType.TYPE_BBONG_NATURE) {  // 2 2 2, 뽕 상태에서 같은 카드 3장일 때 스탑
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
         if (nickname == data.nickname) {
           gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = 0;
         }
@@ -542,7 +540,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     else if (data.type == game_const.GameEndType.TYPE_BBONG_LOW) {  // 뽕 스탑
       var flag = 0;
       var mycard_sum = Number(gameRoomList[data.rid].game_data.players_data[data.nickname].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.players_data[data.nickname].cards[1].slice(1))
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
         if (gameRoomList[data.rid].game_data.players_data[nickname].state != 0 && nickname != data.nickname) {
           if (mycard_sum >= Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[0].slice(1)) + Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[1].slice(1)))
             flag++
@@ -550,7 +548,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
       if (flag == 0) {  // 자기보다 낮은숫자의 카드가 없을 때
-        for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+        for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
           if (nickname == data.nickname) {
             gameRoomList[data.rid].game_data.round_result[gameRoomList[data.rid].game_data.current_round].players_score[data.nickname] = 0;
           }
@@ -564,7 +562,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         }
       }
       else { // 자기보다 낮은숫자의 카드가 있을 때
-        for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+        for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
           for (var k = 0; k < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; k++) {
             card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[k].slice(1));
           }
@@ -579,7 +577,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
       }
     }
     else if(data.type == game_const.GameEndType.TYPE_OVER_PRICE){ // 바가지 처리
-      for (nickname in Object.keys(gameRoomList[RoomIDValue]['game_data']['players_data'])){
+      for (nickname in Object.keys(gameRoomList[data.rid]['game_data']['players_data'])){
         for (var i= 0; i < gameRoomList[data.rid].game_data.players_data[nickname].cards.length; i++) {
           card_sum += Number(gameRoomList[data.rid].game_data.players_data[nickname].cards[i].slice(1));
         }
