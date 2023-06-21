@@ -111,7 +111,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     // Socket Listener Event - 온라인 상태 목록 요청
     socket.on(sock_const.RequestType.ONLINE_LIST, () => {
         let onlineList = [];
-        for (var i = 0; i < Object.values(clientListBySocket).length; i++) {
+        for (let i = 0; i < Object.values(clientListBySocket).length; i++) {
             onlineList.push(Object.values(clientListBySocket)[i].nickname);
         }
         socket.emit(sock_const.ResponseType.RES_ONLINE_LIST, onlineList);
@@ -220,7 +220,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     socket.on(sock_const.RequestType.LEAVE_ROOM, (data) => {
         // room_data의 플레이어 목록에서 해당 플레이어 제거
         gameRoomList[data.rid].players = gameRoomList[data.rid].players.filter(function (player) {
-            return player.nickname !== nickname
+            return player.nickname !== data.nickname
         });
         gameRoomList[data.rid].current_player_count -= 1;
 
@@ -252,9 +252,9 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
     socket.on('disconnect', (reason) => {
         console.log("Socket Event(disconnect): '" + socket.id + "' disconnected => " + reason);
 
-        var socketId = socket.id;
-        var nickname = clientListBySocket[socketId].nickname;
-        var joinedGameRoom = clientListBySocket[socket.id].rid;
+        const socketId = socket.id;
+        const nickname = clientListBySocket[socketId].nickname;
+        const joinedGameRoom = clientListBySocket[socket.id].rid;
 
         if (joinedGameRoom != '') { // 방에 참여한 상태인 경우
             socket.leave(joinedGameRoom);
@@ -364,7 +364,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
         });
 
         setTimeout(function () {
-            var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
+            const players = Object.keys(gameRoomList[data.rid].game_data.players_data);
             io.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
                 nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
                 game_data: filterGameData(data.rid)
@@ -406,7 +406,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             over_price: gameRoomList[data.rid].game_data.players_data[data.nickname].over_price,
             game_data: filterGameData(data.rid)
         })
-        var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
+        const players = Object.keys(gameRoomList[data.rid].game_data.players_data);
         socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
             nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
             game_data: filterGameData(data.rid)
@@ -438,7 +438,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             over_price: gameRoomList[data.rid].game_data.players_data[data.nickname].over_price,
             game_data: filterGameData(data.rid)
         })
-        var players = Object.keys(gameRoomList[data.rid].game_data.players_data);
+        const players = Object.keys(gameRoomList[data.rid].game_data.players_data);
         socket.broadcast.to(data.rid).emit(sock_const.ResponseType.RES_CHANGE_TURN, {
             nickname: players[((players.indexOf(data.nickname)) + 1) % gameRoomList[data.rid].player_limit],
             game_data: filterGameData(data.rid)
@@ -454,7 +454,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
                 if (nickname == data.nickname) {
                     gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[data.nickname] = -100;
                 } else {
-                    for (var k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
+                    for (let k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
                         card_sum += Number(gameRoomList[roomId].game_data.players_data[nickname].cards[k].slice(1));
                     }
                     gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[nickname] = card_sum - threecard_except(gameRoomList[roomId].game_data.players_data[nickname].cards) * 3;
@@ -465,7 +465,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
                 if (nickname == data.nickname) {
                     gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[data.nickname] = -60;
                 } else {
-                    for (var k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
+                    for (let k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
                         card_sum += Number(gameRoomList[roomId].game_data.players_data[nickname].cards[k].slice(1));
                     }
                     gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[nickname] = card_sum - threecard_except(gameRoomList[roomId].game_data.players_data[nickname].cards) * 3;
@@ -473,7 +473,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             });
         } else if (data.type == game_const.GameEndType.TYPE_STRAIGHT) {  // 스트레이트
             Object.keys(gameRoomList[roomId].game_data.players_data).forEach(function (nickname) {
-                for (var k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
+                for (let k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
                     card_sum += Number(gameRoomList[roomId].game_data.players_data[nickname].cards[k].slice(1));
                 }
                 if (nickname == data.nickname) {
@@ -487,15 +487,15 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
                 if (nickname == data.nickname) {
                     gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[data.nickname] = 0;
                 } else {
-                    for (var k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
+                    for (let k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
                         card_sum += Number(gameRoomList[roomId].game_data.players_data[nickname].cards[k].slice(1));
                     }
                     gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[nickname] = card_sum - threecard_except(gameRoomList[roomId].game_data.players_data[nickname].cards) * 3;
                 }
             });
         } else if (data.type == game_const.GameEndType.TYPE_BBONG_LOW) {  // 뽕 스탑
-            var flag = 0;
-            var mycard_sum = Number(gameRoomList[roomId].game_data.players_data[data.nickname].cards[0].slice(1)) + Number(gameRoomList[roomId].game_data.players_data[data.nickname].cards[1].slice(1))
+            let flag = 0;
+            const mycard_sum = Number(gameRoomList[roomId].game_data.players_data[data.nickname].cards[0].slice(1)) + Number(gameRoomList[roomId].game_data.players_data[data.nickname].cards[1].slice(1));
             Object.keys(gameRoomList[roomId].game_data.players_data).forEach(function (nickname) {
                 if (gameRoomList[roomId].game_data.players_data[nickname].state != 0 && nickname != data.nickname) {
                     if (mycard_sum >= Number(gameRoomList[roomId].game_data.players_data[nickname].cards[0].slice(1)) + Number(gameRoomList[roomId].game_data.players_data[nickname].cards[1].slice(1)))
@@ -507,7 +507,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
                     if (nickname == data.nickname) {
                         gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[data.nickname] = 0;
                     } else {
-                        for (var k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
+                        for (let k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
                             card_sum += Number(gameRoomList[roomId].game_data.players_data[nickname].cards[k].slice(1));
                         }
                         gameRoomList[roomId].game_data.round_result[gameRoomList[roomId].game_data.current_round].players_score[nickname] = card_sum - threecard_except(gameRoomList[roomId].game_data.players_data[nickname].cards) * 3;
@@ -515,7 +515,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
                 });
             } else { // 자기보다 낮은숫자의 카드가 있을 때
                 Object.keys(gameRoomList[roomId].game_data.players_data).forEach(function (nickname) {
-                    for (var k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
+                    for (let k = 0; k < gameRoomList[roomId].game_data.players_data[nickname].cards.length; k++) {
                         card_sum += Number(gameRoomList[roomId].game_data.players_data[nickname].cards[k].slice(1));
                     }
                     if (nickname == data.nickname) {
@@ -527,7 +527,7 @@ io.on('connection', (socket) => { // IO Listener Event - 새로운 Client 연결
             }
         } else if (data.type == game_const.GameEndType.TYPE_OVER_PRICE) { // 바가지 처리
             Object.keys(gameRoomList[roomId].game_data.players_data).forEach(function (nickname) {
-                for (var i = 0; i < gameRoomList[roomId].game_data.players_data[nickname].cards.length; i++) {
+                for (let i = 0; i < gameRoomList[roomId].game_data.players_data[nickname].cards.length; i++) {
                     card_sum += Number(gameRoomList[roomId].game_data.players_data[nickname].cards[i].slice(1));
                 }
                 if (nickname == data.overprice_nickname) { // 바가지 먹은 사람
@@ -622,17 +622,18 @@ function filterGameData(rid) {
 
 // Function - 동일한 숫자 3개 카드값 빼기
 function threecard_except(cards) {
-    var number = 0, flag = 0;
-    var hand_card = [];
-    for (var i = 1; i < 13; i++) {
-        hand_card[i] = 0;
+    let loop;
+    let number = 0, flag = 0;
+    const hand_card = [];
+    for (loop = 1; loop < 13; loop++) {
+        hand_card[loop] = 0;
     }
-    for (var i = 0; i < 6; i++) {
-        hand_card[Number(cards[i].slice(1))]++;
+    for (loop = 0; loop < 6; loop++) {
+        hand_card[Number(cards[loop].slice(1))]++;
     }
-    for (var i = 1; i < 13; i++) {
-        if (hand_card[i] >= 3) {
-            number = i;
+    for (loop = 1; loop < 13; loop++) {
+        if (hand_card[loop] >= 3) {
+            number = loop;
             break;
         }
     }
@@ -661,19 +662,19 @@ function startRound(roomId) {
     });
 
     setTimeout(function () { // 1초 뒤에 각각의 플레이어에게 카드 배분.
-        let j = 0;
+        let cardCount = 0;
         gameRoomList[roomId].game_data.deck = shuffleDeck(createDeck());
         Object.keys(gameRoomList[roomId].game_data.players_data).forEach(function (nickname) {
-            gameRoomList[roomId].game_data.players_data[nickname].cards = gameRoomList[roomId].game_data.deck.slice(j, j + 5);
-            j += 5;
+            gameRoomList[roomId].game_data.players_data[nickname].cards = gameRoomList[roomId].game_data.deck.slice(cardCount, cardCount + 5);
+            cardCount += 5;
         });
-        j = 0;
+        cardCount = 0;
         Object.keys(gameRoomList[roomId].game_data.players_data).forEach(function (nickname) {
             io.to(clientListByNickname[nickname].socket_id).emit(sock_const.ResponseType.RES_SPREAD_CARD, {
-                cards: gameRoomList[roomId].game_data.deck.slice(j, j + 5),
+                cards: gameRoomList[roomId].game_data.deck.slice(cardCount, cardCount + 5),
                 game_data: filterGameData(roomId),
             })
-            j += 5;
+            cardCount += 5;
         });
         gameRoomList[roomId].game_data.deck.splice(0, 5 * gameRoomList[roomId].player_limit);
     }, 1000);
